@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free JSON Formatter &amp; Validator — No Upload | DevJay Tools</title>
+<meta name="description" content="Paste JSON, get it pretty-printed, minified, or validated — with exact error locations. Free, no signup, runs in your browser.">
+<meta property="og:title" content="JSON Formatter &amp; Validator — DevJay Tools">
+<meta property="og:description" content="Format, minify, and validate JSON without uploading it.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="style.css">
+<style>
+  .json-area {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    min-height: 260px;
+    white-space: pre;
+  }
+  .controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: end;
+  }
+  @media (max-width: 520px) { .controls-grid { grid-template-columns: 1fr; } }
+  .status-ok { color: var(--green-hover); font-weight: 600; }
+  .status-err { color: var(--error); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://devjaybusiness.com">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="https://devjaybusiness.com#feedback">Feedback</a>
+      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free · Runs in your browser</span>
+    <h1>JSON Formatter &amp; Validator</h1>
+    <p>Paste messy JSON, clean it up, or check it for errors. Everything happens on your device — your data is never uploaded.</p>
+  </section>
+
+  <label for="input">Your JSON</label>
+  <textarea id="input" class="json-area" spellcheck="false" placeholder='{"hello": "world", "items": [1,2,3]}'></textarea>
+
+  <div class="controls-grid">
+    <div>
+      <label for="indent">Indent</label>
+      <select id="indent">
+        <option value="2" selected>2 spaces</option>
+        <option value="4">4 spaces</option>
+        <option value="tab">Tab</option>
+      </select>
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <div class="row" style="margin:0;">
+        <button id="format-btn" class="success">Format</button>
+        <button id="minify-btn" class="secondary">Minify</button>
+        <button id="validate-btn" class="secondary">Validate</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="status" class="muted" role="status" aria-live="polite" style="margin-top:10px;"></div>
+
+  <label for="output" style="margin-top:12px;">Result</label>
+  <textarea id="output" class="json-area" spellcheck="false" readonly></textarea>
+  <div class="row">
+    <button id="copy-btn" class="secondary">Copy result</button>
+  </div>
+
+  <h2>How to use this</h2>
+  <ul>
+    <li><strong>Paste</strong> your JSON into the top box.</li>
+    <li><strong>Format</strong> pretty-prints it with your chosen indent.</li>
+    <li><strong>Minify</strong> strips whitespace to the smallest valid form.</li>
+    <li><strong>Validate</strong> checks for errors and tells you exactly where they are.</li>
+  </ul>
+
+  <h2>Support this tool</h2>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="https://devjaybusiness.com/privacy.html">Privacy</a>
+      <a href="https://devjaybusiness.com/terms.html">Terms</a>
+      <a href="https://devjaybusiness.com">All tools</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const input = document.getElementById('input');
+  const output = document.getElementById('output');
+  const status = document.getElementById('status');
+  const indentSel = document.getElementById('indent');
+
+  function getIndent() {
+    const v = indentSel.value;
+    return v === 'tab' ? '\t' : parseInt(v, 10);
+  }
+
+  function locate(text, pos) {
+    let line = 1, col = 1;
+    for (let i = 0; i < pos && i < text.length; i++) {
+      if (text[i] === '\n') { line++; col = 1; } else col++;
+    }
+    return { line, col };
+  }
+
+  function parse(text) {
+    try {
+      return { ok: true, data: JSON.parse(text) };
+    } catch (e) {
+      const m = /position (\d+)/i.exec(e.message);
+      let where = '';
+      if (m) {
+        const loc = locate(text, parseInt(m[1], 10));
+        where = ` (line ${loc.line}, column ${loc.col})`;
+      }
+      return { ok: false, err: e.message + where };
+    }
+  }
+
+  function showOk(msg) {
+    status.innerHTML = `<span class="status-ok">✓ ${msg}</span>`;
+  }
+  function showErr(msg) {
+    status.innerHTML = `<span class="status-err">✗ ${msg}</span>`;
+  }
+
+  document.getElementById('format-btn').addEventListener('click', () => {
+    const r = parse(input.value);
+    if (!r.ok) { output.value = ''; showErr(r.err); return; }
+    output.value = JSON.stringify(r.data, null, getIndent());
+    showOk('Valid JSON — formatted.');
+  });
+
+  document.getElementById('minify-btn').addEventListener('click', () => {
+    const r = parse(input.value);
+    if (!r.ok) { output.value = ''; showErr(r.err); return; }
+    output.value = JSON.stringify(r.data);
+    showOk(`Valid JSON — minified (${output.value.length} chars).`);
+  });
+
+  document.getElementById('validate-btn').addEventListener('click', () => {
+    const r = parse(input.value);
+    if (r.ok) showOk('Valid JSON.');
+    else { output.value = ''; showErr(r.err); }
+  });
+
+  document.getElementById('copy-btn').addEventListener('click', async () => {
+    if (!output.value) return;
+    try {
+      await navigator.clipboard.writeText(output.value);
+      showOk('Copied.');
+    } catch {
+      showErr('Copy failed — select and copy manually.');
+    }
+  });
+</script>
+</body>
+</html>

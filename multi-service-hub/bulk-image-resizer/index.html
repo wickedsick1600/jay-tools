@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bulk Image Resizer — Batch Crop &amp; Resize to Exact Size | DevJay Tools</title>
+<meta name="description" content="Drop many images, get them all cropped and resized to a fixed ratio and size (e.g. 2:1 at 2000×1000 JPEG). Perfect for article thumbnails. Free, no upload.">
+<meta property="og:title" content="Bulk Image Resizer — DevJay Tools">
+<meta property="og:description" content="Batch resize many images to one exact size and format.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="style.css">
+<style>
+  #drop-zone {
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: 36px 20px;
+    text-align: center;
+    color: var(--fg-muted);
+    background: var(--white);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+  }
+  #drop-zone:hover, #drop-zone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  #drop-zone strong { color: var(--fg); display: block; font-size: 16px; margin-bottom: 4px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+
+  ul.files {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  ul.files li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  ul.files .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  ul.files .size { color: var(--muted); font-variant-numeric: tabular-nums; }
+  ul.files .status { color: var(--muted); font-size: 12px; }
+  ul.files .status.done { color: var(--green-hover); }
+  ul.files .status.err { color: var(--error); }
+
+  .progress {
+    height: 8px;
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .progress .bar { height: 100%; background: var(--green); width: 0%; transition: width .2s; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://devjaybusiness.com">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="https://devjaybusiness.com#feedback">Feedback</a>
+      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free · Runs in your browser</span>
+    <h1>Bulk Image Resizer</h1>
+    <p>Drop in a pile of images. They come out cropped to the exact ratio and size you need — perfect for article thumbnails, social posts, or any workflow that demands a fixed format.</p>
+  </section>
+
+  <div class="notice green">
+    <strong>Your images are never uploaded.</strong> Everything happens on your device.
+  </div>
+
+  <div id="drop-zone" tabindex="0" role="button" aria-label="Add images">
+    <strong>Drop images here, or click to pick</strong>
+    <div class="muted">JPEG, PNG, WebP. Multiple files at once is fine.</div>
+    <input type="file" id="file-input" accept="image/*" multiple hidden>
+  </div>
+
+  <ul class="files" id="file-list"></ul>
+
+  <h2>Output settings</h2>
+
+  <label for="preset">Preset</label>
+  <select id="preset">
+    <option value="2000x1000">Article thumbnail — 2:1 · 2000×1000</option>
+    <option value="1600x800">Article inline — 2:1 · 1600×800</option>
+    <option value="1200x630">Open Graph / social — 1200×630</option>
+    <option value="1080x1080">Instagram square — 1080×1080</option>
+    <option value="1920x1080">Full HD — 1920×1080</option>
+    <option value="custom">Custom…</option>
+  </select>
+
+  <div class="grid" style="margin-top:10px;">
+    <div>
+      <label for="w">Width (px)</label>
+      <input type="number" id="w" value="2000" min="1">
+    </div>
+    <div>
+      <label for="h">Height (px)</label>
+      <input type="number" id="h" value="1000" min="1">
+    </div>
+  </div>
+
+  <label for="fit">How to fit each image into that size</label>
+  <select id="fit">
+    <option value="cover" selected>Crop to fill (center crop) — no bars, no stretching</option>
+    <option value="contain">Letterbox / pillarbox — adds bars, no cropping</option>
+    <option value="stretch">Stretch — ignores original ratio (usually not what you want)</option>
+  </select>
+
+  <div class="grid" style="margin-top:10px;">
+    <div>
+      <label for="format">Format</label>
+      <select id="format">
+        <option value="image/jpeg" selected>JPEG (smaller, no transparency)</option>
+        <option value="image/webp">WebP (modern, small)</option>
+        <option value="image/png">PNG (lossless, bigger)</option>
+      </select>
+    </div>
+    <div>
+      <label for="quality">Quality: <span id="qlabel">0.9</span></label>
+      <input type="range" id="quality" min="0.1" max="1" step="0.05" value="0.9">
+    </div>
+  </div>
+
+  <label for="bg">Background (for letterbox or PNG transparency you want flattened)</label>
+  <input type="color" id="bg" value="#ffffff" style="width:60px; height:40px; padding:2px;">
+
+  <div class="row" style="margin-top:16px;">
+    <button id="go-btn" class="success">Process &amp; download .zip</button>
+    <button id="clear-btn" class="secondary">Clear list</button>
+  </div>
+
+  <div class="progress" id="progress" style="display:none;"><div class="bar" id="bar"></div></div>
+  <div id="msg" class="muted" role="status" aria-live="polite"></div>
+
+  <h2>How to use this</h2>
+  <ul>
+    <li><strong>Drop your images</strong> onto the box, or click to pick them.</li>
+    <li><strong>Pick a preset</strong> (or "Custom…" and type your own size).</li>
+    <li><strong>Pick how each image fits</strong>: crop to fill is the default and the right choice for thumbnails.</li>
+    <li><strong>Click process</strong> — you get a <code>resized.zip</code> with all the output files.</li>
+  </ul>
+
+  <h2>Support this tool</h2>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="https://devjaybusiness.com/privacy.html">Privacy</a>
+      <a href="https://devjaybusiness.com/terms.html">Terms</a>
+      <a href="https://devjaybusiness.com">All tools</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  const fileList = document.getElementById('file-list');
+  const preset = document.getElementById('preset');
+  const wEl = document.getElementById('w');
+  const hEl = document.getElementById('h');
+  const fit = document.getElementById('fit');
+  const format = document.getElementById('format');
+  const quality = document.getElementById('quality');
+  const qlabel = document.getElementById('qlabel');
+  const bg = document.getElementById('bg');
+  const goBtn = document.getElementById('go-btn');
+  const clearBtn = document.getElementById('clear-btn');
+  const progress = document.getElementById('progress');
+  const bar = document.getElementById('bar');
+  const msg = document.getElementById('msg');
+
+  let files = [];
+
+  function humanBytes(n) {
+    if (n < 1024) return n + ' B';
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+    return (n / 1024 / 1024).toFixed(2) + ' MB';
+  }
+
+  function flash(text, isError) {
+    msg.textContent = text;
+    msg.className = isError ? 'error' : 'muted';
+  }
+
+  function renderList() {
+    fileList.innerHTML = '';
+    files.forEach((f, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span class="name">${f.file.name}</span>
+        <span class="size">${humanBytes(f.file.size)}</span>
+        <span class="status ${f.status === 'done' ? 'done' : f.status === 'error' ? 'err' : ''}" data-i="${i}">${f.status === 'done' ? 'done' : f.status === 'error' ? (f.error || 'failed') : ''}</span>
+      `;
+      fileList.appendChild(li);
+    });
+  }
+
+  function addFiles(list) {
+    for (const file of list) {
+      if (!file.type.startsWith('image/')) continue;
+      files.push({ file, status: 'queued' });
+    }
+    renderList();
+  }
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); addFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', e => addFiles(e.target.files));
+
+  clearBtn.addEventListener('click', () => { files = []; renderList(); flash(''); progress.style.display = 'none'; });
+
+  preset.addEventListener('change', () => {
+    if (preset.value === 'custom') return;
+    const [w, h] = preset.value.split('x').map(Number);
+    wEl.value = w; hEl.value = h;
+  });
+
+  quality.addEventListener('input', () => { qlabel.textContent = quality.value; });
+  format.addEventListener('change', () => {
+    const isPng = format.value === 'image/png';
+    quality.disabled = isPng;
+    qlabel.style.opacity = isPng ? 0.4 : 1;
+  });
+
+  function loadImage(file) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); res(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Not a valid image')); };
+      img.src = url;
+    });
+  }
+
+  function process(img, targetW, targetH, fitMode, bgColor) {
+    const canvas = document.createElement('canvas');
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, targetW, targetH);
+
+    const sw = img.naturalWidth, sh = img.naturalHeight;
+    if (fitMode === 'stretch') {
+      ctx.drawImage(img, 0, 0, targetW, targetH);
+    } else if (fitMode === 'cover') {
+      const scale = Math.max(targetW / sw, targetH / sh);
+      const dw = sw * scale, dh = sh * scale;
+      ctx.drawImage(img, (targetW - dw) / 2, (targetH - dh) / 2, dw, dh);
+    } else {
+      const scale = Math.min(targetW / sw, targetH / sh);
+      const dw = sw * scale, dh = sh * scale;
+      ctx.drawImage(img, (targetW - dw) / 2, (targetH - dh) / 2, dw, dh);
+    }
+    return canvas;
+  }
+
+  goBtn.addEventListener('click', async () => {
+    if (files.length === 0) { flash('Add some images first.', true); return; }
+    const targetW = Math.max(1, parseInt(wEl.value, 10) || 0);
+    const targetH = Math.max(1, parseInt(hEl.value, 10) || 0);
+    const type = format.value;
+    const q = type === 'image/png' ? 1 : parseFloat(quality.value);
+    const ext = type.split('/')[1].replace('jpeg', 'jpg');
+
+    goBtn.disabled = true;
+    progress.style.display = '';
+    bar.style.width = '0%';
+    flash('Processing…');
+
+    const zip = new JSZip();
+    let done = 0;
+
+    for (const entry of files) {
+      try {
+        entry.status = 'processing';
+        renderList();
+        const img = await loadImage(entry.file);
+        const canvas = process(img, targetW, targetH, fit.value, bg.value);
+        const blob = await new Promise(res => canvas.toBlob(res, type, q));
+        if (!blob) throw new Error('Encoding failed');
+        const base = entry.file.name.replace(/\.[^.]+$/, '');
+        zip.file(`${base}.${ext}`, blob);
+        entry.status = 'done';
+      } catch (err) {
+        entry.status = 'error';
+        entry.error = err.message;
+      }
+      done++;
+      bar.style.width = `${(done / files.length) * 100}%`;
+      renderList();
+    }
+
+    flash('Building .zip…');
+    const zipBlob = await zip.generateAsync({ type: 'blob' }, m => {
+      bar.style.width = `${m.percent}%`;
+    });
+    const url = URL.createObjectURL(zipBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `resized-${targetW}x${targetH}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    flash(`Done. ${files.filter(f => f.status === 'done').length} / ${files.length} processed.`);
+    goBtn.disabled = false;
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Folder Creator — Turn text into a real folder structure | DevJay Tools</title>
+<meta name="description" content="Type out your folders and files. Click a button. Get a .zip with the real folder structure. Also makes clean folder diagrams for your README. Free, no signup, runs in your browser.">
+<meta property="og:title" content="Free Folder Creator — DevJay Tools">
+<meta property="og:description" content="Type out a folder layout, download it as a .zip.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://devjaybusiness.com">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="https://devjaybusiness.com#feedback">Feedback</a>
+      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free · Runs in your browser</span>
+    <h1>Folder Creator</h1>
+    <p>Type out your folders and files below, one per line. Indent lines to put them inside another folder. Click a button to download it as a ready-to-unzip file.</p>
+  </section>
+
+  <div class="notice green">
+    <strong>Nothing is uploaded.</strong> Your text stays on your device. The .zip is built right here in your browser.
+  </div>
+
+  <label for="tree">Your folder layout</label>
+  <textarea id="tree" spellcheck="false">my-project
+  src
+    index.js
+    utils
+      helpers.js
+  tests
+    index.test.js
+  README.md
+  package.json</textarea>
+
+  <div class="row">
+    <button id="zip-btn">Download as .zip</button>
+    <button id="ascii-btn" class="secondary">Copy diagram for README</button>
+  </div>
+
+  <div id="msg" class="muted" role="status" aria-live="polite"></div>
+
+  <h2>How to use this</h2>
+  <ul>
+    <li><strong>Each line</strong> becomes one folder or file.</li>
+    <li><strong>Indent with spaces or a tab</strong> to put things inside another folder. Two spaces per level is the usual choice.</li>
+    <li>Names with a dot and extension (like <code>index.js</code> or <code>README.md</code>) become empty files.</li>
+    <li>Names without an extension become folders. You can also end a name with a slash <code>/</code> to force it to be a folder.</li>
+  </ul>
+
+  <h2>Example</h2>
+  <p>If you type this:</p>
+  <pre>my-app
+  public
+    index.html
+  src
+    App.js
+  package.json</pre>
+  <p>You'll get a <code>my-app.zip</code> that unzips to this:</p>
+  <pre>my-app/
+├── public/
+│   └── index.html
+├── src/
+│   └── App.js
+└── package.json</pre>
+
+  <h2>Support this tool</h2>
+  <p>Free forever. If it saved you time, a tip keeps this and other free tools alive.</p>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="https://devjaybusiness.com">All tools</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

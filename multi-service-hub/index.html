@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevJay Tools — Free online tools that respect your time</title>
+<meta name="description" content="A collection of free browser-based tools by Dev Jay: image editor, folder creator, AI prompt enhancer, and more. No signup. No tracking. Your files stay on your device.">
+<meta property="og:title" content="DevJay Tools — Free online tools">
+<meta property="og:description" content="Free browser-based tools. No signup. No tracking. Your files stay on your device.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="style.css">
+<style>
+  .hero-card {
+    background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
+    color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px;
+    margin-bottom: 24px;
+  }
+  .hero-card h1 { color: var(--white); margin: 10px 0 8px; }
+  .hero-card p { color: #cbd5e1; margin: 0; }
+  .hero-card .tag {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+  }
+
+  .search-wrap { margin: 20px 0 14px; }
+  .search-wrap label { display: none; }
+  .search-wrap input {
+    font-size: 16px;
+    padding: 14px 16px 14px 44px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%235a6477' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 10px 0 24px;
+  }
+  .tab {
+    background: var(--white);
+    color: var(--fg-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 36px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: all var(--transition);
+  }
+  .tab:hover { color: var(--fg); border-color: var(--border-strong); background: var(--off-white); }
+  .tab.active {
+    background: var(--black);
+    color: var(--white);
+    border-color: var(--black);
+  }
+
+  #tool-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 640px) {
+    #tool-list { grid-template-columns: 1fr 1fr; }
+  }
+
+  .tool-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    position: relative;
+    transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+    display: flex;
+    flex-direction: column;
+    min-height: 140px;
+  }
+  .tool-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+  .tool-card.coming-soon:hover {
+    transform: none;
+    border-color: var(--border);
+    box-shadow: none;
+  }
+
+  .tool-card header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .tool-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--fg);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  a.tool-title:hover { color: var(--accent); text-decoration: none; }
+  .tool-cat {
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .tool-desc {
+    color: var(--fg-muted);
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    flex: 1;
+  }
+  .tool-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tool-tag {
+    background: var(--off-white);
+    color: var(--fg-muted);
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .tool-card.coming-soon { opacity: 0.7; }
+  .tool-card.coming-soon .tool-title { color: var(--fg-muted); }
+  .tool-card.coming-soon .tool-cat {
+    background: var(--off-white);
+    color: var(--fg-muted);
+  }
+  .tool-badge {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 10px;
+    background: var(--green-soft);
+    color: var(--green-hover);
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+  }
+
+  #empty {
+    display: none;
+    text-align: center;
+    color: var(--fg-muted);
+    padding: 40px 16px;
+    background: var(--white);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+  }
+
+  .feedback-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 12px;
+  }
+  .feedback-card .success-msg {
+    display: none;
+    background: var(--green-soft);
+    color: var(--green-hover);
+    padding: 14px;
+    border-radius: var(--radius);
+    text-align: center;
+    font-weight: 500;
+  }
+  .feedback-card.submitted .success-msg { display: block; }
+  .feedback-card.submitted form { display: none; }
+
+  .donate-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  @media (min-width: 480px) {
+    .donate-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="#tools">Tools</a>
+      <a href="#feedback">Feedback</a>
+      <a class="cta" href="#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero-card">
+    <span class="tag">Free · No signup · No tracking</span>
+    <h1>Simple tools that respect your time</h1>
+    <p>A small collection of free browser-based utilities by Dev Jay. Most run entirely on your device — your files never touch a server.</p>
+  </section>
+
+  <div class="search-wrap">
+    <label for="search">Search</label>
+    <input type="search" id="search" placeholder="Search tools: compress, prompt, folder..." autocomplete="off">
+  </div>
+
+  <div id="tabs" class="tabs" role="tablist" aria-label="Tool categories"></div>
+
+  <section id="tools">
+    <div id="tool-list"></div>
+    <div id="empty">No tools match your search. Try a different category or word.</div>
+  </section>
+
+  <h2 id="feedback">Have a suggestion?</h2>
+  <p>Found a bug? Want a new tool built? Just want to say hi? Messages go straight to my inbox.</p>
+
+  <div class="feedback-card" id="feedback-card">
+    <div class="success-msg">Thanks! Your message is on its way. I'll get back to you when I can.</div>
+    <form
+      name="feedback"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      action="/?thanks=1#feedback"
+    >
+      <input type="hidden" name="form-name" value="feedback">
+      <p style="display:none;">
+        <label>Don't fill this out: <input name="bot-field"></label>
+      </p>
+
+      <label for="fb-name">Your name (optional)</label>
+      <input type="text" id="fb-name" name="name" autocomplete="name">
+
+      <label for="fb-email">Your email (optional — only if you want a reply)</label>
+      <input type="email" id="fb-email" name="email" autocomplete="email">
+
+      <label for="fb-type">What's this about?</label>
+      <select id="fb-type" name="type">
+        <option value="suggestion">Tool suggestion</option>
+        <option value="bug">Bug report</option>
+        <option value="feedback">General feedback</option>
+        <option value="hi">Just saying hi</option>
+      </select>
+
+      <label for="fb-message">Your message</label>
+      <textarea id="fb-message" name="message" required placeholder="Tell me what's on your mind..."></textarea>
+
+      <div class="row">
+        <button type="submit">Send message</button>
+      </div>
+    </form>
+  </div>
+
+  <h2 id="donate">Support this project</h2>
+  <p>Everything here is free and always will be. If these tools save you time, a one-time tip helps cover hosting and build new tools.</p>
+  <div class="donate-grid">
+    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">Donate via PayPal</a>
+  </div>
+
+  <h2>Why these tools exist</h2>
+  <p>Most "free" online tools force signups, push ads, or upload your files to unknown servers. These don't. Every tool here is small, focused, and built with one goal: be useful without getting in the way.</p>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="#feedback">Feedback</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="tools.js"></script>
+<script src="main.js"></script>
+<script>
+  // Show success message when Netlify form returns to this page with ?thanks=1
+  if (new URLSearchParams(location.search).get('thanks') === '1') {
+    document.getElementById('feedback-card').classList.add('submitted');
+  }
+</script>
+</body>
+</html>

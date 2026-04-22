@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regex Tester — Live Match Highlighting | DevJay Tools</title>
+<meta name="description" content="Test regular expressions with live match highlighting and capture group display. Free, no login, runs in your browser.">
+<meta property="og:title" content="Regex Tester — DevJay Tools">
+<meta property="og:description" content="Test regex patterns with live highlighting.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="style.css">
+<style>
+  .pattern-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto 120px;
+    gap: 6px;
+    align-items: center;
+    font-family: var(--font-mono);
+  }
+  .pattern-row .slash { color: var(--muted); font-size: 18px; }
+  .pattern-row input[type="text"] { font-family: var(--font-mono); }
+  @media (max-width: 520px) {
+    .pattern-row { grid-template-columns: auto 1fr auto; }
+    .pattern-row input.flags { grid-column: 1 / -1; }
+  }
+
+  .highlight-box {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 200px;
+  }
+  .highlight-box textarea,
+  .highlight-box .overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    padding: 10px 12px;
+    margin: 0;
+    border: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    box-sizing: border-box;
+    background: transparent;
+  }
+  .highlight-box .overlay {
+    color: transparent;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .highlight-box textarea {
+    position: relative;
+    resize: vertical;
+    min-height: 200px;
+    color: var(--fg);
+    outline: none;
+  }
+  .highlight-box mark {
+    background: rgba(37, 99, 235, 0.22);
+    color: transparent;
+    border-radius: 2px;
+  }
+  .stats { font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .matches-list {
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    max-height: 240px;
+    overflow: auto;
+  }
+  .matches-list div { padding: 2px 0; }
+  .matches-list .m-idx { color: var(--muted); }
+  .matches-list .m-val { color: var(--fg); }
+  .matches-list .m-grp { color: var(--accent); margin-left: 8px; }
+  .err-msg { color: var(--error); font-weight: 600; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://devjaybusiness.com">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="https://devjaybusiness.com#feedback">Feedback</a>
+      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free · Runs in your browser</span>
+    <h1>Regex Tester</h1>
+    <p>Type a pattern, type some text, see matches highlighted live. Capture groups show up below.</p>
+  </section>
+
+  <label for="pattern">Pattern</label>
+  <div class="pattern-row">
+    <span class="slash">/</span>
+    <input type="text" id="pattern" spellcheck="false" placeholder="e.g. (\w+)@(\w+\.\w+)">
+    <span class="slash">/</span>
+    <input type="text" id="flags" class="flags" spellcheck="false" value="gi" placeholder="gimsuy">
+  </div>
+  <div id="err" class="err-msg" style="display:none;"></div>
+
+  <label for="text" style="margin-top:16px;">Text to search</label>
+  <div class="highlight-box">
+    <div class="overlay" id="overlay"></div>
+    <textarea id="text" spellcheck="false">Contact us at hello@example.com or support@devjaybusiness.com. Phone: 555-1234.</textarea>
+  </div>
+
+  <div class="stats" id="stats">0 matches</div>
+
+  <div class="matches-list" id="matches"></div>
+
+  <h2>How to use this</h2>
+  <ul>
+    <li><strong>Pattern</strong> is the regex — no slashes, just the body (e.g. <code>\d+</code>).</li>
+    <li><strong>Flags</strong>: <code>g</code> = find all, <code>i</code> = case-insensitive, <code>m</code> = ^/$ match line starts/ends, <code>s</code> = dot matches newline.</li>
+    <li>Matches highlight live as you type. Capture groups show in the list below.</li>
+  </ul>
+
+  <h2>Support this tool</h2>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="https://devjaybusiness.com/privacy.html">Privacy</a>
+      <a href="https://devjaybusiness.com/terms.html">Terms</a>
+      <a href="https://devjaybusiness.com">All tools</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const pat = document.getElementById('pattern');
+  const flags = document.getElementById('flags');
+  const text = document.getElementById('text');
+  const overlay = document.getElementById('overlay');
+  const stats = document.getElementById('stats');
+  const matchesEl = document.getElementById('matches');
+  const errEl = document.getElementById('err');
+
+  pat.value = '(\\w+)@([\\w.]+)';
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  }
+
+  function run() {
+    const p = pat.value;
+    let f = flags.value;
+    if (!f.includes('g')) f += 'g';
+
+    errEl.style.display = 'none';
+    matchesEl.innerHTML = '';
+
+    if (!p) {
+      overlay.textContent = text.value;
+      stats.textContent = '0 matches';
+      return;
+    }
+
+    let re;
+    try { re = new RegExp(p, f); }
+    catch (e) {
+      errEl.textContent = 'Invalid regex: ' + e.message;
+      errEl.style.display = '';
+      overlay.textContent = text.value;
+      stats.textContent = '';
+      return;
+    }
+
+    const src = text.value;
+    let html = '';
+    let last = 0;
+    const list = [];
+    let m;
+    let guard = 0;
+    while ((m = re.exec(src)) !== null && guard < 10000) {
+      if (m.index === re.lastIndex) re.lastIndex++;
+      html += escapeHtml(src.slice(last, m.index)) + '<mark>' + escapeHtml(m[0] || ' ') + '</mark>';
+      last = m.index + m[0].length;
+      list.push(m);
+      guard++;
+    }
+    html += escapeHtml(src.slice(last));
+    overlay.innerHTML = html;
+    stats.textContent = `${list.length} match${list.length === 1 ? '' : 'es'}`;
+
+    list.forEach((m, i) => {
+      const div = document.createElement('div');
+      let inner = `<span class="m-idx">${i + 1}.</span> <span class="m-val">${escapeHtml(m[0])}</span>`;
+      for (let g = 1; g < m.length; g++) {
+        inner += `<span class="m-grp">[$${g}: ${escapeHtml(m[g] === undefined ? '' : m[g])}]</span>`;
+      }
+      div.innerHTML = inner;
+      matchesEl.appendChild(div);
+    });
+  }
+
+  function syncScroll() { overlay.scrollTop = text.scrollTop; }
+
+  pat.addEventListener('input', run);
+  flags.addEventListener('input', run);
+  text.addEventListener('input', run);
+  text.addEventListener('scroll', syncScroll);
+
+  run();
+</script>
+</body>
+</html>

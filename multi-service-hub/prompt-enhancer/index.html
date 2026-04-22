@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free AI Prompt Enhancer — Turn Rough Ideas into Polished Prompts | DevJay Tools</title>
+<meta name="description" content="Paste a rough prompt idea and get back a detailed, structured prompt ready for ChatGPT, Midjourney, Claude, or any AI tool. Free, no signup.">
+<meta property="og:title" content="Free AI Prompt Enhancer — DevJay Tools">
+<meta property="og:description" content="Turn a rough prompt into a polished one for any AI tool.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://devjaybusiness.com">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="https://devjaybusiness.com#feedback">Feedback</a>
+      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free · AI-powered</span>
+    <h1>Prompt Enhancer</h1>
+    <p>Type a rough idea. Get back a detailed, well-structured prompt you can paste straight into ChatGPT, Midjourney, Claude, or any other AI tool.</p>
+  </section>
+
+  <div class="notice">
+    <strong>Heads up:</strong> your prompt is sent to Google Gemini to be rewritten. Don't paste anything confidential, private, or sensitive.
+  </div>
+
+  <label for="prompt">Your rough idea</label>
+  <textarea id="prompt" spellcheck="false" placeholder="e.g. a futuristic city at night"></textarea>
+
+  <label for="target">Which AI tool will you use this prompt with?</label>
+  <select id="target">
+    <option value="chatgpt">ChatGPT / GPT-4 (text)</option>
+    <option value="midjourney">Midjourney (image)</option>
+    <option value="stable-diffusion">Stable Diffusion (image)</option>
+    <option value="claude">Claude (text)</option>
+    <option value="generic">Something else / not sure</option>
+  </select>
+
+  <div class="row" style="margin-top:16px;">
+    <button id="enhance-btn" class="success">Enhance prompt</button>
+  </div>
+
+  <div id="msg" class="muted" role="status" aria-live="polite"></div>
+
+  <div id="output-wrap" style="display:none;">
+    <label for="output">Your polished prompt</label>
+    <textarea id="output" spellcheck="false" readonly></textarea>
+    <div class="row">
+      <button id="copy-btn" class="secondary">Copy to clipboard</button>
+    </div>
+  </div>
+
+  <h2>How this works</h2>
+  <ul>
+    <li><strong>You type a rough idea</strong> — one sentence, a few words, whatever you've got.</li>
+    <li><strong>Your text is sent to Google Gemini</strong> through a small server function. The AI key stays on the server — it never touches your browser.</li>
+    <li><strong>You get back a polished prompt</strong> shaped for the AI tool you picked. Copy it, paste it into the other tool, done.</li>
+    <li><strong>Nothing is saved.</strong> No account, no history. Each request is independent.</li>
+    <li><strong>Fair-use limit.</strong> To keep the tool free for everyone, there's a cap on how often one person can hit it per hour.</li>
+  </ul>
+
+  <h2>Support this tool</h2>
+  <p>Each prompt uses a bit of paid AI quota. If this saves you time, a small tip keeps it free for everyone.</p>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="https://devjaybusiness.com">All tools</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

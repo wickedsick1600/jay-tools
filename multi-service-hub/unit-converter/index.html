@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web Dev Unit Converter — px/rem, Hex/RGBA, Epoch/ISO | DevJay Tools</title>
+<meta name="description" content="Three conversions web developers hit every day: pixels to rem, hex color to rgba, and Unix timestamps to ISO dates. Free, instant, no signup.">
+<meta property="og:title" content="Web Dev Unit Converter — DevJay Tools">
+<meta property="og:description" content="px↔rem, hex↔rgba, epoch↔ISO date.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="style.css">
+<style>
+  .card {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin: 18px 0;
+  }
+  .card h2 { margin-top: 0; }
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: end;
+  }
+  @media (max-width: 520px) { .pair { grid-template-columns: 1fr; } }
+  .swatch {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://devjaybusiness.com">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="https://devjaybusiness.com#feedback">Feedback</a>
+      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free · Runs in your browser</span>
+    <h1>Web Dev Unit Converter</h1>
+    <p>The three conversions web developers hit every day. Type in one box, the other fills in instantly.</p>
+  </section>
+
+  <div class="card">
+    <h2>Pixels ↔ Rem</h2>
+    <p class="muted">Base font size: <input type="number" id="base" value="16" min="1" max="64" style="width:80px; display:inline-block; margin:0 4px;"> px</p>
+    <div class="pair">
+      <div>
+        <label for="px">Pixels (px)</label>
+        <input type="number" id="px" step="any">
+      </div>
+      <div>
+        <label for="rem">Rem</label>
+        <input type="number" id="rem" step="any">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Hex ↔ RGBA</h2>
+    <div class="pair">
+      <div>
+        <label for="hex">Hex (e.g. #2563eb or #2563ebcc)</label>
+        <input type="text" id="hex" spellcheck="false" placeholder="#2563eb">
+      </div>
+      <div>
+        <label for="rgba">rgba() / rgb()</label>
+        <input type="text" id="rgba" spellcheck="false" placeholder="rgba(37, 99, 235, 1)">
+      </div>
+    </div>
+    <p style="margin-top:10px;">Preview: <span class="swatch" id="swatch" style="background:#2563eb;"></span></p>
+  </div>
+
+  <div class="card">
+    <h2>Unix Timestamp ↔ ISO Date</h2>
+    <div class="pair">
+      <div>
+        <label for="epoch">Unix timestamp (seconds)</label>
+        <input type="number" id="epoch" step="any">
+      </div>
+      <div>
+        <label for="iso">ISO 8601 date</label>
+        <input type="text" id="iso" spellcheck="false" placeholder="2026-04-21T12:00:00.000Z">
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+      <button id="now-btn" class="secondary">Use current time</button>
+    </div>
+  </div>
+
+  <h2>How to use this</h2>
+  <ul>
+    <li>Type in any field — the matching one updates automatically.</li>
+    <li>Hex accepts 3, 6, or 8 digits (with or without <code>#</code>). 8 digits include alpha.</li>
+    <li>Unix timestamps are in <strong>seconds</strong> (not milliseconds).</li>
+  </ul>
+
+  <h2>Support this tool</h2>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="https://devjaybusiness.com/privacy.html">Privacy</a>
+      <a href="https://devjaybusiness.com/terms.html">Terms</a>
+      <a href="https://devjaybusiness.com">All tools</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const base = document.getElementById('base');
+  const px = document.getElementById('px');
+  const rem = document.getElementById('rem');
+
+  let lock = false;
+  function withLock(fn) { if (lock) return; lock = true; fn(); lock = false; }
+
+  function pxFromRem() { withLock(() => { const v = parseFloat(rem.value); const b = parseFloat(base.value) || 16; px.value = isNaN(v) ? '' : +(v * b).toFixed(4); }); }
+  function remFromPx() { withLock(() => { const v = parseFloat(px.value); const b = parseFloat(base.value) || 16; rem.value = isNaN(v) ? '' : +(v / b).toFixed(6); }); }
+  px.addEventListener('input', remFromPx);
+  rem.addEventListener('input', pxFromRem);
+  base.addEventListener('input', () => { if (px.value) remFromPx(); });
+  px.value = 16; remFromPx();
+
+  const hex = document.getElementById('hex');
+  const rgba = document.getElementById('rgba');
+  const swatch = document.getElementById('swatch');
+
+  function parseHex(s) {
+    s = s.trim().replace(/^#/, '');
+    if (s.length === 3) s = s.split('').map(c => c + c).join('');
+    if (!/^[0-9a-f]{6}([0-9a-f]{2})?$/i.test(s)) return null;
+    const r = parseInt(s.slice(0, 2), 16);
+    const g = parseInt(s.slice(2, 4), 16);
+    const b = parseInt(s.slice(4, 6), 16);
+    const a = s.length === 8 ? +(parseInt(s.slice(6, 8), 16) / 255).toFixed(3) : 1;
+    return { r, g, b, a };
+  }
+
+  function parseRgba(s) {
+    const m = /rgba?\s*\(\s*(\d+)\s*[, ]\s*(\d+)\s*[, ]\s*(\d+)\s*(?:[,/]\s*([\d.]+%?))?\s*\)/i.exec(s);
+    if (!m) return null;
+    const r = +m[1], g = +m[2], b = +m[3];
+    let a = 1;
+    if (m[4] != null) a = m[4].endsWith('%') ? parseFloat(m[4]) / 100 : parseFloat(m[4]);
+    if ([r,g,b].some(x => x < 0 || x > 255)) return null;
+    return { r, g, b, a };
+  }
+
+  function toHex({r,g,b,a}) {
+    const h = n => n.toString(16).padStart(2, '0');
+    let s = '#' + h(r) + h(g) + h(b);
+    if (a < 1) s += h(Math.round(a * 255));
+    return s;
+  }
+
+  function fromColor(c) {
+    rgba.value = c.a < 1 ? `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})` : `rgb(${c.r}, ${c.g}, ${c.b})`;
+    hex.value = toHex(c);
+    swatch.style.background = rgba.value;
+  }
+
+  hex.addEventListener('input', () => withLock(() => { const c = parseHex(hex.value); if (!c) return; rgba.value = c.a < 1 ? `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})` : `rgb(${c.r}, ${c.g}, ${c.b})`; swatch.style.background = rgba.value; }));
+  rgba.addEventListener('input', () => withLock(() => { const c = parseRgba(rgba.value); if (!c) return; hex.value = toHex(c); swatch.style.background = rgba.value; }));
+  fromColor({ r: 37, g: 99, b: 235, a: 1 });
+
+  const epoch = document.getElementById('epoch');
+  const iso = document.getElementById('iso');
+
+  epoch.addEventListener('input', () => withLock(() => {
+    const v = parseFloat(epoch.value);
+    if (isNaN(v)) { iso.value = ''; return; }
+    const d = new Date(v * 1000);
+    iso.value = isNaN(d.getTime()) ? '' : d.toISOString();
+  }));
+  iso.addEventListener('input', () => withLock(() => {
+    const d = new Date(iso.value);
+    epoch.value = isNaN(d.getTime()) ? '' : Math.floor(d.getTime() / 1000);
+  }));
+  document.getElementById('now-btn').addEventListener('click', () => {
+    const now = Math.floor(Date.now() / 1000);
+    epoch.value = now;
+    epoch.dispatchEvent(new Event('input'));
+  });
+  document.getElementById('now-btn').click();
+</script>
+</body>
+</html>

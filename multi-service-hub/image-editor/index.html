@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Image Editor — Draw, Annotate, Resize (No Upload) | DevJay Tools</title>
+<meta name="description" content="A free online image editor. Add shapes, text, and drawings in any color and font. Resize and compress before downloading. Your files never leave your device.">
+<meta property="og:title" content="Free Image Editor — DevJay Tools">
+<meta property="og:description" content="Draw, annotate, resize, and compress images in your browser.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root { --maxw: 960px; }
+
+  #drop-zone {
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: 48px 20px;
+    text-align: center;
+    color: var(--fg-muted);
+    background: var(--white);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+  }
+  #drop-zone:hover, #drop-zone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  #drop-zone strong { color: var(--fg); display: block; font-size: 17px; margin-bottom: 4px; }
+
+  #editor { display: none; }
+  #editor.active { display: block; }
+
+  .toolbar {
+    background: var(--black);
+    border-radius: var(--radius);
+    padding: 10px;
+    margin: 14px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .tool-btn {
+    background: transparent;
+    color: #cbd5e1;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    min-height: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background var(--transition), color var(--transition);
+  }
+  .tool-btn:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+  .tool-btn.active {
+    background: var(--accent);
+    color: var(--white);
+    border-color: var(--accent);
+  }
+  .tool-btn svg { width: 16px; height: 16px; display: block; }
+  .tool-sep { width: 1px; height: 24px; background: rgba(255,255,255,0.12); margin: 0 4px; }
+
+  .color-input {
+    width: 40px;
+    min-height: 40px;
+    min-width: 40px;
+    padding: 2px;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .text-options {
+    display: none;
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .text-options.show { display: flex; }
+  .text-options label { margin: 0; font-size: 13px; }
+  .text-options select, .text-options input[type="number"] {
+    min-height: 36px;
+    padding: 6px 10px;
+    width: auto;
+  }
+  .text-options select { min-width: 140px; }
+  .text-options input[type="number"] { width: 70px; }
+
+  .canvas-wrap {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px;
+    overflow: auto;
+    max-width: 100%;
+  }
+  .canvas-wrap canvas { max-width: 100%; }
+
+  .export-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  @media (max-width: 520px) {
+    .export-grid { grid-template-columns: 1fr; }
+  }
+  .stats { font-size: 13px; color: var(--fg-muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://devjaybusiness.com">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="https://devjaybusiness.com#feedback">Feedback</a>
+      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free · Runs in your browser</span>
+    <h1>Image Editor</h1>
+    <p>Add shapes, text, and drawings to any image. Resize and compress before downloading. Everything happens on your own device — your files never leave your browser.</p>
+  </section>
+
+  <div class="notice green">
+    <strong>Your image is never uploaded.</strong> It stays on your device the entire time.
+  </div>
+
+  <div id="drop-zone" tabindex="0" role="button" aria-label="Upload an image">
+    <strong>Drop an image here, or click to pick one</strong>
+    <div class="muted">JPEG, PNG, or WebP. Any size.</div>
+    <input type="file" id="file-input" accept="image/*" hidden>
+  </div>
+
+  <div id="editor">
+    <div class="toolbar" role="toolbar" aria-label="Drawing tools">
+      <button class="tool-btn active" data-tool="select" title="Select / move">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51z"/></svg>
+        Select
+      </button>
+      <button class="tool-btn" data-tool="rect" title="Rectangle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="1"/></svg>
+        Rectangle
+      </button>
+      <button class="tool-btn" data-tool="circle" title="Circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
+        Circle
+      </button>
+      <button class="tool-btn" data-tool="line" title="Line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="20" x2="20" y2="4"/></svg>
+        Line
+      </button>
+      <button class="tool-btn" data-tool="text" title="Text">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M12 6v14"/><path d="M9 20h6"/></svg>
+        Text
+      </button>
+      <button class="tool-btn" data-tool="draw" title="Free draw">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.44 2.56 5.66 5.66-11.82 11.82-5.66 1.41 1.41-5.66Z"/><path d="m14.03 3.97 5.66 5.66"/></svg>
+        Draw
+      </button>
+
+      <span class="tool-sep"></span>
+
+      <label title="Fill color" style="display:flex;align-items:center;gap:4px;margin:0;color:#cbd5e1;font-size:13px;">
+        <span>Color</span>
+        <input type="color" id="fill-color" class="color-input" value="#2563eb">
+      </label>
+
+      <span class="tool-sep"></span>
+
+      <button class="tool-btn" id="delete-btn" title="Delete selected">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Delete
+      </button>
+      <button class="tool-btn" id="clear-btn" title="Remove all drawings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Clear all
+      </button>
+    </div>
+
+    <div class="text-options" id="text-options">
+      <label for="font-family">Font</label>
+      <select id="font-family">
+        <option value="Arial">Arial</option>
+        <option value="Helvetica">Helvetica</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Verdana">Verdana</option>
+        <option value="Courier New">Courier New</option>
+        <option value="Comic Sans MS">Comic Sans MS</option>
+        <option value="Impact">Impact</option>
+        <option value="Trebuchet MS">Trebuchet MS</option>
+      </select>
+      <label for="font-size">Size</label>
+      <input type="number" id="font-size" value="32" min="8" max="200">
+      <label style="display:inline-flex;align-items:center;gap:4px;">
+        <input type="checkbox" id="font-bold"> Bold
+      </label>
+      <label style="display:inline-flex;align-items:center;gap:4px;">
+        <input type="checkbox" id="font-italic"> Italic
+      </label>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <h2>Export</h2>
+    <div class="export-grid">
+      <div>
+        <label for="out-width">Width (px)</label>
+        <input type="number" id="out-width" min="1" step="1">
+      </div>
+      <div>
+        <label for="out-height">Height (px)</label>
+        <input type="number" id="out-height" min="1" step="1">
+      </div>
+    </div>
+    <label style="margin-top:12px;">
+      <input type="checkbox" id="lock-ratio" checked> Lock aspect ratio
+    </label>
+
+    <label for="quality">Quality: <span id="quality-label">0.9</span></label>
+    <input type="range" id="quality" min="0.1" max="1" step="0.05" value="0.9">
+
+    <label for="format">Format</label>
+    <select id="format">
+      <option value="image/png">PNG (best quality, larger file)</option>
+      <option value="image/jpeg" selected>JPEG (smaller file)</option>
+      <option value="image/webp">WebP (modern, small file)</option>
+    </select>
+
+    <div class="row" style="margin-top:16px;">
+      <button id="download-btn" class="success">Download</button>
+      <button id="reset-btn" class="secondary">Load different image</button>
+    </div>
+
+    <div class="stats" id="stats"></div>
+    <div id="msg" class="muted" role="status" aria-live="polite"></div>
+  </div>
+
+  <h2>How to use this</h2>
+  <ul>
+    <li><strong>Load your image</strong> by dropping it onto the box above or clicking to pick a file.</li>
+    <li><strong>Pick a tool</strong> from the toolbar: Rectangle, Circle, Line, Text, or Free Draw.</li>
+    <li><strong>Click and drag</strong> on the image to draw. Use <strong>Select</strong> to move, resize, or rotate things you've added.</li>
+    <li><strong>Change color</strong> using the color picker on the toolbar.</li>
+    <li><strong>For text</strong>, pick a font and size from the text options, then click on the image to place text.</li>
+    <li><strong>Download</strong> when you're done — you can resize and choose format/quality first.</li>
+  </ul>
+
+  <h2>Support this tool</h2>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="https://devjaybusiness.com">All tools</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
