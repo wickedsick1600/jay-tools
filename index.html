@@ -9,6 +9,27 @@
 <meta property="og:description" content="Free browser-based tools. No signup. No tracking. Your files stay on your device.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://jaytools.netlify.app/">
+<meta property="og:url" content="https://jaytools.netlify.app/">
+<meta property="og:site_name" content="DevJay Tools">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DevJay Tools — Free online tools">
+<meta name="twitter:description" content="Free browser-based tools. No signup. No tracking. Your files stay on your device.">
+<meta name="robots" content="index, follow">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "DevJay Tools",
+  "url": "https://jaytools.netlify.app/",
+  "description": "Free browser-based tools: image editor, folder creator, AI prompt enhancer, and more. No signup. No tracking.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://jaytools.netlify.app/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 <link rel="stylesheet" href="style.css">
 <style>
   .hero-card {
@@ -306,11 +327,5 @@
 
 <script src="tools.js"></script>
 <script src="main.js"></script>
-<script>
-  // Show success message when Netlify form returns to this page with ?thanks=1
-  if (new URLSearchParams(location.search).get('thanks') === '1') {
-    document.getElementById('feedback-card').classList.add('submitted');
-  }
-</script>
 </body>
 </html>

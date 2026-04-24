@@ -128,3 +128,7 @@ searchInput.addEventListener('input', (e) => {
 });
 
 render();
+
+if (new URLSearchParams(location.search).get('thanks') === '1') {
+  document.getElementById('feedback-card').classList.add('submitted');
+}

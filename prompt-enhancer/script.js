@@ -30,18 +30,43 @@ function writeHistory(history) {
 
 function renderHistory() {
   const history = readHistory();
+  historyList.textContent = '';
   if (!history.length) {
-    historyList.innerHTML = '<p class="muted">No history yet.</p>';
+    const p = document.createElement('p');
+    p.className = 'muted';
+    p.textContent = 'No history yet.';
+    historyList.appendChild(p);
     return;
   }
-  historyList.innerHTML = history.map((entry, idx) => `
-    <div style="padding:10px 0;border-bottom:${idx === history.length - 1 ? 'none' : '1px solid var(--border)'};">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">${entry.target} · ${new Date(entry.time).toLocaleString()}</div>
-      <div style="margin-bottom:8px;"><strong>Input:</strong> ${entry.prompt}</div>
-      <div style="margin-bottom:8px;"><strong>Output:</strong> ${entry.enhanced}</div>
-      <button class="secondary" type="button" data-history-index="${idx}">Use this</button>
-    </div>
-  `).join('');
+  history.forEach((entry, idx) => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = `padding:10px 0;border-bottom:${idx === history.length - 1 ? 'none' : '1px solid var(--border)'};`;
+
+    const meta = document.createElement('div');
+    meta.style.cssText = 'font-size:12px;color:var(--muted);margin-bottom:6px;';
+    meta.textContent = `${entry.target} · ${new Date(entry.time).toLocaleString()}`;
+
+    const inputRow = document.createElement('div');
+    inputRow.style.marginBottom = '8px';
+    const inputLabel = document.createElement('strong');
+    inputLabel.textContent = 'Input: ';
+    inputRow.append(inputLabel, document.createTextNode(entry.prompt || ''));
+
+    const outputRow = document.createElement('div');
+    outputRow.style.marginBottom = '8px';
+    const outputLabel = document.createElement('strong');
+    outputLabel.textContent = 'Output: ';
+    outputRow.append(outputLabel, document.createTextNode(entry.enhanced || ''));
+
+    const btn = document.createElement('button');
+    btn.className = 'secondary';
+    btn.type = 'button';
+    btn.dataset.historyIndex = idx;
+    btn.textContent = 'Use this';
+
+    wrap.append(meta, inputRow, outputRow, btn);
+    historyList.appendChild(wrap);
+  });
 }
 
 function saveHistoryItem(prompt, target, enhanced) {

@@ -6,12 +6,19 @@
 <title>Diff Checker — Compare Text Changes | DevJay Tools</title>
 <meta name="description" content="Compare two text blocks and highlight what changed.">
 <meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://jaytools.netlify.app/diff-checker/">
+<meta property="og:url" content="https://jaytools.netlify.app/diff-checker/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DevJay Tools">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
 <link rel="stylesheet" href="../style.css">
 <style>
 .diff { white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; background: var(--white); }
 .add { background: #e6ffed; }
 .del { background: #ffeef0; text-decoration: line-through; }
 </style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Diff Checker — Compare Text Changes","url":"https://jaytools.netlify.app/diff-checker/","description":"Compare two text blocks and highlight what changed.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 <header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>DevJay Tools</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#donate">Donate</a></nav></div></header>
@@ -25,19 +32,7 @@
   <div id="result" class="diff"></div>
 </main>
 <footer class="site-footer"><div class="wrap"><div><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/">All tools</a></div><div><a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a><a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a></div></div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.2.0/diff.min.js"></script>
-<script>
-const left = document.getElementById('left');
-const right = document.getElementById('right');
-const result = document.getElementById('result');
-function esc(s) { return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
-document.getElementById('compare-btn').addEventListener('click', () => {
-  const parts = Diff.diffWordsWithSpace(left.value, right.value);
-  result.innerHTML = parts.map(p => `<span class="${p.added ? 'add' : p.removed ? 'del' : ''}">${esc(p.value)}</span>`).join('');
-});
-left.value = 'Version one text goes here.';
-right.value = 'Version two text goes here with changes.';
-document.getElementById('compare-btn').click();
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.2.0/diff.min.js" integrity="sha384-lJJVaUgxmk/PVfQnAsGN1QuJZrE+n6bg2EMu33yVZOJ2av/3UzTHbmnPCI7ENJYa" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="script.js"></script>
 </body>
 </html>

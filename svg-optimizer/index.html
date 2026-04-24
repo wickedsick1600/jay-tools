@@ -6,7 +6,14 @@
 <title>SVG Optimizer — Clean and Minify SVG | DevJay Tools</title>
 <meta name="description" content="Strip common SVG bloat and minify markup in your browser.">
 <meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://jaytools.netlify.app/svg-optimizer/">
+<meta property="og:url" content="https://jaytools.netlify.app/svg-optimizer/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DevJay Tools">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
 <link rel="stylesheet" href="../style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SVG Optimizer — Clean and Minify SVG","url":"https://jaytools.netlify.app/svg-optimizer/","description":"Strip common SVG bloat and minify markup in your browser.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 <header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>DevJay Tools</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#donate">Donate</a></nav></div></header>
@@ -20,30 +27,6 @@
   <div id="msg" class="muted" role="status" aria-live="polite"></div>
 </main>
 <footer class="site-footer"><div class="wrap"><div><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/">All tools</a></div><div><a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a><a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a></div></div></footer>
-<script>
-const input = document.getElementById('input');
-const output = document.getElementById('output');
-const msg = document.getElementById('msg');
-function flash(text, isError) { msg.textContent = text; msg.className = isError ? 'error' : 'muted'; }
-function optimize(svg) {
-  return svg
-    .replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/>\s+</g, '><')
-    .replace(/\s?(id|class|data-name|xmlns:xlink)="[^"]*"/g, (m, attr) => (attr === 'xmlns:xlink' ? m : ''))
-    .trim();
-}
-document.getElementById('opt-btn').addEventListener('click', () => {
-  const raw = input.value.trim();
-  if (!raw.includes('<svg')) { flash('Paste valid SVG first.', true); return; }
-  output.value = optimize(raw);
-  flash(`Optimized. ${raw.length} -> ${output.value.length} chars.`);
-});
-document.getElementById('copy-btn').addEventListener('click', async () => {
-  if (!output.value) return;
-  await navigator.clipboard.writeText(output.value);
-  flash('Copied.');
-});
-</script>
+<script src="script.js"></script>
 </body>
 </html>

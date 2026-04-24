@@ -6,7 +6,14 @@
 <title>PDF Merger — Combine PDF Files | DevJay Tools</title>
 <meta name="description" content="Merge multiple PDF files into one directly in your browser.">
 <meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://jaytools.netlify.app/pdf-merger/">
+<meta property="og:url" content="https://jaytools.netlify.app/pdf-merger/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DevJay Tools">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
 <link rel="stylesheet" href="../style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Merger — Combine PDF Files","url":"https://jaytools.netlify.app/pdf-merger/","description":"Merge multiple PDF files into one directly in your browser.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 <header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>DevJay Tools</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#donate">Donate</a></nav></div></header>
@@ -18,36 +25,7 @@
   <div id="msg" class="muted" role="status" aria-live="polite"></div>
 </main>
 <footer class="site-footer"><div class="wrap"><div><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/">All tools</a></div><div><a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a><a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a></div></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
-<script>
-const filesEl = document.getElementById('files');
-const msg = document.getElementById('msg');
-function flash(text, isError) { msg.textContent = text; msg.className = isError ? 'error' : 'muted'; }
-document.getElementById('merge-btn').addEventListener('click', async () => {
-  const files = Array.from(filesEl.files || []);
-  if (files.length < 2) { flash('Select at least 2 PDF files.', true); return; }
-  try {
-    const outPdf = await PDFLib.PDFDocument.create();
-    for (const file of files) {
-      const bytes = await file.arrayBuffer();
-      const srcPdf = await PDFLib.PDFDocument.load(bytes);
-      const copiedPages = await outPdf.copyPages(srcPdf, srcPdf.getPageIndices());
-      copiedPages.forEach((p) => outPdf.addPage(p));
-    }
-    const outBytes = await outPdf.save();
-    const blob = new Blob([outBytes], { type: 'application/pdf' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'merged.pdf';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-    flash('Merged and downloaded.');
-  } catch (err) {
-    flash('Failed to merge PDFs: ' + err.message, true);
-  }
-});
-</script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" integrity="sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="script.js"></script>
 </body>
 </html>

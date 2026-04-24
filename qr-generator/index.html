@@ -6,7 +6,14 @@
 <title>QR Code Generator — Download PNG | DevJay Tools</title>
 <meta name="description" content="Generate a QR code from text or URL and download it as PNG.">
 <meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://jaytools.netlify.app/qr-generator/">
+<meta property="og:url" content="https://jaytools.netlify.app/qr-generator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DevJay Tools">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
 <link rel="stylesheet" href="../style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"QR Code Generator — Download PNG","url":"https://jaytools.netlify.app/qr-generator/","description":"Generate a QR code from text or URL and download it as PNG.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 <header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>DevJay Tools</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#donate">Donate</a></nav></div></header>
@@ -21,38 +28,7 @@
   <div id="msg" class="muted" role="status" aria-live="polite"></div>
 </main>
 <footer class="site-footer"><div class="wrap"><div><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/">All tools</a></div><div><a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a><a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a></div></div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-const textEl = document.getElementById('text');
-const sizeEl = document.getElementById('size');
-const qrEl = document.getElementById('qr');
-const msg = document.getElementById('msg');
-let qr = null;
-function flash(text, isError) { msg.textContent = text; msg.className = isError ? 'error' : 'muted'; }
-function generate() {
-  const text = textEl.value.trim();
-  if (!text) { flash('Enter text first.', true); return; }
-  const size = Math.max(128, Math.min(1024, parseInt(sizeEl.value, 10) || 320));
-  qrEl.innerHTML = '';
-  qr = new QRCode(qrEl, { text, width: size, height: size, correctLevel: QRCode.CorrectLevel.M });
-  flash('QR generated.');
-}
-document.getElementById('gen-btn').addEventListener('click', generate);
-document.getElementById('download-btn').addEventListener('click', () => {
-  const img = qrEl.querySelector('img');
-  const canvas = qrEl.querySelector('canvas');
-  const src = img ? img.src : (canvas ? canvas.toDataURL('image/png') : '');
-  if (!src) { flash('Generate a QR first.', true); return; }
-  const a = document.createElement('a');
-  a.href = src;
-  a.download = 'qr-code.png';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  flash('Downloaded.');
-});
-textEl.value = 'https://jaytools.netlify.app/';
-generate();
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="script.js"></script>
 </body>
 </html>

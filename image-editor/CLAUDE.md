@@ -56,6 +56,33 @@ If the user's proposed approach has a clear problem or a meaningfully better alt
 - **Files are processed in the user's browser.** Never add code that uploads user content to a server unless the feature explicitly requires it (e.g., AI API calls).
 - **API keys live only in Netlify environment variables**, accessed only from serverless functions (`netlify/functions/*.js`). Never commit a key. Never send one to the client. If a tool needs an AI API, the API call happens in a serverless function, and the client only sees your function's URL.
 - **No third-party analytics, no trackers, no fingerprinting.** If you want usage stats, check Netlify's built-in analytics or read server logs.
+- **No inline `<script>` blocks and no inline event handlers (`onclick=`, etc.).** Move all JS into external `script.js` files loaded with `<script src="script.js"></script>`. Strict CSP in `netlify.toml` blocks inline script — keeping it strict is the XSS firewall.
+- **Never use `innerHTML` with user-controlled data.** Use `textContent` or `document.createElement` + DOM APIs. If you must use `innerHTML` for multi-element templates, escape every interpolated value with a dedicated `escapeHtml()` function first. This applies to filenames, clipboard content, localStorage values, AI API responses, and anything the user typed.
+- **Pin CDN libraries to a specific version and include SRI.** Every `<script src="https://...">` must include `integrity="sha384-..."`, `crossorigin="anonymous"`, and `referrerpolicy="no-referrer"`. Never use floating tags like `@latest` or unversioned paths — SRI requires byte-identical responses.
+- **Randomness for security (passwords, tokens, keys) uses `crypto.getRandomValues` with rejection sampling.** Never `buf[0] % max` — it introduces modulo bias.
+
+## SEO baseline
+
+Every tool page MUST include, in `<head>`:
+
+- `<title>` — keyword-rich, under 60 chars, ends with `| DevJay Tools`.
+- `<meta name="description">` — plain-English value prop, 140–160 chars. Must include the primary keyword and a differentiator ("free", "no upload", "in browser").
+- `<link rel="canonical" href="https://jaytools.netlify.app/{tool}/">` — absolute URL, trailing slash, matches sitemap.
+- `<meta property="og:title">`, `og:description`, `og:url`, `og:type="website"`, `og:site_name="DevJay Tools"`.
+- `<meta name="twitter:card" content="summary_large_image">`.
+- `<meta name="robots" content="index, follow">`.
+- `<script type="application/ld+json">` with `SoftwareApplication` schema (name, url, description, `applicationCategory: "UtilitiesApplication"`, `operatingSystem: "Any (browser)"`, `offers` with price `"0"`).
+
+Content rules:
+
+- **One `<h1>` per page**, matching the page title's core phrase.
+- Every tool gets a short "How to use this" section — Google rewards task-oriented content and users want it.
+- Register new tools in the hub's `tools.js` **and** append them to root `sitemap.xml` with the canonical URL.
+- `robots.txt` at the root allows everything except `/.netlify/` and points at `sitemap.xml`.
+- Use real HTML semantics: `<main>`, `<header>`, `<footer>`, `<nav>`, `<section>`, `<label for=...>`. Don't wrap everything in `<div>`s.
+- All `<img>` tags need a real `alt` — descriptive for content images, empty (`alt=""`) for decorative.
+- Internal links use relative paths. External links use `rel="noopener"` (+ `target="_blank"` only if needed).
+- Never block crawlers with JS-only content. First paint must include the H1 + description in plain HTML.
 
 ## When you finish a task
 

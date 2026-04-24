@@ -134,8 +134,8 @@ const TOOLS = [
     longDescription: 'Drop an image, get the text out. Runs fully on your device using Tesseract.js — no upload. Best for printed text and screenshots; handwriting is hit-or-miss.',
     category: 'image',
     tags: ['ocr', 'extract', 'text', 'screenshot', 'scan', 'tesseract'],
-    url: './diff-checker/',
-    status: 'live',
+    url: '#',
+    status: 'coming-soon',
   },
   {
     id: 'exam-generator',
@@ -144,8 +144,8 @@ const TOOLS = [
     longDescription: 'Drop in a topic, a block of notes, or a text file, pick how many questions you want, and get a practice quiz with answers. Powered by Google Gemini.',
     category: 'ai',
     tags: ['quiz', 'exam', 'reviewer', 'multiple choice', 'study', 'flashcards', 'test', 'gemini'],
-    url: './svg-optimizer/',
-    status: 'live',
+    url: '#',
+    status: 'coming-soon',
   },
   {
     id: 'json-formatter',
@@ -174,7 +174,7 @@ const TOOLS = [
     longDescription: 'Paste two texts, get a side-by-side (or inline) diff with additions and removals highlighted. Good for comparing configs, drafts, or code.',
     category: 'dev',
     tags: ['diff', 'compare', 'text', 'changes'],
-    url: './pdf-merger/',
+    url: './diff-checker/',
     status: 'live',
   },
   {
@@ -204,8 +204,8 @@ const TOOLS = [
     longDescription: 'Drop an SVG, get a smaller one back — metadata removed, paths simplified, whitespace cleaned. Runs in your browser.',
     category: 'image',
     tags: ['svg', 'optimize', 'compress', 'minify', 'vector', 'icon'],
-    url: '#',
-    status: 'coming-soon',
+    url: './svg-optimizer/',
+    status: 'live',
   },
   {
     id: 'pdf-merger',
@@ -214,7 +214,7 @@ const TOOLS = [
     longDescription: 'Drag in several PDFs, reorder them, download the merged file. Uses pdf-lib in your browser so your documents never leave the device.',
     category: 'dev',
     tags: ['pdf', 'merge', 'combine', 'join', 'document'],
-    url: '#',
-    status: 'coming-soon',
+    url: './pdf-merger/',
+    status: 'live',
   },
 ];
