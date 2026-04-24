@@ -15,14 +15,14 @@
 
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="https://devjaybusiness.com">
+    <a class="brand" href="/">
       <span class="dot"></span>
       DevJay Tools
     </a>
     <nav>
-      <a href="https://devjaybusiness.com">All tools</a>
-      <a href="https://devjaybusiness.com#feedback">Feedback</a>
-      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+      <a href="/">All tools</a>
+      <a href="/#feedback">Feedback</a>
+      <a class="cta" href="/#donate">Donate</a>
     </nav>
   </div>
 </header>
@@ -38,53 +38,70 @@
     <strong>Nothing is uploaded.</strong> Your text stays on your device. The .zip is built right here in your browser.
   </div>
 
-  <label for="tree">Your folder layout</label>
-  <textarea id="tree" spellcheck="false">my-project
-  src
-    index.js
-    utils
-      helpers.js
-  tests
-    index.test.js
-  README.md
-  package.json</textarea>
+  <label>Build your folder layout</label>
+  <div class="builder-card">
+    <div class="builder-toolbar">
+      <button id="add-root-btn" type="button">+ Add top-level item</button>
+      <button id="reset-sample-btn" type="button" class="secondary">Reset sample</button>
+      <button id="sample-admin-btn" type="button" class="secondary">Load admin sample</button>
+      <button id="sample-personal-btn" type="button" class="secondary">Load personal sample</button>
+    </div>
+    <label for="paste-import" style="margin-top:0;">Paste from Excel / Word / notes (optional)</label>
+    <textarea id="paste-import" spellcheck="false" placeholder="Example:
+HR-Operations
+  Recruitment
+    Candidate Tracker.xlsx
+
+or paste tab-separated rows from Excel"></textarea>
+    <div class="row" style="margin-top:8px;">
+      <button id="import-btn" type="button" class="secondary">Import pasted list</button>
+      <button id="copy-plain-btn" type="button" class="secondary">Copy plain list</button>
+    </div>
+    <div id="builder-list" class="builder-list" aria-live="polite"></div>
+  </div>
+  <textarea id="tree" spellcheck="false" hidden></textarea>
 
   <div class="row">
     <button id="zip-btn">Download as .zip</button>
-    <button id="ascii-btn" class="secondary">Copy diagram for README</button>
+    <button id="ascii-btn" class="secondary">Copy folder diagram</button>
   </div>
 
   <div id="msg" class="muted" role="status" aria-live="polite"></div>
 
   <h2>How to use this</h2>
   <ul>
-    <li><strong>Each line</strong> becomes one folder or file.</li>
-    <li><strong>Indent with spaces or a tab</strong> to put things inside another folder. Two spaces per level is the usual choice.</li>
-    <li>Names with a dot and extension (like <code>index.js</code> or <code>README.md</code>) become empty files.</li>
-    <li>Names without an extension become folders. You can also end a name with a slash <code>/</code> to force it to be a folder.</li>
+    <li><strong>Fastest way:</strong> paste your list from Excel, Word, or notes, then click <strong>Import pasted list</strong>.</li>
+    <li><strong>Click "Add top-level item"</strong> to create your first folder or file.</li>
+    <li><strong>Use Folder/File</strong> to choose what each row should be.</li>
+    <li><strong>Use "Indent" and "Outdent"</strong> to move items under a parent folder.</li>
+    <li><strong>Use "Add child"</strong> to quickly create sub-items under any folder.</li>
   </ul>
 
   <h2>Example</h2>
   <p>If you type this:</p>
-  <pre>my-app
-  public
-    index.html
-  src
-    App.js
-  package.json</pre>
-  <p>You'll get a <code>my-app.zip</code> that unzips to this:</p>
-  <pre>my-app/
-├── public/
-│   └── index.html
-├── src/
-│   └── App.js
-└── package.json</pre>
+  <pre>HR-Operations
+  Recruitment
+    Job Descriptions.docx
+    Candidate Tracker.xlsx
+  Onboarding
+    New Hire Checklist.pdf
+  Policies
+    Leave Policy.docx</pre>
+  <p>You'll get an <code>HR-Operations.zip</code> that unzips to this:</p>
+  <pre>HR-Operations/
+├── Recruitment/
+│   ├── Job Descriptions.docx
+│   └── Candidate Tracker.xlsx
+├── Onboarding/
+│   └── New Hire Checklist.pdf
+└── Policies/
+    └── Leave Policy.docx</pre>
 
   <h2>Support this tool</h2>
   <p>Free forever. If it saved you time, a tip keeps this and other free tools alive.</p>
   <div class="row">
-    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
-    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
   </div>
 </main>
 
@@ -93,11 +110,11 @@
     <div>
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
-      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="/">All tools</a>
     </div>
     <div>
-      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
-      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+      <a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
     </div>
   </div>
 </footer>

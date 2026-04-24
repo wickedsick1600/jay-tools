@@ -124,14 +124,14 @@
 
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="https://devjaybusiness.com">
+    <a class="brand" href="/">
       <span class="dot"></span>
       DevJay Tools
     </a>
     <nav>
-      <a href="https://devjaybusiness.com">All tools</a>
-      <a href="https://devjaybusiness.com#feedback">Feedback</a>
-      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+      <a href="/">All tools</a>
+      <a href="/#feedback">Feedback</a>
+      <a class="cta" href="/#donate">Donate</a>
     </nav>
   </div>
 </header>
@@ -197,6 +197,26 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         Clear all
       </button>
+      <button class="tool-btn" id="undo-btn" title="Undo">
+        Undo
+      </button>
+      <button class="tool-btn" id="redo-btn" title="Redo">
+        Redo
+      </button>
+    </div>
+
+    <div class="text-options show" id="image-adjustments">
+      <button id="rotate-left-btn" class="secondary" type="button">Rotate left</button>
+      <button id="rotate-right-btn" class="secondary" type="button">Rotate right</button>
+      <button id="flip-x-btn" class="secondary" type="button">Flip horizontal</button>
+      <button id="flip-y-btn" class="secondary" type="button">Flip vertical</button>
+      <label for="brightness">Brightness</label>
+      <input type="range" id="brightness" min="-1" max="1" step="0.05" value="0">
+      <label for="contrast">Contrast</label>
+      <input type="range" id="contrast" min="-1" max="1" step="0.05" value="0">
+      <label for="saturation">Saturation</label>
+      <input type="range" id="saturation" min="-1" max="1" step="0.05" value="0">
+      <button id="reset-filters-btn" class="secondary" type="button">Reset adjustments</button>
     </div>
 
     <div class="text-options" id="text-options">
@@ -272,8 +292,8 @@
 
   <h2>Support this tool</h2>
   <div class="row">
-    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
-    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
   </div>
 </main>
 
@@ -282,11 +302,11 @@
     <div>
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
-      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="/">All tools</a>
     </div>
     <div>
-      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
-      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+      <a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
     </div>
   </div>
 </footer>

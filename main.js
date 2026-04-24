@@ -73,6 +73,28 @@ function renderCard(tool) {
 
   card.append(header, desc, tags);
 
+  if (tool.status === 'live') {
+    card.classList.add('clickable');
+    card.tabIndex = 0;
+    card.setAttribute('role', 'link');
+    card.setAttribute('aria-label', `Open ${tool.title}`);
+
+    const goToTool = () => {
+      window.location.href = tool.url;
+    };
+
+    card.addEventListener('click', (event) => {
+      if (event.target.closest('a, button, input, select, textarea, label')) return;
+      goToTool();
+    });
+
+    card.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      goToTool();
+    });
+  }
+
   if (tool.status === 'coming-soon') {
     const badge = document.createElement('span');
     badge.className = 'tool-badge';

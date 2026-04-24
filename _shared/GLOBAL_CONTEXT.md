@@ -15,7 +15,7 @@ When starting a new service in the suite, your prompt becomes:
 - **Voice:** Plain, non-technical. Imagine explaining to a friend who isn't a developer.
 - **Palette:** Black, blue, white, green. No other accent colors.
 - **Hub domain:** `devjaybusiness.com` (root)
-- **Tool subdomains:** `[tool].devjaybusiness.com` (e.g., `foldercreator.devjaybusiness.com`, `images.devjaybusiness.com`)
+- **Tool subdomains:** `[tool].devjaybusiness.com` (e.g., `foldercreator.devjaybusiness.com`, `imageeditor.devjaybusiness.com`)
 
 ## What the suite is
 
@@ -27,10 +27,10 @@ The suite is **deliberately fragmented**: each tool is its own repo, its own Net
 
 | Service | What it does | Repo | Subdomain |
 |---|---|---|---|
-| **Hub** | Landing page. Lists all tools, provides search + categories, donation links, feedback form. | `multi-service-hub` | `devjaybusiness.com` |
+| **Hub** | Landing page. Lists all tools, provides search + categories, donation links, feedback form. | `multi-service` | `devjaybusiness.com` |
 | **Folder Creator** | Type a folder layout, get it as a downloadable .zip. Also makes clean ASCII trees for READMEs. | `folder-tool` | `foldercreator.devjaybusiness.com` |
-| **Image Editor** | Crop, resize, compress, draw shapes, add text. Runs in the browser — your files never leave your device. | `image-editor` | `images.devjaybusiness.com` |
-| **Prompt Enhancer** | Turn a rough prompt into a polished one for ChatGPT, Claude, Midjourney, or Stable Diffusion. | `prompt-enhancer` | `prompts.devjaybusiness.com` |
+| **Image Editor** | Crop, resize, compress, draw shapes, add text. Runs in the browser — your files never leave your device. | `image-editor` | `imageeditor.devjaybusiness.com` |
+| **Prompt Enhancer** | Turn a rough prompt into a polished one for ChatGPT, Claude, Midjourney, or Stable Diffusion. | `prompt-enhancer` | `promptenhancer.devjaybusiness.com` |
 
 More services will be added over time using the same conventions.
 

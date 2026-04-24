@@ -10,6 +10,16 @@ const fontBold = document.getElementById('font-bold');
 const fontItalic = document.getElementById('font-italic');
 const deleteBtn = document.getElementById('delete-btn');
 const clearBtn = document.getElementById('clear-btn');
+const undoBtn = document.getElementById('undo-btn');
+const redoBtn = document.getElementById('redo-btn');
+const rotateLeftBtn = document.getElementById('rotate-left-btn');
+const rotateRightBtn = document.getElementById('rotate-right-btn');
+const flipXBtn = document.getElementById('flip-x-btn');
+const flipYBtn = document.getElementById('flip-y-btn');
+const brightnessEl = document.getElementById('brightness');
+const contrastEl = document.getElementById('contrast');
+const saturationEl = document.getElementById('saturation');
+const resetFiltersBtn = document.getElementById('reset-filters-btn');
 const outWidth = document.getElementById('out-width');
 const outHeight = document.getElementById('out-height');
 const lockRatio = document.getElementById('lock-ratio');
@@ -22,6 +32,7 @@ const stats = document.getElementById('stats');
 const msg = document.getElementById('msg');
 
 const MAX_CANVAS_W = 900;
+const MAX_EXPORT_PIXELS = 16000000;
 
 let canvas = null;
 let originalFile = null;
@@ -30,6 +41,9 @@ let displayScale = 1;
 let activeTool = 'select';
 let drawing = null;
 let startPt = null;
+let historyStack = [];
+let historyIndex = -1;
+let isRestoringHistory = false;
 
 function flash(text, isError) {
   msg.textContent = text;
@@ -41,6 +55,72 @@ function humanBytes(n) {
   if (n < 1024) return n + ' B';
   if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
   return (n / 1024 / 1024).toFixed(2) + ' MB';
+}
+
+function updateHistoryButtons() {
+  undoBtn.disabled = historyIndex <= 0;
+  redoBtn.disabled = historyIndex >= historyStack.length - 1;
+}
+
+function getBgState() {
+  const bg = canvas?.backgroundImage;
+  return {
+    angle: bg?.angle || 0,
+    flipX: !!bg?.flipX,
+    flipY: !!bg?.flipY,
+    brightness: Number(brightnessEl.value),
+    contrast: Number(contrastEl.value),
+    saturation: Number(saturationEl.value),
+  };
+}
+
+function saveHistory() {
+  if (!canvas || isRestoringHistory) return;
+  const state = {
+    objects: canvas.getObjects().map((o) => o.toObject()),
+    bg: getBgState(),
+  };
+  historyStack = historyStack.slice(0, historyIndex + 1);
+  historyStack.push(state);
+  historyIndex = historyStack.length - 1;
+  updateHistoryButtons();
+}
+
+function applyBackgroundAdjustments() {
+  if (!canvas?.backgroundImage) return;
+  const bg = canvas.backgroundImage;
+  const filters = [];
+  const brightness = Number(brightnessEl.value);
+  const contrast = Number(contrastEl.value);
+  const saturation = Number(saturationEl.value);
+  if (brightness !== 0) filters.push(new fabric.Image.filters.Brightness({ brightness }));
+  if (contrast !== 0) filters.push(new fabric.Image.filters.Contrast({ contrast }));
+  if (saturation !== 0) filters.push(new fabric.Image.filters.Saturation({ saturation }));
+  bg.filters = filters;
+  bg.applyFilters();
+  canvas.requestRenderAll();
+}
+
+function restoreHistoryState(state) {
+  if (!canvas || !state) return;
+  isRestoringHistory = true;
+  canvas.getObjects().forEach((o) => canvas.remove(o));
+  fabric.util.enlivenObjects(state.objects || [], (objects) => {
+    objects.forEach((o) => canvas.add(o));
+    if (canvas.backgroundImage) {
+      canvas.backgroundImage.set({
+        angle: state.bg?.angle || 0,
+        flipX: !!state.bg?.flipX,
+        flipY: !!state.bg?.flipY,
+      });
+    }
+    brightnessEl.value = state.bg?.brightness ?? 0;
+    contrastEl.value = state.bg?.contrast ?? 0;
+    saturationEl.value = state.bg?.saturation ?? 0;
+    applyBackgroundAdjustments();
+    canvas.requestRenderAll();
+    isRestoringHistory = false;
+  });
 }
 
 dropZone.addEventListener('click', () => fileInput.click());
@@ -64,6 +144,10 @@ function loadFile(file) {
       originalImage = img;
       const w = img.width;
       const h = img.height;
+      const pixels = w * h;
+      if (pixels > 24000000) {
+        flash('Very large image detected. Export is capped at 16 MP to avoid crashes.', true);
+      }
       displayScale = w > MAX_CANVAS_W ? MAX_CANVAS_W / w : 1;
       const displayW = Math.round(w * displayScale);
       const displayH = Math.round(h * displayScale);
@@ -94,6 +178,12 @@ function loadFile(file) {
       stats.textContent = `Original: ${w}×${h} · ${humanBytes(file.size)}`;
       setTool('select');
       wireCanvas();
+      historyStack = [];
+      historyIndex = -1;
+      brightnessEl.value = 0;
+      contrastEl.value = 0;
+      saturationEl.value = 0;
+      saveHistory();
     });
   };
   reader.readAsDataURL(file);
@@ -133,6 +223,12 @@ fillColor.addEventListener('change', () => {
 });
 
 function wireCanvas() {
+  canvas.on('object:modified', saveHistory);
+  canvas.on('object:added', saveHistory);
+  canvas.on('object:removed', saveHistory);
+  canvas.on('path:created', saveHistory);
+  canvas.on('text:editing:exited', saveHistory);
+
   canvas.on('mouse:down', (e) => {
     if (activeTool === 'select' || activeTool === 'draw') return;
     const p = canvas.getPointer(e.e);
@@ -169,6 +265,7 @@ function wireCanvas() {
       t.selectAll();
       setTool('select');
       drawing = null;
+      saveHistory();
       return;
     }
 
@@ -220,6 +317,70 @@ clearBtn.addEventListener('click', () => {
   if (!confirm('Remove all shapes and drawings from the image? (The image itself stays.)')) return;
   canvas.getObjects().forEach(o => canvas.remove(o));
   canvas.requestRenderAll();
+  saveHistory();
+});
+
+undoBtn.addEventListener('click', () => {
+  if (historyIndex <= 0) return;
+  historyIndex -= 1;
+  restoreHistoryState(historyStack[historyIndex]);
+  updateHistoryButtons();
+});
+
+redoBtn.addEventListener('click', () => {
+  if (historyIndex >= historyStack.length - 1) return;
+  historyIndex += 1;
+  restoreHistoryState(historyStack[historyIndex]);
+  updateHistoryButtons();
+});
+
+rotateLeftBtn.addEventListener('click', () => {
+  if (!canvas?.backgroundImage) return;
+  const bg = canvas.backgroundImage;
+  bg.rotate((bg.angle || 0) - 90);
+  canvas.requestRenderAll();
+  saveHistory();
+});
+
+rotateRightBtn.addEventListener('click', () => {
+  if (!canvas?.backgroundImage) return;
+  const bg = canvas.backgroundImage;
+  bg.rotate((bg.angle || 0) + 90);
+  canvas.requestRenderAll();
+  saveHistory();
+});
+
+flipXBtn.addEventListener('click', () => {
+  if (!canvas?.backgroundImage) return;
+  const bg = canvas.backgroundImage;
+  bg.set('flipX', !bg.flipX);
+  canvas.requestRenderAll();
+  saveHistory();
+});
+
+flipYBtn.addEventListener('click', () => {
+  if (!canvas?.backgroundImage) return;
+  const bg = canvas.backgroundImage;
+  bg.set('flipY', !bg.flipY);
+  canvas.requestRenderAll();
+  saveHistory();
+});
+
+[brightnessEl, contrastEl, saturationEl].forEach((el) => {
+  el.addEventListener('input', () => {
+    applyBackgroundAdjustments();
+  });
+  el.addEventListener('change', () => {
+    saveHistory();
+  });
+});
+
+resetFiltersBtn.addEventListener('click', () => {
+  brightnessEl.value = 0;
+  contrastEl.value = 0;
+  saturationEl.value = 0;
+  applyBackgroundAdjustments();
+  saveHistory();
 });
 
 document.addEventListener('keydown', (e) => {
@@ -272,6 +433,9 @@ downloadBtn.addEventListener('click', async () => {
   try {
     const targetW = Math.max(1, parseInt(outWidth.value, 10) || originalImage.width);
     const targetH = Math.max(1, parseInt(outHeight.value, 10) || originalImage.height);
+    if (targetW * targetH > MAX_EXPORT_PIXELS) {
+      throw new Error(`Export too large (${targetW}x${targetH}). Keep under 16 MP.`);
+    }
     const multiplier = targetW / canvas.width;
 
     canvas.discardActiveObject();

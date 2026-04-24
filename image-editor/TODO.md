@@ -15,10 +15,14 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [x] Quality slider + format picker (JPEG / WebP / PNG)
 - [x] Original + output size stats
 - [x] Privacy, terms, README
+- [x] Whole-image rotate (left/right) and flip (horizontal/vertical)
+- [x] Basic adjustments: brightness, contrast, saturation
+- [x] Undo/redo history for canvas actions
+- [x] Max export-size guard for large output dimensions
 
 ## Before deploy
 - [ ] Set up subdomain: imageeditor.devjaybusiness.com → Netlify
-- [ ] Replace `YOUR_HANDLE` (Ko-fi / PayPal) placeholders
+- [x] Replace `YOUR_HANDLE` (Ko-fi / PayPal) placeholders
 - [ ] Add `og-image.png`
 - [ ] Create GitHub repo and push
 - [ ] Create Netlify site, connect repo
@@ -30,7 +34,4 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
 ## Future
 - [ ] Crop tool (Fabric doesn't ship one — may need a rect-mask approach)
-- [ ] Rotate / flip the whole image
-- [ ] Basic filters (brightness, contrast, saturation) via Fabric filters
-- [ ] Undo/redo
-- [ ] Max-dimension guard to prevent OOM on massive images
+- [ ] Auto downscale very large source image on load (not just export guard)

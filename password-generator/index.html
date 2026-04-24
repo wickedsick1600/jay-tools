@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Password Generator — Strong Random Passwords | DevJay Tools</title>
+<meta name="description" content="Generate strong random passwords in your browser with custom length and character sets.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>DevJay Tools</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#donate">Donate</a></nav></div></header>
+<main>
+  <section class="hero"><span class="tag">Free · Runs in your browser</span><h1>Password Generator</h1><p>Create strong, random passwords with settings you control.</p></section>
+  <label for="length">Length</label>
+  <input id="length" type="number" min="6" max="128" value="20">
+  <label><input id="upper" type="checkbox" checked> Uppercase (A-Z)</label>
+  <label><input id="lower" type="checkbox" checked> Lowercase (a-z)</label>
+  <label><input id="digits" type="checkbox" checked> Numbers (0-9)</label>
+  <label><input id="symbols" type="checkbox" checked> Symbols (!@#$...)</label>
+  <div class="row"><button id="gen-btn" class="success">Generate</button><button id="copy-btn" class="secondary">Copy</button></div>
+  <label for="output">Password</label>
+  <input id="output" type="text" readonly>
+  <div id="msg" class="muted" role="status" aria-live="polite"></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/">All tools</a></div><div><a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a><a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a></div></div></footer>
+<script>
+const lengthEl = document.getElementById('length');
+const upper = document.getElementById('upper');
+const lower = document.getElementById('lower');
+const digits = document.getElementById('digits');
+const symbols = document.getElementById('symbols');
+const output = document.getElementById('output');
+const msg = document.getElementById('msg');
+const sets = { upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', lower: 'abcdefghijklmnopqrstuvwxyz', digits: '0123456789', symbols: '!@#$%^&*()-_=+[]{};:,.?/|~' };
+function flash(text, isError) { msg.textContent = text; msg.className = isError ? 'error' : 'muted'; }
+function randInt(max) { const buf = new Uint32Array(1); crypto.getRandomValues(buf); return buf[0] % max; }
+function generate() {
+  const pool = (upper.checked ? sets.upper : '') + (lower.checked ? sets.lower : '') + (digits.checked ? sets.digits : '') + (symbols.checked ? sets.symbols : '');
+  if (!pool) { flash('Select at least one character type.', true); return; }
+  const len = Math.max(6, Math.min(128, parseInt(lengthEl.value, 10) || 20));
+  let out = '';
+  for (let i = 0; i < len; i++) out += pool[randInt(pool.length)];
+  output.value = out;
+  flash('New password generated.');
+}
+document.getElementById('gen-btn').addEventListener('click', generate);
+document.getElementById('copy-btn').addEventListener('click', async () => {
+  if (!output.value) return;
+  try { await navigator.clipboard.writeText(output.value); flash('Copied.'); } catch { output.select(); document.execCommand('copy'); flash('Copied.'); }
+});
+generate();
+</script>
+</body>
+</html>

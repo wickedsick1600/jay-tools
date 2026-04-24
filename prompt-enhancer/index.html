@@ -15,14 +15,14 @@
 
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="https://devjaybusiness.com">
+    <a class="brand" href="/">
       <span class="dot"></span>
       DevJay Tools
     </a>
     <nav>
-      <a href="https://devjaybusiness.com">All tools</a>
-      <a href="https://devjaybusiness.com#feedback">Feedback</a>
-      <a class="cta" href="https://devjaybusiness.com#donate">Donate</a>
+      <a href="/">All tools</a>
+      <a href="/#feedback">Feedback</a>
+      <a class="cta" href="/#donate">Donate</a>
     </nav>
   </div>
 </header>
@@ -47,6 +47,10 @@
     <option value="midjourney">Midjourney (image)</option>
     <option value="stable-diffusion">Stable Diffusion (image)</option>
     <option value="claude">Claude (text)</option>
+    <option value="gemini">Gemini (text)</option>
+    <option value="linkedin-post">LinkedIn post</option>
+    <option value="email-draft">Professional email draft</option>
+    <option value="youtube-script">YouTube script outline</option>
     <option value="generic">Something else / not sure</option>
   </select>
 
@@ -64,20 +68,27 @@
     </div>
   </div>
 
+  <h2>Recent prompts</h2>
+  <p class="muted">Saved locally on your device (last 5).</p>
+  <div class="row">
+    <button id="clear-history-btn" type="button" class="secondary">Clear history</button>
+  </div>
+  <div id="history-list" class="card"></div>
+
   <h2>How this works</h2>
   <ul>
     <li><strong>You type a rough idea</strong> — one sentence, a few words, whatever you've got.</li>
     <li><strong>Your text is sent to Google Gemini</strong> through a small server function. The AI key stays on the server — it never touches your browser.</li>
     <li><strong>You get back a polished prompt</strong> shaped for the AI tool you picked. Copy it, paste it into the other tool, done.</li>
-    <li><strong>Nothing is saved.</strong> No account, no history. Each request is independent.</li>
+    <li><strong>Only local history is saved.</strong> The last 5 requests stay in your browser so you can quickly reuse them.</li>
     <li><strong>Fair-use limit.</strong> To keep the tool free for everyone, there's a cap on how often one person can hit it per hour.</li>
   </ul>
 
   <h2>Support this tool</h2>
   <p>Each prompt uses a bit of paid AI quota. If this saves you time, a small tip keeps it free for everyone.</p>
   <div class="row">
-    <a class="btn success" href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Donate on Ko-fi</a>
-    <a class="btn secondary" href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+    <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
   </div>
 </main>
 
@@ -86,11 +97,11 @@
     <div>
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
-      <a href="https://devjaybusiness.com">All tools</a>
+      <a href="/">All tools</a>
     </div>
     <div>
-      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener">Ko-fi</a>
-      <a href="https://paypal.me/YOUR_HANDLE" target="_blank" rel="noopener">PayPal</a>
+      <a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
     </div>
   </div>
 </footer>

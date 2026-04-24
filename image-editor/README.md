@@ -1,6 +1,6 @@
 # image-editor
 
-Browser-based image editor: add shapes, text, and drawings, then resize/compress and download. Files never leave the user's device.
+Browser-based image editor: add shapes/text/drawings, rotate/flip, tune image adjustments, undo/redo edits, then resize/compress and download. Files never leave the user's device.
 
 ## Local preview
 
@@ -16,7 +16,7 @@ Push to `main` → Netlify auto-deploys. Static site, no serverless functions.
 
 ## Before going live
 
-- [ ] Replace `YOUR_HANDLE` (Ko-fi / PayPal) placeholders.
+- [x] Replace `YOUR_HANDLE` (Ko-fi / PayPal) placeholders.
 - [ ] Point `imageeditor.devjaybusiness.com` at the Netlify site.
 - [ ] Add `og-image.png`.
-- [ ] Test on a large (10MB+) photo to confirm browser handles it — if memory becomes an issue, add a max-dimension guard.
+- [x] Add max export-size guard to reduce browser OOM failures.

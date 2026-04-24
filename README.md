@@ -1,6 +1,6 @@
-# multi-service-hub
+# multi-service
 
-Landing page for the DevJay Tools suite. This file is the single source of truth for what the suite is, why it exists, how services fit together, and how this hub is run.
+Monorepo for the DevJay Tools suite. This file describes what is currently live in this workspace, how deployment works, and how to add new tools.
 
 ## Brand
 
@@ -9,8 +9,8 @@ Landing page for the DevJay Tools suite. This file is the single source of truth
 - Tagline: Free, simple tools that respect your time and your files.
 - Voice: Plain, non-technical.
 - Palette: black, blue, white, green only.
-- Hub domain: `devjaybusiness.com`
-- Tool subdomains: `[tool].devjaybusiness.com` (for example `foldercreator.devjaybusiness.com`)
+- Current live URL: `https://jaytools.netlify.app/`
+- Planned custom domain: `devjaybusiness.com`
 
 ## What this suite is
 
@@ -21,27 +21,35 @@ DevJay Tools is a set of free, focused web utilities. Each tool solves one repet
 - browser-first processing where possible
 - revenue from optional donations only
 
-The suite is intentionally split into separate repos and deployments. Each tool is isolated so failures, policy issues, or downtime in one service do not break the others.
+Right now this repo hosts the hub and tool folders together. Tools can still be peeled into separate repos/subdomains later when needed.
 
-## Services in the suite
+## Tools currently in this repo
 
-| Service | What it does | Repo | Subdomain |
+| Tool | What it does | Path | Status |
 |---|---|---|---|
-| Hub | Landing page with tool listing, search/categories, donation links, and feedback form. | `multi-service-hub` | `devjaybusiness.com` |
-| Folder Creator | Builds folder layouts as downloadable `.zip` files and exports ASCII trees. | `folder-tool` | `foldercreator.devjaybusiness.com` |
-| Image Editor | Crop/resize/compress, annotate images, and keep processing in-browser. | `image-editor` | `images.devjaybusiness.com` |
-| Prompt Enhancer | Turns rough prompts into polished prompts for common AI tools. | `prompt-enhancer` | `prompts.devjaybusiness.com` |
+| Hub | Searchable homepage and tool registry. | `/` | Live |
+| Folder Creator | Visual builder + paste import (Excel/Word/text), ZIP + ASCII output. | `folder-tool` | Live |
+| Image Editor | Shapes/text/draw + rotate/flip + adjustments + undo/redo + export guard. | `image-editor` | Live |
+| Prompt Enhancer | Gemini-backed prompt rewrite + local recent history. | `prompt-enhancer` | Live |
+| Stopwatch with Splits | Split tracking with notes and copyable timecodes. | `stopwatch` | Live |
+| Pseudo Word Generator | Generate pronounceable fake words. | `pseudo-word` | Live |
+| JSON Formatter | Format/minify/validate JSON. | `json-formatter` | Live |
+| Regex Tester | Live regex highlighting + groups. | `regex-tester` | Live |
+| Web Dev Unit Converter | px/rem, hex/rgba, epoch/ISO converters. | `unit-converter` | Live |
+| Bulk Image Resizer | Batch resize/crop many images to exact output size. | `bulk-image-resizer` | Live |
+| Password Generator | Secure random password generation in-browser. | `password-generator` | Live |
+| QR Generator | Create and download QR code PNG. | `qr-generator` | Live |
+| Diff Checker | Compare two text blocks with highlighted changes. | `diff-checker` | Live |
+| PDF Merger | Merge multiple PDFs in-browser. | `pdf-merger` | Live |
+| SVG Optimizer | Basic SVG cleanup/minification. | `svg-optimizer` | Live |
+| Audio Trimmer | Trim audio clip and download as WAV. | `audio-trimmer` | Live |
 
-More services can be added using the same conventions.
+## Hosting and deployment model (current)
 
-## Hosting and deployment model
-
-- One GitHub repo per service.
-- Netlify free tier per service.
-- Push to `main` triggers auto-deploy.
-- One subdomain per service via CNAME/custom domain.
+- Single repo deployed to Netlify (`publish = "."`).
 - Static HTML/CSS/JS by default; no build step.
-- Server logic only via Netlify functions in `netlify/functions/*.js`.
+- Server logic only where needed via Netlify functions (`prompt-enhancer/netlify/functions/enhance.js`).
+- Domain migration to `devjaybusiness.com` is still pending.
 
 ## Stack conventions
 
@@ -101,10 +109,11 @@ Open `index.html` directly in a browser. No build step required.
 
 Push to `main` to auto-deploy on Netlify.
 
-## Hub pre-launch checklist
+## Deployment checklist
 
-- [ ] Replace `YOUR_HANDLE` placeholders in `index.html`, `header.html`, `footer.html`, `privacy.html`, `terms.html` with Ko-fi/PayPal usernames.
-- [ ] Replace `your-*-site.netlify.app` placeholders with real Netlify URLs or production domains.
+- [x] Replace `YOUR_HANDLE` placeholders with production Ko-fi/PayPal links.
+- [ ] Add `og-image.png` (1200x630) and wire into all tool pages that need it.
+- [ ] Connect custom domain `devjaybusiness.com` in Netlify.
 - [ ] Add an OG image (`og-image.png`, 1200x630) referenced in `<meta property="og:image">`.
 
 ## Adding a new service

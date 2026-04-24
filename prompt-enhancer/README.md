@@ -1,6 +1,6 @@
 # prompt-enhancer
 
-Turns a rough prompt idea into a polished, structured prompt for ChatGPT, Claude, Midjourney, Stable Diffusion, or any AI tool.
+Turns a rough prompt idea into a polished, structured prompt for ChatGPT, Claude, Midjourney, Stable Diffusion, Gemini, and other target profiles.
 
 ## Architecture
 
@@ -31,7 +31,12 @@ Gemini 2.0 Flash gives **1,500 requests / day** per API key (shared across all u
 ## Before going live
 
 - [ ] Set `GEMINI_API_KEY` in Netlify environment variables.
-- [ ] Replace `YOUR_HANDLE` and `your-hub-site.netlify.app` placeholders.
+- [x] Replace `YOUR_HANDLE` placeholders.
 - [ ] Test via `netlify dev` first — confirm enhance succeeds locally.
 - [ ] After deploy, view page source and Ctrl+F for `GEMINI` or your key prefix — must not appear.
 - [ ] Add `og-image.png`.
+
+## Local UX features
+
+- Recent history (last 5 prompts) is stored in `localStorage` only.
+- History entries can be reloaded into input/output with one click.

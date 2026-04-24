@@ -10,11 +10,13 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [x] Copy-to-clipboard output
 - [x] Privacy page explicitly noting data is sent to Google Gemini
 - [x] Terms linking to Gemini API terms
+- [x] Local history of last 5 enhancements (localStorage only)
+- [x] Additional target profiles in selector
 
 ## Before deploy
 - [ ] Get Gemini API key from https://aistudio.google.com/apikey
 - [ ] Add `GEMINI_API_KEY` to Netlify site environment variables (NEVER commit)
-- [ ] Replace `YOUR_HANDLE` and `your-hub-site.netlify.app` placeholders
+- [x] Replace `YOUR_HANDLE` placeholders
 - [ ] Create GitHub repo and push
 - [ ] Install Netlify CLI locally (`npm install -g netlify-cli`) and test via `netlify dev`
 - [ ] Deploy and run a smoke test
@@ -28,4 +30,3 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ## Future
 - [ ] Optional "paste your own Gemini API key" field for power users (unlimited per-user use, key stored only in localStorage)
 - [ ] More target profiles (Sora, DALL-E 3, video prompts)
-- [ ] History of last 5 enhancements stored in localStorage only

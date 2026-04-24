@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free YouTube Looper — Repeat a Section of Any Video | DevJay Tools</title>
+<meta name="description" content="Loop a specific part of any YouTube video. Pick a start and end time and the player repeats just that section — great for language practice, music, or dance.">
+<meta property="og:title" content="YouTube Looper — DevJay Tools">
+<meta property="og:description" content="Repeat any section of a YouTube video on loop.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="/">All tools</a>
+      <a href="/#feedback">Feedback</a>
+      <a class="cta" href="/#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free · Runs in your browser</span>
+    <h1>YouTube Looper</h1>
+    <p>Pick a start and end time, and play just that section on repeat. Useful for language practice, music transcription, dance drills, or re-watching one moment.</p>
+  </section>
+
+  <div class="row">
+    <input type="text" id="url-input" placeholder="Paste a YouTube URL or video ID" autocomplete="off">
+    <button id="load-btn">Load</button>
+  </div>
+  <div id="url-msg" class="muted" role="status" aria-live="polite"></div>
+
+  <div id="recents" class="recents" hidden>
+    <div class="recents-head">
+      <span>Recent</span>
+      <button id="clear-recents" class="icon-btn" title="Clear list">Clear</button>
+    </div>
+    <div id="recents-list" class="recents-list"></div>
+  </div>
+
+  <div id="player-wrap" class="player-wrap" hidden>
+    <div id="player"></div>
+  </div>
+
+  <div id="controls" hidden>
+    <div class="range" id="range">
+      <div class="range-track">
+        <div class="range-fill" id="range-fill"></div>
+        <div class="range-playhead" id="range-playhead"></div>
+        <div class="range-thumb" id="thumb-start" data-thumb="start" tabindex="0" role="slider" aria-label="Start time"></div>
+        <div class="range-thumb" id="thumb-end" data-thumb="end" tabindex="0" role="slider" aria-label="End time"></div>
+      </div>
+      <div class="range-labels">
+        <span id="range-start-label">0:00</span>
+        <span id="range-end-label">0:00</span>
+      </div>
+    </div>
+
+    <div class="time-grid">
+      <label>
+        <span>Start</span>
+        <div class="time-row">
+          <input type="text" id="start-input" placeholder="0:00" inputmode="numeric">
+          <button class="secondary" id="start-now" title="Use current playback time">Use now</button>
+        </div>
+      </label>
+      <label>
+        <span>End</span>
+        <div class="time-row">
+          <input type="text" id="end-input" placeholder="0:00" inputmode="numeric">
+          <button class="secondary" id="end-now" title="Use current playback time">Use now</button>
+        </div>
+      </label>
+    </div>
+
+    <div class="opts-grid">
+      <label class="loop-toggle">
+        <input type="checkbox" id="loop-toggle" checked>
+        <span>Loop this section</span>
+      </label>
+      <label class="opt">
+        <span>Speed</span>
+        <select id="speed-select">
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="0.75">0.75×</option>
+          <option value="1" selected>1×</option>
+          <option value="1.25">1.25×</option>
+          <option value="1.5">1.5×</option>
+          <option value="1.75">1.75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <label class="opt">
+        <span>Loop count</span>
+        <input type="number" id="loop-count" min="0" step="1" placeholder="∞" inputmode="numeric">
+      </label>
+    </div>
+
+    <div class="row">
+      <button id="jump-start" class="secondary">Jump to start</button>
+      <button id="copy-share" class="secondary">Copy share link</button>
+    </div>
+
+    <div id="msg" class="muted" role="status" aria-live="polite"></div>
+
+    <p class="hint">Time format: <code>1:20</code>, <code>1:20.5</code>, <code>80</code>, or <code>1:02:03</code>. Leave loop count blank for infinite.</p>
+  </div>
+
+  <h2>Don't have a link yet?</h2>
+  <div class="row search-row">
+    <input type="text" id="search-input" placeholder="Search YouTube (opens in a new tab)" autocomplete="off">
+    <button id="search-btn" class="secondary">Search</button>
+  </div>
+
+  <h2>How to use this</h2>
+  <ul>
+    <li>Paste a YouTube link (or just the video ID) and click <strong>Load</strong>.</li>
+    <li>Type a <strong>Start</strong> and <strong>End</strong> time, or scrub the video to the moment you want and click <strong>Use now</strong>.</li>
+    <li>Keep <strong>Loop this section</strong> on — when playback reaches the end, it jumps back to the start.</li>
+    <li>Turn the loop off to let the video play normally.</li>
+    <li><strong>Share link</strong> copies a URL that opens this exact video and loop on any device.</li>
+  </ul>
+
+  <h2>Keyboard shortcuts</h2>
+  <ul class="shortcuts">
+    <li><kbd>Space</kbd> — play / pause</li>
+    <li><kbd>[</kbd> / <kbd>]</kbd> — set start / end to current playback time</li>
+    <li><kbd>L</kbd> — toggle loop</li>
+    <li><kbd>J</kbd> / <kbd>K</kbd> — nudge start earlier / later by 1s</li>
+    <li><kbd>,</kbd> / <kbd>.</kbd> — nudge end earlier / later by 1s</li>
+    <li><kbd>Home</kbd> — jump to start</li>
+  </ul>
+
+  <p class="hint">Tired of ads interrupting your loop? Try a browser with a built-in ad blocker like <a href="https://brave.com/" target="_blank" rel="noopener">Brave</a> — this tool doesn't (and can't) block YouTube ads itself.</p>
+
+  <h2>Support this tool</h2>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/">All tools</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

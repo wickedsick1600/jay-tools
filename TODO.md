@@ -1,4 +1,4 @@
-# multi-service-hub — Task Tracker
+# multi-service — Task Tracker
 
 Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
@@ -32,7 +32,7 @@ When you peel a tool into its own repo:
 
 ## Before deploy
 - [ ] Register `devjaybusiness.com` (or confirm it's ready to point at Netlify)
-- [ ] Replace `YOUR_HANDLE` placeholders (Ko-fi + PayPal) in index.html, privacy.html, terms.html
+- [x] Replace `YOUR_HANDLE` placeholders (Ko-fi + PayPal) in index.html, privacy.html, terms.html
 - [ ] Add `og-image.png` (1200×630) with DevJay branding
 - [ ] Create GitHub repo and push
 - [ ] Create Netlify site, connect repo, point root domain at it
@@ -47,6 +47,7 @@ When you peel a tool into its own repo:
 - [ ] After each move: update that tool's `url` in [tools.js](tools.js) to the full subdomain URL
 
 ## Launch polish
+- [x] Replace hardcoded `devjaybusiness.com` links with root-relative navigation for Netlify deploys
 - [ ] Final copy edit of homepage
 - [ ] Submit every site to Google Search Console
 - [ ] Test search on mobile
@@ -59,12 +60,14 @@ Treat this as the master status board for all services.
 ### Folder Creator
 - [x] MVP implementation
 - [x] DevJay rebrand + plain-language legal pages
+- [x] Visual builder + paste import from Excel/Word + sample presets
 - [ ] Deployed independently to Netlify
 - [ ] Subdomain live
 
 ### Image Editor
 - [x] MVP implementation (Fabric.js: shapes, text, free draw, colors, fonts)
 - [x] DevJay rebrand + plain-language legal pages
+- [x] Rotate/flip + adjustments + undo/redo + large export guard
 - [ ] Deployed independently to Netlify
 - [ ] Subdomain live
 
@@ -95,6 +98,7 @@ Treat this as the master status board for all services.
 ### Prompt Enhancer
 - [x] MVP implementation
 - [x] DevJay rebrand + plain-language legal pages
+- [x] Local recent history (last 5) + extra target profiles
 - [ ] Get a Google AI Studio API key (free tier) from your Gmail account
 - [ ] Add `GEMINI_API_KEY` to the prompt-enhancer Netlify site env vars
 - [ ] Deployed independently to Netlify
@@ -119,19 +123,19 @@ Treat this as the master status board for all services.
 - [x] **Regex Tester** — live highlight, capture groups. Pure JS.
 - [x] **Web Dev Unit Converter** — px↔rem, hex↔rgba, epoch↔ISO. Pure JS.
 
-Note: these six currently link to the hub's privacy/terms (`https://devjaybusiness.com/privacy.html`). When any of them gets peeled onto its own subdomain, add a local `privacy.html` + `terms.html` to that tool's new repo and update the footer links.
+Note: tools currently use root-relative links to hub privacy/terms (`/privacy.html`, `/terms.html`). When any tool is peeled onto its own subdomain, add local `privacy.html` + `terms.html` in that repo and update footer links.
 
 ### Build later (real library commitment or AI integration)
 - [ ] **Image to Text (OCR)** — Tesseract.js (~2MB WASM). Worth it but warn users on cost/perf.
 - [ ] **Exam / Reviewer Generator** — Gemini-backed, reuse prompt-enhancer serverless pattern. Design prompt carefully (structured JSON output with questions + answers).
-- [ ] **Diff Checker** — needs a diff algo; jsdiff is ~15KB, acceptable.
+- [x] **Diff Checker** — needs a diff algo; jsdiff is ~15KB, acceptable.
 - [ ] **AI Token Counter** — port of tiktoken to JS is available.
-- [ ] **SVG Optimizer** — SVGO has a browser build.
-- [ ] **PDF Merger** — pdf-lib. Easy, real demand.
-- [ ] **YouTube Replay / Looper** — embed player + loop logic, client-side only, no download features (ToS).
-- [ ] **Audio Trimmer** — Web Audio API.
-- [ ] **QR Generator** — qrcode.js.
-- [ ] **Password Generator** — `crypto.getRandomValues`.
+- [x] **SVG Optimizer** — SVGO has a browser build.
+- [x] **PDF Merger** — pdf-lib. Easy, real demand.
+- [x] **YouTube Replay / Looper** — embed player + loop logic, client-side only, no download features (ToS).
+- [x] **Audio Trimmer** — Web Audio API.
+- [x] **QR Generator** — qrcode.js.
+- [x] **Password Generator** — `crypto.getRandomValues`.
 
 ### Skipped / declined
 - **YouTube audio download of a portion** — violates YouTube ToS, and browsers can't cleanly grab YT streams without a server proxy. Risk of takedown/API revocation.

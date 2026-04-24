@@ -6,30 +6,26 @@ Step-by-step for getting DevJay Tools live on Netlify. Written assuming you alre
 
 ## Path A — Ship everything as one Netlify site (recommended first)
 
-This is the fastest way to launch. All tools live at `devjaybusiness.com/<tool>/`. You can peel individual tools out to subdomains later without breaking anything (Path B below).
+This is the fastest way to launch. All tools live at one root site (`jaytools.netlify.app` now, later `devjaybusiness.com/<tool>/`). You can peel individual tools out to subdomains later without breaking anything (Path B below).
 
-### 1. Replace the placeholders
+### 1. Confirm production links
 
-Open a global find-and-replace across `multi-service-hub/` and swap:
+Production links currently used:
 
-| Placeholder | Replace with |
+| Service | Link |
 |---|---|
-| `YOUR_HANDLE` (Ko-fi links) | your Ko-fi handle, e.g. `devjay` → `https://ko-fi.com/devjay` |
-| `YOUR_HANDLE` (PayPal links) | your PayPal.me handle, e.g. `devjay` → `https://paypal.me/devjay` |
+| Ko-fi | `https://ko-fi.com/devjaybusiness` |
+| PayPal | `https://paypal.me/devjaybusiness` |
 
-Files that contain `YOUR_HANDLE`:
-- `index.html`, `privacy.html`, `terms.html` (hub)
-- Every tool's `index.html`
+Quick check: `rg "YOUR_HANDLE" .` should return zero results.
 
-Quick check with grep: `grep -r YOUR_HANDLE multi-service-hub/` — should return zero results when done.
-
-### 2. Push the hub to GitHub
+### 2. Push this repo to GitHub
 
 ```bash
-cd multi-service-hub
+cd multi-service
 git init
 git add .
-git commit -m "Initial commit — DevJay Tools hub with 9 live tools"
+git commit -m "Initial commit — DevJay Tools suite"
 # Create a new GitHub repo (e.g. devjay/tools) via gh or the web UI
 git remote add origin https://github.com/YOUR_GH_USER/tools.git
 git push -u origin main
@@ -65,7 +61,7 @@ Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS 
 2. Netlify dashboard → your site → **Site configuration** → **Environment variables** → **Add a variable**.
 3. Key: `GEMINI_API_KEY`. Value: your key. Scope: **All contexts** (production + deploy previews). Save.
 4. Trigger a redeploy: **Deploys** → **Trigger deploy** → **Deploy site**. The serverless function at `prompt-enhancer/netlify/functions/enhance.js` now has access to the key.
-5. Visit `devjaybusiness.com/prompt-enhancer/`, type a rough prompt, click Enhance. Should work.
+5. Visit `/prompt-enhancer/`, type a rough prompt, click Enhance. Should work.
 6. View page source (Ctrl+U) and Ctrl+F for `GEMINI` and the first few characters of your key. **Neither should appear.** If either does, stop and investigate before publicizing the URL.
 
 ### 7. Final checks before telling anyone
@@ -75,6 +71,7 @@ Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS 
 - [ ] Ko-fi donate button goes to the right page
 - [ ] PayPal donate button goes to the right page
 - [ ] View source on prompt-enhancer: no API key visible
+- [ ] Verify new tools: Password Generator, QR Generator, Diff Checker, PDF Merger, SVG Optimizer, Audio Trimmer
 
 ### 8. Submit to search engines
 
@@ -105,7 +102,7 @@ Target layout:
    - Value: `<your-netlify-site>.netlify.app`
 6. Wait a minute for DNS to propagate. SSL provisions automatically.
 7. In the **hub** repo, edit `tools.js` — change that tool's `url` from the relative path (`./image-editor/`) to the full URL (`https://imageeditor.devjaybusiness.com/`). Commit + push. Hub redeploys automatically.
-8. (Optional) Delete the tool's directory from the hub repo so the old path 404s. Or leave it in place as a fallback — it'll keep working.
+8. (Optional) Delete the tool's directory from this repo so the old path 404s. Or leave it in place as a fallback — it'll keep working.
 
 ### If the tool has serverless functions (currently just Prompt Enhancer)
 
