@@ -3,26 +3,172 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PDF Merger — Combine PDF Files | DevJay Tools</title>
-<meta name="description" content="Merge multiple PDF files into one directly in your browser.">
+<title>PDF Merger - Reorder &amp; Combine PDF Files | DevJay Tools</title>
+<meta name="description" content="Merge multiple PDF files in your browser. Reorder PDFs, remove files, and download one combined PDF with no upload.">
 <meta name="theme-color" content="#0a0f1a">
 <link rel="canonical" href="https://jaytools.netlify.app/pdf-merger/">
 <meta property="og:url" content="https://jaytools.netlify.app/pdf-merger/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="DevJay Tools">
+<meta property="og:title" content="PDF Merger - DevJay Tools">
+<meta property="og:description" content="Reorder and combine PDFs in your browser with no upload.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="index, follow">
 <link rel="stylesheet" href="../style.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Merger — Combine PDF Files","url":"https://jaytools.netlify.app/pdf-merger/","description":"Merge multiple PDF files into one directly in your browser.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+  .notice { margin-top: 16px; }
+
+  .file-panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin: 14px 0;
+  }
+
+  .file-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .file-panel-head h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .file-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    background: var(--off-white);
+  }
+
+  .file-item.dragging { opacity: 0.55; }
+
+  .file-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: var(--black);
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .file-main { min-width: 0; }
+
+  .file-name {
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-meta {
+    color: var(--fg-muted);
+    font-size: 13px;
+  }
+
+  .file-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .file-actions button {
+    min-height: 36px;
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .empty-list {
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    padding: 18px;
+    text-align: center;
+    color: var(--fg-muted);
+    background: var(--off-white);
+  }
+
+  @media (max-width: 620px) {
+    .file-item {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .file-actions {
+      grid-column: 1 / -1;
+      justify-content: stretch;
+    }
+
+    .file-actions button {
+      flex: 1 1 42%;
+    }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Merger - Reorder & Combine PDF Files","url":"https://jaytools.netlify.app/pdf-merger/","description":"Merge multiple PDF files in your browser. Reorder PDFs, remove files, and download one combined PDF with no upload.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 <header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>DevJay Tools</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#donate">Donate</a></nav></div></header>
 <main>
-  <section class="hero"><span class="tag">Free · Runs in your browser</span><h1>PDF Merger</h1><p>Combine multiple PDFs into one file without uploading anything.</p></section>
-  <label for="files">Select PDF files</label>
-  <input id="files" type="file" accept="application/pdf" multiple>
+  <section class="hero"><span class="tag">Free - Runs in your browser</span><h1>PDF Merger</h1><p>Combine multiple PDFs into one file without uploading anything. Put the files in the exact order you want before downloading.</p></section>
+
+  <div class="notice green">
+    <strong>Your PDFs are never uploaded.</strong> They are merged in your browser.
+  </div>
+
+  <label for="files">Add PDF files</label>
+  <input id="files" type="file" accept="application/pdf,.pdf" multiple>
+
+  <section class="file-panel" aria-label="PDF merge order">
+    <div class="file-panel-head">
+      <h2>Merge order</h2>
+      <button id="clear-btn" class="secondary" type="button">Clear list</button>
+    </div>
+    <ol id="file-list" class="file-list"></ol>
+    <div id="empty-list" class="empty-list">Add at least 2 PDF files. The first file in this list becomes the first pages in the merged PDF.</div>
+  </section>
+
+  <label for="output-name">Output filename</label>
+  <input id="output-name" type="text" value="merged.pdf" autocomplete="off">
+
   <div class="row"><button id="merge-btn" class="success">Merge and download</button></div>
   <div id="msg" class="muted" role="status" aria-live="polite"></div>
+
+  <h2>How to use this</h2>
+  <ul>
+    <li><strong>Add PDFs</strong> using the file picker.</li>
+    <li><strong>Set the order</strong> with Move up / Move down, or drag files on desktop.</li>
+    <li><strong>Remove anything unwanted</strong> before merging.</li>
+    <li><strong>Download</strong> the merged PDF when the order looks right.</li>
+  </ul>
+
+  <h2>Support this tool</h2>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
+  </div>
 </main>
 <footer class="site-footer"><div class="wrap"><div><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/">All tools</a></div><div><a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a><a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a></div></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" integrity="sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

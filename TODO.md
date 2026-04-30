@@ -136,7 +136,7 @@ Note: tools currently use root-relative links to hub privacy/terms (`/privacy.ht
 - [ ] **AI Token Counter** — port of tiktoken to JS is available.
 - [x] **SVG Optimizer** — SVGO has a browser build.
 - [x] **PDF Editor** - PDF.js preview + Fabric.js annotations/signatures + pdf-lib export.
-- [x] **PDF Merger** — pdf-lib. Easy, real demand.
+- [x] **PDF Merger** — pdf-lib, reorder/remove list, custom output filename.
 - [x] **YouTube Replay / Looper** — embed player + loop logic, client-side only, no download features (ToS).
 - [x] **Audio Trimmer** — Web Audio API.
 - [x] **QR Generator** — qrcode.js.
