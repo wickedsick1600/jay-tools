@@ -208,6 +208,16 @@ const TOOLS = [
     status: 'live',
   },
   {
+    id: 'pdf-editor',
+    title: 'PDF Editor',
+    description: 'Add text, shapes, drawings, and signatures to PDFs without uploading them.',
+    longDescription: 'Edit a PDF in your browser by adding text, rectangles, ellipses, lines, freehand drawing, and uploaded signatures or images. Includes local white background cleanup for signature images, then downloads a flattened PDF copy.',
+    category: 'dev',
+    tags: ['pdf', 'edit', 'editor', 'sign', 'signature', 'annotate', 'text', 'draw', 'shapes', 'document'],
+    url: './pdf-editor/',
+    status: 'live',
+  },
+  {
     id: 'pdf-merger',
     title: 'PDF Merger',
     description: 'Combine multiple PDFs into one — without uploading them anywhere.',

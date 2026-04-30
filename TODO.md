@@ -91,6 +91,10 @@ Treat this as the master status board for all services.
 - [x] MVP implementation
 - [ ] Deployed with the hub
 
+### PDF Editor
+- [x] MVP implementation (PDF.js preview + Fabric.js annotations/signatures + pdf-lib export)
+- [ ] Deployed with the hub
+
 ### Bulk Image Resizer
 - [x] MVP implementation
 - [ ] Deployed with the hub
@@ -131,6 +135,7 @@ Note: tools currently use root-relative links to hub privacy/terms (`/privacy.ht
 - [x] **Diff Checker** — needs a diff algo; jsdiff is ~15KB, acceptable.
 - [ ] **AI Token Counter** — port of tiktoken to JS is available.
 - [x] **SVG Optimizer** — SVGO has a browser build.
+- [x] **PDF Editor** - PDF.js preview + Fabric.js annotations/signatures + pdf-lib export.
 - [x] **PDF Merger** — pdf-lib. Easy, real demand.
 - [x] **YouTube Replay / Looper** — embed player + loop logic, client-side only, no download features (ToS).
 - [x] **Audio Trimmer** — Web Audio API.
