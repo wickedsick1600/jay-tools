@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Editor &amp; Signature Tool | DevJay Tools</title>
+<meta name="description" content="Edit PDFs in your browser: add text, shapes, drawings, and signatures, then download the finished file. Free PDF editor with no upload.">
+<meta property="og:title" content="PDF Editor &amp; Signature Tool - DevJay Tools">
+<meta property="og:description" content="Add text, shapes, drawings, and signatures to PDFs in your browser. No upload.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://jaytools.netlify.app/pdf-editor/">
+<meta property="og:url" content="https://jaytools.netlify.app/pdf-editor/">
+<meta property="og:site_name" content="DevJay Tools">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Editor & Signature Tool","url":"https://jaytools.netlify.app/pdf-editor/","description":"Edit PDFs in your browser: add text, shapes, drawings, and signatures, then download the finished file. Free PDF editor with no upload.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="dot"></span>
+      DevJay Tools
+    </a>
+    <nav>
+      <a href="/">All tools</a>
+      <a href="/#feedback">Feedback</a>
+      <a class="cta" href="/#donate">Donate</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free - Runs in your browser</span>
+    <h1>PDF Editor &amp; Signature Tool</h1>
+    <p>Add text, shapes, drawings, and signatures to a PDF, then download a finished copy. Your files stay on your device.</p>
+  </section>
+
+  <div class="notice green">
+    <strong>Your PDF is never uploaded.</strong> The editor runs in your browser and saves a new copy when you download.
+  </div>
+
+  <div id="drop-zone" tabindex="0" role="button" aria-label="Upload a PDF">
+    <strong>Drop a PDF here, or click to pick one</strong>
+    <div class="muted">Works best with normal, unlocked PDF files.</div>
+    <input type="file" id="pdf-input" accept="application/pdf,.pdf" hidden>
+  </div>
+
+  <div id="msg" class="muted" role="status" aria-live="polite"></div>
+
+  <section id="editor" aria-label="PDF editor">
+    <div class="editor-top">
+      <div>
+        <h2 id="file-title">Edit PDF</h2>
+        <p id="file-meta" class="muted"></p>
+      </div>
+      <div class="row editor-actions">
+        <button id="download-btn" class="success" type="button">Download PDF</button>
+        <button id="change-file-btn" class="secondary" type="button">Load another PDF</button>
+      </div>
+    </div>
+
+    <div class="signature-strip" aria-label="Signature actions">
+      <div>
+        <strong id="signature-heading">Signature</strong>
+        <span id="signature-status" class="muted">Upload once, then place it anywhere in this PDF.</span>
+      </div>
+      <div class="signature-strip-actions">
+        <button id="upload-signature-btn" class="sign-primary" type="button">Upload signature</button>
+        <button id="place-saved-signature-btn" class="sign-primary" type="button" hidden>Place signature</button>
+        <button id="signature-settings-btn" class="secondary" type="button" hidden>Adjust cleanup</button>
+        <button id="replace-signature-btn" class="secondary" type="button" hidden>Replace</button>
+        <button id="clear-signature-btn" class="secondary" type="button" hidden>Clear</button>
+      </div>
+    </div>
+
+    <div class="toolbar" role="toolbar" aria-label="PDF editing tools">
+      <button class="tool-btn active" data-tool="select" type="button" title="Select, move, and resize items">Move/select</button>
+      <button class="tool-btn" data-tool="pan" type="button" title="Scroll around the PDF page">Scroll page</button>
+      <button class="tool-btn" data-tool="text" type="button" title="Add text">Add text</button>
+      <button class="tool-btn" data-tool="rect" type="button" title="Add rectangle">Rectangle</button>
+      <button class="tool-btn" data-tool="ellipse" type="button" title="Add circle or oval">Circle/oval</button>
+      <button class="tool-btn" data-tool="line" type="button" title="Add line">Line</button>
+      <button class="tool-btn" data-tool="draw" type="button" title="Draw freehand">Free draw</button>
+      <span class="tool-sep"></span>
+      <label class="toolbar-field" for="tool-color">
+        Color
+        <input type="color" id="tool-color" value="#2563eb">
+      </label>
+      <label class="toolbar-field compact" for="stroke-width">
+        Line width
+        <input type="number" id="stroke-width" value="3" min="1" max="30">
+      </label>
+      <label class="toolbar-field compact" for="text-size">
+        Text size
+        <input type="number" id="text-size" value="24" min="8" max="120">
+      </label>
+      <span class="tool-sep"></span>
+      <button id="delete-btn" class="tool-btn" type="button">Delete selected</button>
+      <button id="undo-btn" class="tool-btn" type="button">Undo</button>
+      <button id="redo-btn" class="tool-btn" type="button">Redo</button>
+      <button id="clear-page-btn" class="tool-btn" type="button">Clear page</button>
+    </div>
+    <input type="file" id="signature-input" accept="image/*" hidden>
+
+    <div id="signature-panel" class="signature-panel" hidden>
+      <div class="signature-preview-wrap">
+        <canvas id="signature-preview" width="320" height="140"></canvas>
+      </div>
+      <div class="signature-controls">
+        <label class="inline-check" for="remove-white">
+          <input type="checkbox" id="remove-white" checked>
+          Remove white background
+        </label>
+        <label for="white-threshold">White cleanup: <span id="threshold-label">245</span></label>
+        <input type="range" id="white-threshold" min="180" max="255" value="245">
+        <div class="row">
+          <button id="done-signature-btn" class="secondary" type="button">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="editor-shell">
+      <aside class="page-sidebar" aria-label="PDF pages">
+        <div class="sidebar-title">Pages</div>
+        <div id="page-list" class="page-list"></div>
+      </aside>
+
+      <section class="page-workspace" aria-label="Current PDF page">
+        <div class="page-controls">
+          <button id="prev-page-btn" class="secondary" type="button">Previous</button>
+          <span id="page-status" class="page-status">Page 1 of 1</span>
+          <button id="next-page-btn" class="secondary" type="button">Next</button>
+          <div class="zoom-controls" aria-label="PDF zoom controls">
+            <button id="zoom-out-btn" class="secondary" type="button">Zoom out</button>
+            <span id="zoom-label" class="zoom-label">100%</span>
+            <button id="zoom-in-btn" class="secondary" type="button">Zoom in</button>
+          </div>
+        </div>
+
+        <div class="canvas-scroller">
+          <div id="page-stage" class="page-stage">
+            <canvas id="pdf-canvas"></canvas>
+            <canvas id="edit-canvas"></canvas>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <h2>How to use this</h2>
+  <ul>
+    <li><strong>Load your PDF</strong> by dropping it onto the box or clicking to pick a file.</li>
+    <li><strong>Pick a page</strong> from the page list, then add text, shapes, drawing, or a signature.</li>
+    <li><strong>Use Select</strong> to move, resize, or delete items you added.</li>
+    <li><strong>On phones</strong>, use Pan when you need to scroll around the page, then switch back to Select or another tool.</li>
+    <li><strong>For signatures</strong>, upload once, adjust cleanup if needed, then place it on as many pages as you need.</li>
+    <li><strong>Download</strong> when you are done. The output is a new flattened PDF copy.</li>
+  </ul>
+
+  <h2>Support this tool</h2>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Donate on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/">All tools</a>
+    </div>
+    <div>
+      <a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a>
+      <a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" integrity="sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js" integrity="sha384-K2R7AzsJQPCDnhTlIEZr5pifaODgyx7XqbqkZMtLKzGJNo/Irtg9yU85F+1YwL8X" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="script.js"></script>
+</body>
+</html>

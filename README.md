@@ -40,6 +40,7 @@ Right now this repo hosts the hub and tool folders together. Tools can still be 
 | Password Generator | Secure random password generation in-browser. | `password-generator` | Live |
 | QR Generator | Create and download QR code PNG. | `qr-generator` | Live |
 | Diff Checker | Compare two text blocks with highlighted changes. | `diff-checker` | Live |
+| PDF Editor | Add text, shapes, drawings, and signatures to PDFs in-browser. | `pdf-editor` | Live |
 | PDF Merger | Merge multiple PDFs in-browser. | `pdf-merger` | Live |
 | SVG Optimizer | Basic SVG cleanup/minification. | `svg-optimizer` | Live |
 | Audio Trimmer | Trim audio clip and download as WAV. | `audio-trimmer` | Live |
