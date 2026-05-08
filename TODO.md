@@ -64,6 +64,7 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [ ] YouTube Looper deployed with hub
 
 ## Growth and operations backlog
+- [x] Dismissible bookmark hint (`bookmark-hint.js`, `localStorage` key `juankit_bookmark_hint_v1`)
 - [ ] Add "Did this help?" donation prompt after successful actions
 - [ ] Add per-tool privacy trust blurb
 - [ ] Verify privacy + terms pages across all tools

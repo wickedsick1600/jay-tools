@@ -88,7 +88,7 @@ const TOOLS = [
     shortTitle: 'Audio Trimmer',
     hint: 'Cut and fade audio',
     description: 'Cut and fade audio clips without installing anything.',
-    longDescription: 'Trim the start or end of an audio clip, add fade-in or fade-out, download the result. Runs fully in your browser.',
+    longDescription: 'Trim the start and end of a clip, preview it, and download as WAV or MP3. Runs fully in your browser.',
     category: 'audio',
     group: 'media',
     icon: 'audio',

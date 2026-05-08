@@ -60,6 +60,20 @@ This repository currently hosts the hub and multiple tool folders in one place.
 - No browser ES modules in tool pages; keep `file://` compatibility
 - Prefer broad browser support and simple UI behavior
 
+### Shared layout CSS (`style.css`)
+
+- **Canonical file:** root `style.css`. Several tool folders keep a **byte-identical copy** for deploys that only ship that folder; after changing global rules, update the root file and re-copy to those duplicates (or merge the same edits into extended sheets such as `image-editor/style.css`, `folder-tool/style.css`, and `prompt-enhancer/style.css`, which append tool-only rules after the shared block).
+- **`--maxw`:** default max width for `<main>` (often `800px`; individual tools may override via `:root` or page `<style>`).
+- **`--chrome-maxw`:** max width for `header.site-header .wrap` and `footer.site-footer .wrap` (`1180px`) so the header/footer bar matches the hub even when main content is narrower.
+
+### Bookmark hint script
+
+File: **`bookmark-hint.js`** at the publish root.
+
+- Optional, **dismissible** strip injected **above** `footer.site-footer` with plain bookmark instructions (keyboard shortcuts + browser menu).
+- **Persistence:** after **Dismiss**, `localStorage` key `juankit_bookmark_hint_v1` prevents the bar from showing again (private browsing or blocked storage disables the feature harmlessly).
+- **Wiring:** from the publish root, `<script src="bookmark-hint.js" defer></script>` before `</body>`; from a one-level-deep tool path, `<script src="../bookmark-hint.js" defer></script>`. Styles live at the end of `style.css` (`.bookmark-hint-bar`, etc.).
+
 ## Security and privacy model
 
 - Process user files in browser whenever possible
@@ -124,13 +138,16 @@ Donations and feedback baseline:
 
 1. Create the new service folder (or new repo if splitting immediately).
 2. Build with the shared suite conventions.
-3. Add legal pages (`privacy.html`, `terms.html`) and `netlify.toml` if needed.
-4. Register the service in `tools.js`.
-5. Deploy and verify links, metadata, and navigation.
-6. Add the service entry to this README service table.
+3. Match **hub chrome:** same `site-header` / `site-footer` structure; nav labels **All tools** (to `/` or `/#tools` on the hub), **Feedback**, **Support**; link root `style.css` (or keep a synced copy) so `--chrome-maxw` header/footer alignment stays consistent.
+4. Add legal pages (`privacy.html`, `terms.html`) and `netlify.toml` if needed.
+5. Register the service in `tools.js`.
+6. Load **`bookmark-hint.js`** before `</body>` (see [Bookmark hint script](#bookmark-hint-script)).
+7. Deploy and verify links, metadata, and navigation.
+8. Add the service entry to this README service table.
 
 ## Documentation map
 
 - `README.md` - project source of truth (this file)
 - `TODO.md` - actionable checklist (backlog, deployment tasks, launch tasks)
 - `DEPLOY.md` - operational deployment runbook and troubleshooting
+- `bookmark-hint.js` - site-wide dismissible bookmark reminder ([details](#bookmark-hint-script))

@@ -68,6 +68,8 @@ More services will be added over time using the same conventions.
 - **Mobile-first, single-column layouts.** Tap targets at least 44×44px.
 - **Palette: black, blue, white, green only.** No other accent colors.
 - Every tool should include a small **"How does this work?"** section in plain English.
+- **Header/footer match the hub:** same nav labels — **All tools** (to `https://juankit.com/` or `/`), **Feedback** (hub `/#feedback`), **Support** (hub `/#support`). Shared `style.css` uses **`--chrome-maxw`** for the header/footer inner width (wider bar) and **`--maxw`** for `<main>` (narrower content) so chrome lines up with the hub.
+- **Optional bookmark reminder:** the central monorepo includes `bookmark-hint.js` — a dismissible strip above the footer. New pages should load it before `</body>` (`bookmark-hint.js` from site root, or `../bookmark-hint.js` one folder deep). After dismiss, `localStorage` key `juankit_bookmark_hint_v1` hides it.
 
 ## What services DO NOT do
 
@@ -95,7 +97,7 @@ Every service has:
 
 1. Create a new GitHub repo.
 2. Copy into it: `CLAUDE.md`, `GLOBAL_CONTEXT.md`, `style.css`, shared header/footer, privacy + terms templates.
-3. Write `index.html` using the shared header/footer/CSS.
+3. Write `index.html` using the shared header/footer/CSS, and load **`bookmark-hint.js`** before `</body>` (same pattern as the hub monorepo).
 4. Add `privacy.html`, `terms.html`, `README.md`, `TODO.md`, `netlify.toml`.
 5. Add the service to the hub's `tools.js` registry so it shows up in search and the right category tab.
 6. Deploy to Netlify, then add a CNAME for `[tool].juankit.com`.

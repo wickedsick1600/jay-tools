@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Audio Trimmer — Cut Audio in Browser | Juankit</title>
-<meta name="description" content="Trim audio start/end and download a WAV clip in your browser.">
+<meta name="description" content="Trim audio start/end and download as WAV or MP3 in your browser.">
 <meta name="theme-color" content="#0a0f1a">
 <link rel="canonical" href="https://juankit.com/audio-trimmer/">
 <meta property="og:url" content="https://juankit.com/audio-trimmer/">
@@ -13,22 +13,155 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="index, follow">
 <link rel="stylesheet" href="../style.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Audio Trimmer — Cut Audio in Browser","url":"https://juankit.com/audio-trimmer/","description":"Trim audio start/end and download a WAV clip in your browser.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+  .trim-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+    margin-top: 4px;
+  }
+  .trim-fields label { margin-top: 8px; }
+  .trim-fields input,
+  #export-format {
+    font-size: 16px;
+  }
+  .audio-timeline-wrap { margin: 8px 0 4px; }
+  .audio-timeline-wrap > label { margin-top: 8px; }
+  .audio-timeline {
+    position: relative;
+    height: 44px;
+    margin: 6px 0 14px;
+    touch-action: none;
+    user-select: none;
+  }
+  .audio-timeline__track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 8px;
+    border-radius: 4px;
+    background: var(--border-strong);
+  }
+  .audio-timeline__region {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 8px;
+    border-radius: 4px;
+    background: var(--accent);
+    pointer-events: none;
+  }
+  .audio-timeline__playhead {
+    position: absolute;
+    top: 50%;
+    width: 3px;
+    height: 22px;
+    margin-left: -1.5px;
+    transform: translateY(-50%);
+    border-radius: 2px;
+    background: var(--success);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 120ms ease;
+    z-index: 2;
+  }
+  .audio-timeline__playhead.is-visible { opacity: 1; }
+  .audio-timeline__handle {
+    position: absolute;
+    top: 50%;
+    width: 16px;
+    height: 28px;
+    margin-left: -8px;
+    transform: translateY(-50%);
+    border-radius: 4px;
+    border: 2px solid var(--white);
+    background: var(--accent);
+    box-shadow: var(--shadow-sm);
+    cursor: grab;
+    padding: 0;
+    z-index: 3;
+    touch-action: none;
+  }
+  .audio-timeline__handle:active { cursor: grabbing; }
+  .audio-timeline__handle--end { background: var(--accent-hover); }
+  .audio-timeline.is-disabled { opacity: 0.45; pointer-events: none; }
+  .trim-actions.row { margin-top: 12px; }
+  .time-format-hint { margin-top: 8px; margin-bottom: 0; }
+  @media (max-width: 560px) {
+    .trim-fields {
+      grid-template-columns: 1fr;
+    }
+    .trim-actions.row {
+      flex-direction: column;
+    }
+    .trim-actions.row button {
+      width: 100%;
+    }
+    .audio-timeline {
+      height: 52px;
+    }
+    .audio-timeline__track {
+      height: 10px;
+    }
+    .audio-timeline__region {
+      height: 10px;
+    }
+    .audio-timeline__handle {
+      width: 22px;
+      height: 40px;
+      min-width: 44px;
+      min-height: 44px;
+      margin-left: -22px;
+    }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Audio Trimmer — Cut Audio in Browser","url":"https://juankit.com/audio-trimmer/","description":"Trim audio start/end and download as WAV or MP3 in your browser.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 <header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>Juankit</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#support">Support</a></nav></div></header>
 <main>
-  <section class="hero"><span class="tag">Free · Runs in your browser</span><h1>Audio Trimmer</h1><p>Cut an audio clip by start/end time and download as WAV.</p></section>
+  <section class="hero"><span class="tag">Free · Runs in your browser</span><h1>Audio Trimmer</h1><p>Cut an audio clip by start/end time and download as WAV or MP3.</p></section>
   <label for="file">Audio file</label>
   <input id="file" type="file" accept="audio/*">
-  <label for="start">Start (seconds)</label>
-  <input id="start" type="number" min="0" step="0.1" value="0">
-  <label for="end">End (seconds)</label>
-  <input id="end" type="number" min="0" step="0.1" value="0">
-  <div class="row"><button id="trim-btn" class="success">Trim and download</button></div>
+  <div class="trim-fields">
+    <div>
+      <label for="start">Start (mm:ss)</label>
+      <input id="start" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="0:00" value="0:00" aria-describedby="time-format-hint">
+    </div>
+    <div>
+      <label for="end">End (mm:ss)</label>
+      <input id="end" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="0:00" value="0:00" aria-describedby="time-format-hint">
+    </div>
+  </div>
+  <p id="time-format-hint" class="muted time-format-hint">Use minutes and seconds, for example <code>1:30</code> for one minute thirty seconds, or <code>0:05.5</code> for five and a half seconds.</p>
+  <div class="audio-timeline-wrap">
+    <label>Trim on timeline</label>
+    <div id="timeline" class="audio-timeline is-disabled" aria-label="Trim range and playback">
+      <div class="audio-timeline__track"></div>
+      <div id="timeline-region" class="audio-timeline__region"></div>
+      <div id="timeline-playhead" class="audio-timeline__playhead" aria-hidden="true"></div>
+      <button type="button" class="audio-timeline__handle audio-timeline__handle--start" id="handle-start" aria-label="Drag to set trim start"></button>
+      <button type="button" class="audio-timeline__handle audio-timeline__handle--end" id="handle-end" aria-label="Drag to set trim end"></button>
+    </div>
+  </div>
+  <div class="muted" id="selection-info"></div>
+  <label for="export-format">Download format</label>
+  <select id="export-format">
+    <option value="wav">WAV (lossless, larger file)</option>
+    <option value="mp3">MP3 (128 kbps, smaller file)</option>
+  </select>
+  <div class="row trim-actions">
+    <button id="play-pause-btn" type="button" disabled aria-label="Play selection">Play</button>
+    <button id="reset-btn" type="button" class="secondary">Reset trim</button>
+    <button id="trim-btn" type="button" class="success">Trim and download</button>
+  </div>
   <div id="msg" class="muted" role="status" aria-live="polite"></div>
 </main>
 <footer class="site-footer"><div class="wrap"><div><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/">All tools</a></div><div><a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a><a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a></div></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js" integrity="sha384-xuasJXVcyv3hZq0eYpelEkBC8l4yufatZXDsKuyCU2rqfhDCb+ftuE/mSfZAteiK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="script.js"></script>
+<script src="../bookmark-hint.js" defer></script>
 </body>
 </html>
