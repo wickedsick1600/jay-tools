@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Free Image Editor — Draw, Annotate, Resize (No Upload) | Juankit</title>
-<meta name="description" content="A free online image editor. Add shapes, text, and drawings in any color and font. Resize and compress before downloading. Your files never leave your device.">
+<title>Free Image Editor — Crop, Draw, Annotate, Resize (No Upload) | Juankit</title>
+<meta name="description" content="A free online image editor. Crop, add shapes, text, and drawings in any color and font. Resize and compress before downloading. Your files never leave your device.">
 <meta property="og:title" content="Free Image Editor — Juankit">
-<meta property="og:description" content="Draw, annotate, resize, and compress images in your browser.">
+<meta property="og:description" content="Crop, draw, annotate, resize, and compress images in your browser.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0a0f1a">
 <link rel="canonical" href="https://juankit.com/image-editor/">
@@ -124,7 +124,7 @@
   }
   .stats { font-size: 13px; color: var(--fg-muted); margin-top: 8px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free Image Editor — Draw, Annotate, Resize (No Upload)","url":"https://juankit.com/image-editor/","description":"A free online image editor. Add shapes, text, and drawings in any color and font. Resize and compress before downloading. Your files never leave your device.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free Image Editor — Crop, Draw, Annotate, Resize (No Upload)","url":"https://juankit.com/image-editor/","description":"A free online image editor. Crop, add shapes, text, and drawings in any color and font. Resize and compress before downloading. Your files never leave your device.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 
@@ -146,7 +146,7 @@
   <section class="hero">
     <span class="tag">Free · Runs in your browser</span>
     <h1>Image Editor</h1>
-    <p>Add shapes, text, and drawings to any image. Resize and compress before downloading. Everything happens on your own device — your files never leave your browser.</p>
+    <p>Add shapes, text, and drawings to any image. <strong>Crop</strong> to a rectangle, then resize and compress before downloading. Everything happens on your own device — your files never leave your browser.</p>
   </section>
 
   <div class="notice green">
@@ -185,6 +185,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.44 2.56 5.66 5.66-11.82 11.82-5.66 1.41 1.41-5.66Z"/><path d="m14.03 3.97 5.66 5.66"/></svg>
         Draw
       </button>
+      <button class="tool-btn" data-tool="crop" title="Crop — drag to select region, then Apply crop">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2H3v4M6 22H3v-4M18 2h3v4M18 22h3v-4"/><path d="M6 6h12v12H6z"/></svg>
+        Crop
+      </button>
 
       <span class="tool-sep"></span>
 
@@ -209,6 +213,12 @@
       <button class="tool-btn" id="redo-btn" title="Redo">
         Redo
       </button>
+    </div>
+
+    <div class="text-options" id="crop-actions" aria-live="polite">
+      <span class="muted" style="flex:1;min-width:200px">Drag a rectangle over the part you want to keep. Use <strong>Select</strong> to move or drag the corner handles to resize, then <strong>Apply crop</strong>. Everything outside the box is removed (including drawings there).</span>
+      <button type="button" id="apply-crop-btn" class="success" disabled>Apply crop</button>
+      <button type="button" id="cancel-crop-btn" class="secondary">Cancel</button>
     </div>
 
     <div class="text-options show" id="image-adjustments">
@@ -289,8 +299,9 @@
   <h2>How to use this</h2>
   <ul>
     <li><strong>Load your image</strong> by dropping it onto the box above or clicking to pick a file.</li>
-    <li><strong>Pick a tool</strong> from the toolbar: Rectangle, Circle, Line, Text, or Free Draw.</li>
-    <li><strong>Click and drag</strong> on the image to draw. Use <strong>Select</strong> to move, resize, or rotate things you've added.</li>
+    <li><strong>Pick a tool</strong> from the toolbar: Rectangle, Circle, Line, Text, Free Draw, or <strong>Crop</strong>.</li>
+    <li><strong>Crop</strong>: choose Crop and drag a box, or use <strong>Select</strong> to move and resize the box like any shape, then <strong>Apply crop</strong>. Cancel or Esc clears the box.</li>
+    <li><strong>Click and drag</strong> on the image to draw. Use <strong>Select</strong> to move, resize, or rotate things you've added (the crop box can be moved and resized but not rotated).</li>
     <li><strong>Change color</strong> using the color picker on the toolbar.</li>
     <li><strong>For text</strong>, pick a font and size from the text options, then click on the image to place text.</li>
     <li><strong>Download</strong> when you're done — you can resize and choose format/quality first. With the editor focused (not typing in a field), use <strong>Ctrl+S</strong> (Windows) or <strong>Cmd+S</strong> (Mac) to download with your current settings.</li>

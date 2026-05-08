@@ -49,7 +49,7 @@ Set **`juankit.com`** as the **primary domain** so canonical URLs match [sitemap
 
 **Optional (SEO):** In **Domain management**, also add your old `*.netlify.app` host as a domain alias, then add a Netlify **redirect rule** so `https://YOUR-OLD-SITE.netlify.app/*` → `https://juankit.com/:splat` (301). That consolidates backlinks from earlier deployments.
 
-**Social preview:** Add a static `og-image.png` (1200×630) at the **publish root** so `https://juankit.com/og-image.png` resolves. The hub already references it in `og:image` / `twitter:image`.
+**Social preview:** Add a static `og-image.jpg` (1200×630) at the **publish root** so `https://juankit.com/og-image.jpg` resolves. The hub already references it in `og:image` / `twitter:image`.
 
 Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS resolving.
 

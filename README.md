@@ -18,7 +18,7 @@ Juankit is a suite of free, focused web utilities built for speed and privacy.
 - Tagline: Pick a utility, finish the job — free browser tools that keep files on your device.
 - Voice: Plain, non-technical
 - Palette: black, blue, white, green
-- Canonical site URL: `https://juankit.com/` (apex; add `og-image.png` at repo root for social previews — already referenced in hub meta tags)
+- Canonical site URL: `https://juankit.com/` (apex; add `og-image.jpg` at repo root for social previews — already referenced in hub meta tags)
 
 ## Repository structure
 
