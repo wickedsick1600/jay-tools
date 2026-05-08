@@ -44,12 +44,6 @@
 </script>
 <link rel="stylesheet" href="style.css">
 <style>
-  header.site-header .wrap,
-  footer.site-footer .wrap {
-    max-width: 1180px;
-  }
-
-  header.site-header a.brand,
   .home-main h1,
   .home-main h2,
   .home-main h3,
@@ -190,6 +184,10 @@
     border: 1px solid rgba(16, 185, 129, 0.25);
     border-radius: var(--radius);
     background: var(--black);
+  }
+
+  #faq-heading {
+    color: white;
   }
 
   .faq-section h2 {
@@ -675,35 +673,6 @@
   }
 
   @media (max-width: 640px) {
-    header.site-header .wrap {
-      display: block;
-    }
-
-    header.site-header nav {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6px;
-      margin-top: 10px;
-      width: 100%;
-    }
-
-    header.site-header a.brand {
-      font-size: clamp(1rem, 0.96rem + 0.6vw, 1.0625rem);
-    }
-
-    header.site-header nav a {
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 44px;
-      padding-left: 6px;
-      padding-right: 6px;
-      font-size: clamp(0.8125rem, 0.78rem + 0.35vw, 0.9375rem);
-      text-align: center;
-    }
-
     .home-main {
       padding-left: 14px;
       padding-right: 14px;
@@ -767,7 +736,7 @@
       Juankit
     </a>
     <nav>
-      <a href="#tools">Tools</a>
+      <a href="#tools">All tools</a>
       <a href="#feedback">Feedback</a>
       <a class="cta" href="#support">Support</a>
     </nav>
@@ -918,5 +887,6 @@
 
 <script src="tools.js"></script>
 <script src="main.js"></script>
+<script src="bookmark-hint.js" defer></script>
 </body>
 </html>
