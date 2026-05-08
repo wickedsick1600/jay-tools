@@ -30,7 +30,7 @@ Right now this repo hosts the hub and tool folders together. Tools can still be 
 | Hub | Searchable homepage and tool registry. | `/` | Live |
 | Folder Creator | Visual builder + paste import (Excel/Word/text), ZIP + ASCII output. | `folder-tool` | Live |
 | Image Editor | Shapes/text/draw + rotate/flip + adjustments + undo/redo + export guard. | `image-editor` | Live |
-| Prompt Enhancer | Gemini-backed prompt rewrite + local recent history. | `prompt-enhancer` | Live |
+| Prompt Enhancer | OpenAI-compatible API prompt rewrite + local recent history. | `prompt-enhancer` | Live |
 | Stopwatch with Splits | Split tracking with notes and copyable timecodes. | `stopwatch` | Live |
 | Pseudo Word Generator | Generate pronounceable fake words. | `pseudo-word` | Live |
 | JSON Formatter | Format/minify/validate JSON. | `json-formatter` | Live |
@@ -49,8 +49,22 @@ Right now this repo hosts the hub and tool folders together. Tools can still be 
 
 - Single repo deployed to Netlify (`publish = "."`).
 - Static HTML/CSS/JS by default; no build step.
-- Server logic only where needed via Netlify functions (`prompt-enhancer/netlify/functions/enhance.js`).
+- Server logic only where needed via Netlify functions (`prompt-enhancer/netlify/functions/enhance.js`, OpenAI-compatible Chat Completions).
 - Domain migration to `devjaybusiness.com` is still pending.
+
+## Prompt Enhancer env vars (baseline)
+
+Set these in local `.env` and Netlify environment variables:
+
+- `OPENAI_API_KEY` (required)
+- `OPENAI_MODEL=gpt-4o-mini` (recommended explicit default)
+- `GLOBAL_DAILY_LIMIT=100` (recommended baseline cost cap)
+
+Optional hardening later:
+
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
+- `TURNSTILE_SECRET_KEY`
 
 ## Stack conventions
 
@@ -122,7 +136,7 @@ Push to `main` to auto-deploy on Netlify.
 1. Create a new GitHub repo.
 2. Copy in shared baseline files (including this README context conventions).
 3. Build `index.html` with shared layout conventions.
-4. Add `privacy.html`, `terms.html`, `README.md`, `TODO.md`, and `netlify.toml`.
+4. Add `privacy.html`, `terms.html`, and `netlify.toml`.
 5. Register the new service in the hub `tools.js` list for discovery.
 6. Deploy to Netlify and attach `[tool].devjaybusiness.com`.
 7. Update the services table in this README.

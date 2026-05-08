@@ -55,14 +55,22 @@ Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS 
 4. Set recipient: `devjaybusiness@gmail.com`. Save.
 5. Go back to the live site, submit a test message. Within ~30 seconds you should get it in Gmail.
 
-### 6. Add `GEMINI_API_KEY` for the Prompt Enhancer
+### 6. Add `OPENAI_API_KEY` for the Prompt Enhancer
 
-1. In [Google AI Studio](https://aistudio.google.com/apikey), sign in with your Gmail, create an API key. Copy it.
+1. Create an API key in the [OpenAI dashboard (API keys)](https://platform.openai.com/api-keys). Copy it. (**`https://api.openai.com/v1` is not a website** — it’s the API base your server calls; opening it in a browser usually 404s.)
 2. Netlify dashboard → your site → **Site configuration** → **Environment variables** → **Add a variable**.
-3. Key: `GEMINI_API_KEY`. Value: your key. Scope: **All contexts** (production + deploy previews). Save.
-4. Trigger a redeploy: **Deploys** → **Trigger deploy** → **Deploy site**. The serverless function at `prompt-enhancer/netlify/functions/enhance.js` now has access to the key.
-5. Visit `/prompt-enhancer/`, type a rough prompt, click Enhance. Should work.
-6. View page source (Ctrl+U) and Ctrl+F for `GEMINI` and the first few characters of your key. **Neither should appear.** If either does, stop and investigate before publicizing the URL.
+3. Key: `OPENAI_API_KEY`. Value: your key. Scope: **All contexts** (production + deploy previews). Save.
+4. Baseline recommended settings:
+   - `OPENAI_MODEL=gpt-4o-mini`
+   - `GLOBAL_DAILY_LIMIT=100` (or your preferred cap)
+5. Optional provider settings:
+   - `OPENAI_API_BASE` for OpenAI-compatible providers (example Groq: `https://api.groq.com/openai/v1`)
+6. Optional abuse-protection settings:
+   - `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (distributed rate limit)
+   - `TURNSTILE_SECRET_KEY` (human verification on function)
+7. Trigger a redeploy: **Deploys** → **Trigger deploy** → **Deploy site**. The serverless function at `prompt-enhancer/netlify/functions/enhance.js` now has access to the key.
+8. Visit `/prompt-enhancer/`, type a rough prompt, click Enhance. Should work.
+9. View page source (Ctrl+U) and Ctrl+F for the first few characters of your key. **It must not appear.** If it does, stop and investigate before publicizing the URL.
 
 ### 7. Final checks before telling anyone
 
@@ -106,7 +114,7 @@ Target layout:
 
 ### If the tool has serverless functions (currently just Prompt Enhancer)
 
-Add `GEMINI_API_KEY` as an environment variable on the **new** Netlify site too (each Netlify site has its own env vars).
+Add `OPENAI_API_KEY` as an environment variable on the **new** Netlify site too (each Netlify site has its own env vars).
 
 ---
 
@@ -129,7 +137,7 @@ Run a test donation with a second account (or friend) of $1–2 to confirm the w
 - Confirm the notification email is `devjaybusiness@gmail.com` in Netlify Forms settings.
 
 **"Prompt Enhancer returns 500 error."**
-- 90% of the time this means `GEMINI_API_KEY` isn't set on the Netlify site, or it's set but you haven't redeployed after adding it. Trigger a redeploy.
+- 90% of the time this means `OPENAI_API_KEY` isn't set on the Netlify site, or it's set but you haven't redeployed after adding it. Trigger a redeploy.
 - Check function logs: Netlify → **Functions** → `enhance` → **Function log**.
 
 **"Images on Bulk Image Resizer process but the .zip is empty."**

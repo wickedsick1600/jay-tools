@@ -43,7 +43,7 @@ When you peel a tool into its own repo:
 ## Peel tools into independent repos + subdomains
 - [ ] image-editor → own repo + `imageeditor.devjaybusiness.com`
 - [ ] folder-tool → own repo + `foldercreator.devjaybusiness.com`
-- [ ] prompt-enhancer → own repo + `promptenhancer.devjaybusiness.com` (plus `GEMINI_API_KEY` env var)
+- [ ] prompt-enhancer → own repo + `promptenhancer.devjaybusiness.com` (plus `OPENAI_API_KEY` env var)
 - [ ] After each move: update that tool's `url` in [tools.js](tools.js) to the full subdomain URL
 
 ## Launch polish
@@ -103,12 +103,14 @@ Treat this as the master status board for all services.
 - [x] MVP implementation
 - [x] DevJay rebrand + plain-language legal pages
 - [x] Local recent history (last 5) + extra target profiles
-- [ ] Get a Google AI Studio API key (free tier) from your Gmail account
-- [ ] Add `GEMINI_API_KEY` to the prompt-enhancer Netlify site env vars
+- [ ] Get OpenAI API key from `platform.openai.com/api-keys`
+- [ ] Add `OPENAI_API_KEY` to the prompt-enhancer Netlify site env vars
+- [ ] Set `OPENAI_MODEL=gpt-4o-mini` in prompt-enhancer env vars
+- [ ] Set `GLOBAL_DAILY_LIMIT` in prompt-enhancer env vars (baseline cap)
 - [ ] Deployed independently to Netlify
 - [ ] Subdomain live
 - [ ] Rate limiting tested (10 requests / IP / hour by default)
-- [ ] Verify key is NOT in client source (Ctrl+F page source for `GEMINI` / key prefix)
+- [ ] Verify key is NOT in client source (Ctrl+F page source for API key prefix)
 
 ### Cross-cutting
 - [ ] Ko-fi account live and test donation received

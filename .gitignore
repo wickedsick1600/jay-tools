@@ -1,0 +1,7 @@
+# Local Netlify folder
+.netlify
+
+# API keys (netlify dev loads .env; never commit)
+.env
+.env.*
+!.env.example

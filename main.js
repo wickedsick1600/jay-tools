@@ -225,7 +225,7 @@ function renderHeroShortcuts() {
   const shortcuts = liveTools()
     .filter((tool) => tool.featured)
     .sort((a, b) => groupSortValue(a) - groupSortValue(b))
-    .slice(0, 4);
+    .slice(0, 6);
 
   for (const tool of shortcuts) {
     const link = document.createElement('a');
