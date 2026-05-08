@@ -134,6 +134,34 @@ dropZone.addEventListener('drop', (e) => {
 });
 fileInput.addEventListener('change', (e) => { if (e.target.files[0]) loadFile(e.target.files[0]); });
 
+document.addEventListener('paste', (e) => {
+  if (editor.classList.contains('active') && canvas) {
+    const active = canvas.getActiveObject();
+    if (active?.isEditing) return;
+  }
+  const tag = document.activeElement?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+  const items = e.clipboardData?.items || [];
+  let file = null;
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    if (it.kind === 'file' && it.type.startsWith('image/')) {
+      file = it.getAsFile();
+      break;
+    }
+  }
+  if (!file && e.clipboardData?.files?.length) {
+    const f = e.clipboardData.files[0];
+    if (f.type.startsWith('image/')) file = f;
+  }
+  if (file) {
+    e.preventDefault();
+    loadFile(file);
+    flash('Image pasted from clipboard.');
+  }
+});
+
 function loadFile(file) {
   if (!file.type.startsWith('image/')) { flash('That file is not an image.', true); return; }
   originalFile = file;
@@ -389,6 +417,12 @@ document.addEventListener('keydown', (e) => {
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
   const obj = canvas.getActiveObject();
   if (obj?.isEditing) return;
+  const saveMod = e.ctrlKey || e.metaKey;
+  if (saveMod && (e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    if (!downloadBtn.disabled) downloadBtn.click();
+    return;
+  }
   if (e.key === 'Delete' || e.key === 'Backspace') {
     deleteBtn.click();
     e.preventDefault();

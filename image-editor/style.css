@@ -425,8 +425,223 @@ p code, li code {
   header.site-header .wrap { padding: 12px 16px; }
   header.site-header nav a { padding: 6px 10px; }
   footer.site-footer .wrap { padding: 16px; }
+
+  .toolbar {
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .tool-btn {
+    min-height: 44px;
+  }
+
+  .tool-sep {
+    display: none;
+  }
+
+  .text-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .canvas-wrap {
+    padding: 8px;
+  }
+
+  .export-actions {
+    flex-direction: column;
+  }
+
+  .export-actions button {
+    width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
+}
+
+/* Image editor specific helpers moved from inline styles */
+
+:root {
+  --maxw: 960px;
+}
+
+#drop-zone {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--fg-muted);
+  background: var(--white);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+#drop-zone:hover,
+#drop-zone.dragover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+#drop-zone strong {
+  color: var(--fg);
+  display: block;
+  font-size: 17px;
+  margin-bottom: 4px;
+}
+
+#editor {
+  display: none;
+}
+
+#editor.active {
+  display: block;
+}
+
+.toolbar {
+  background: var(--black);
+  border-radius: var(--radius);
+  padding: 10px;
+  margin: 14px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.tool-btn {
+  background: transparent;
+  color: #cbd5e1;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  min-height: 40px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background var(--transition), color var(--transition);
+}
+
+.tool-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--white);
+}
+
+.tool-btn.active {
+  background: var(--accent);
+  color: var(--white);
+  border-color: var(--accent);
+}
+
+.tool-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.tool-sep {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0 4px;
+}
+
+.color-input {
+  width: 40px;
+  min-height: 40px;
+  min-width: 40px;
+  padding: 2px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.toolbar-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.text-options {
+  display: none;
+  background: var(--off-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.text-options.show {
+  display: flex;
+}
+
+.text-options label {
+  margin: 0;
+  font-size: 13px;
+}
+
+.text-options select,
+.text-options input[type="number"] {
+  min-height: 36px;
+  padding: 6px 10px;
+  width: auto;
+}
+
+.text-options select {
+  min-width: 140px;
+}
+
+.text-options input[type="number"] {
+  width: 70px;
+}
+
+.canvas-wrap {
+  background: var(--off-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  overflow: auto;
+  max-width: 100%;
+}
+
+.canvas-wrap canvas {
+  max-width: 100%;
+}
+
+.canvas-wrap .canvas-container {
+  max-width: 100%;
+}
+
+.export-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+@media (max-width: 520px) {
+  .export-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stats {
+  font-size: 13px;
+  color: var(--fg-muted);
+  margin-top: 8px;
+}
+
+.lock-ratio-label {
+  margin-top: 12px;
 }

@@ -154,7 +154,7 @@
   </div>
 
   <div id="drop-zone" tabindex="0" role="button" aria-label="Upload an image">
-    <strong>Drop an image here, or click to pick one</strong>
+    <strong>Drop an image here, click to pick one, or paste a screenshot with Ctrl+V</strong>
     <div class="muted">JPEG, PNG, or WebP. Any size.</div>
     <input type="file" id="file-input" accept="image/*" hidden>
   </div>
@@ -188,7 +188,7 @@
 
       <span class="tool-sep"></span>
 
-      <label title="Fill color" style="display:flex;align-items:center;gap:4px;margin:0;color:#cbd5e1;font-size:13px;">
+      <label title="Fill color" class="toolbar-label">
         <span>Color</span>
         <input type="color" id="fill-color" class="color-input" value="#2563eb">
       </label>
@@ -263,7 +263,7 @@
         <input type="number" id="out-height" min="1" step="1">
       </div>
     </div>
-    <label style="margin-top:12px;">
+    <label class="lock-ratio-label">
       <input type="checkbox" id="lock-ratio" checked> Lock aspect ratio
     </label>
 
@@ -277,7 +277,7 @@
       <option value="image/webp">WebP (modern, small file)</option>
     </select>
 
-    <div class="row" style="margin-top:16px;">
+    <div class="row export-actions">
       <button id="download-btn" class="success">Download</button>
       <button id="reset-btn" class="secondary">Load different image</button>
     </div>
@@ -293,7 +293,7 @@
     <li><strong>Click and drag</strong> on the image to draw. Use <strong>Select</strong> to move, resize, or rotate things you've added.</li>
     <li><strong>Change color</strong> using the color picker on the toolbar.</li>
     <li><strong>For text</strong>, pick a font and size from the text options, then click on the image to place text.</li>
-    <li><strong>Download</strong> when you're done — you can resize and choose format/quality first.</li>
+    <li><strong>Download</strong> when you're done — you can resize and choose format/quality first. With the editor focused (not typing in a field), use <strong>Ctrl+S</strong> (Windows) or <strong>Cmd+S</strong> (Mac) to download with your current settings.</li>
   </ul>
 
   <h2>Support this tool</h2>
