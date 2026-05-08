@@ -65,10 +65,10 @@ If the user's proposed approach has a clear problem or a meaningfully better alt
 
 Every tool page MUST include, in `<head>`:
 
-- `<title>` — keyword-rich, under 60 chars, ends with `| DevJay Tools`.
+- `<title>` — keyword-rich, under 60 chars, ends with `| Juankit`.
 - `<meta name="description">` — plain-English value prop, 140–160 chars. Must include the primary keyword and a differentiator ("free", "no upload", "in browser").
-- `<link rel="canonical" href="https://jaytools.netlify.app/{tool}/">` — absolute URL, trailing slash, matches sitemap.
-- `<meta property="og:title">`, `og:description`, `og:url`, `og:type="website"`, `og:site_name="DevJay Tools"`.
+- `<link rel="canonical" href="https://juankit.com/{tool}/">` — absolute URL, trailing slash, matches sitemap.
+- `<meta property="og:title">`, `og:description`, `og:url`, `og:type="website"`, `og:site_name="Juankit"`.
 - `<meta name="twitter:card" content="summary_large_image">`.
 - `<meta name="robots" content="index, follow">`.
 - `<script type="application/ld+json">` with `SoftwareApplication` schema (name, url, description, `applicationCategory: "UtilitiesApplication"`, `operatingSystem: "Any (browser)"`, `offers` with price `"0"`).

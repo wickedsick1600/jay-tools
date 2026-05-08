@@ -3,19 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Free AI Prompt Enhancer — Turn Rough Ideas into Polished Prompts | DevJay Tools</title>
+<title>Free AI Prompt Enhancer — Turn Rough Ideas into Polished Prompts | Juankit</title>
 <meta name="description" content="Paste a rough prompt idea and get back a detailed, structured prompt ready for ChatGPT, Midjourney, Claude, or any AI tool. Free, no signup.">
-<meta property="og:title" content="Free AI Prompt Enhancer — DevJay Tools">
+<meta property="og:title" content="Free AI Prompt Enhancer — Juankit">
 <meta property="og:description" content="Turn a rough prompt into a polished one for any AI tool.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0a0f1a">
-<link rel="canonical" href="https://jaytools.netlify.app/prompt-enhancer/">
-<meta property="og:url" content="https://jaytools.netlify.app/prompt-enhancer/">
-<meta property="og:site_name" content="DevJay Tools">
+<link rel="canonical" href="https://juankit.com/prompt-enhancer/">
+<meta property="og:url" content="https://juankit.com/prompt-enhancer/">
+<meta property="og:site_name" content="Juankit">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="index, follow">
+<meta name="turnstile-site-key" content="">
 <link rel="stylesheet" href="style.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free AI Prompt Enhancer — Turn Rough Ideas into Polished Prompts","url":"https://jaytools.netlify.app/prompt-enhancer/","description":"Paste a rough prompt idea and get back a detailed, structured prompt ready for ChatGPT, Midjourney, Claude, or any AI tool. Free, no signup.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free AI Prompt Enhancer — Turn Rough Ideas into Polished Prompts","url":"https://juankit.com/prompt-enhancer/","description":"Paste a rough prompt idea and get back a detailed, structured prompt ready for ChatGPT, Midjourney, Claude, or any AI tool. Free, no signup.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 
@@ -23,79 +24,110 @@
   <div class="wrap">
     <a class="brand" href="/">
       <span class="dot"></span>
-      DevJay Tools
+      Juankit
     </a>
     <nav>
       <a href="/">All tools</a>
       <a href="/#feedback">Feedback</a>
-      <a class="cta" href="/#donate">Donate</a>
+      <a class="cta" href="/#support">Support</a>
     </nav>
   </div>
 </header>
 
-<main>
+<main class="chat-page">
   <section class="hero">
     <span class="tag">Free · AI-powered</span>
     <h1>Prompt Enhancer</h1>
-    <p>Type a rough idea. Get back a detailed, well-structured prompt you can paste straight into ChatGPT, Midjourney, Claude, or any other AI tool.</p>
+    <p>Chat with the enhancer. Type a rough idea and get a polished prompt you can paste into ChatGPT, Claude, Midjourney, or any other AI tool.</p>
   </section>
 
   <div class="notice">
-    <strong>Heads up:</strong> your prompt is sent to Google Gemini to be rewritten. Don't paste anything confidential, private, or sensitive.
+    <strong>Heads up:</strong> your text is sent to a configured AI API through a server function. Avoid confidential, private, or sensitive data.
   </div>
 
-  <label for="prompt">Your rough idea</label>
-  <textarea id="prompt" spellcheck="false" placeholder="e.g. a futuristic city at night"></textarea>
+  <section class="chat-layout" aria-label="Prompt enhancer chat interface">
+    <aside class="history-panel card" aria-label="Recent prompts">
+      <div class="history-head">
+        <h2>Recent prompts</h2>
+        <button id="clear-history-btn" type="button" class="secondary">Clear</button>
+      </div>
+      <p class="muted">Saved locally on your device (last 5).</p>
+      <div id="history-list"></div>
+    </aside>
 
-  <label for="target">Which AI tool will you use this prompt with?</label>
-  <select id="target">
-    <option value="chatgpt">ChatGPT / GPT-4 (text)</option>
-    <option value="midjourney">Midjourney (image)</option>
-    <option value="stable-diffusion">Stable Diffusion (image)</option>
-    <option value="claude">Claude (text)</option>
-    <option value="gemini">Gemini (text)</option>
-    <option value="linkedin-post">LinkedIn post</option>
-    <option value="email-draft">Professional email draft</option>
-    <option value="youtube-script">YouTube script outline</option>
-    <option value="generic">Something else / not sure</option>
-  </select>
+    <section class="chat-panel card">
+      <div id="chat-thread" class="chat-thread" aria-live="polite" aria-label="Conversation thread"></div>
 
-  <div class="row" style="margin-top:16px;">
-    <button id="enhance-btn" class="success">Enhance prompt</button>
-  </div>
+      <div class="quick-targets" aria-label="Quick target selection">
+        <button type="button" class="chip" data-target-chip="chatgpt">ChatGPT</button>
+        <button type="button" class="chip" data-target-chip="claude">Claude</button>
+        <button type="button" class="chip" data-target-chip="midjourney">Midjourney</button>
+        <button type="button" class="chip" data-target-chip="generic">Not sure</button>
+      </div>
 
-  <div id="msg" class="muted" role="status" aria-live="polite"></div>
+      <label for="target">Target AI tool</label>
+      <select id="target">
+        <option value="chatgpt">ChatGPT / GPT-4 (text)</option>
+        <option value="midjourney">Midjourney (image)</option>
+        <option value="stable-diffusion">Stable Diffusion (image)</option>
+        <option value="claude">Claude (text)</option>
+        <option value="gemini">Gemini (text)</option>
+        <option value="linkedin-post">LinkedIn post</option>
+        <option value="email-draft">Professional email draft</option>
+        <option value="youtube-script">YouTube script outline</option>
+        <option value="generic">Something else / not sure</option>
+      </select>
 
-  <div id="output-wrap" style="display:none;">
-    <label for="output">Your polished prompt</label>
-    <textarea id="output" spellcheck="false" readonly></textarea>
+      <label for="prompt">Your rough idea</label>
+      <div class="composer">
+        <textarea id="prompt" spellcheck="false" placeholder="Type your rough idea. Press Enter to enhance, Shift+Enter for a new line."></textarea>
+        <div class="composer-privacy">
+          <label class="inline-check" for="save-history-toggle">
+            <input id="save-history-toggle" type="checkbox">
+            Save local history on this device
+          </label>
+          <p class="muted">Turn off on shared devices.</p>
+        </div>
+        <div id="turnstile-wrap" class="turnstile-wrap" style="display:none;">
+          <div id="turnstile-container"></div>
+        </div>
+        <div class="composer-actions">
+          <button id="new-chat-btn" type="button" class="secondary">New chat</button>
+          <button id="enhance-btn" class="success">Enhance</button>
+        </div>
+      </div>
+
+      <div id="msg" class="muted" role="status" aria-live="polite"></div>
+    </section>
+  </section>
+
+  <section class="how-it-works">
+    <h2>How this works</h2>
+    <ul>
+      <li><strong>You send a rough idea</strong> in chat.</li>
+      <li><strong>The enhancer rewrites it</strong> based on your selected target.</li>
+      <li><strong>You can copy, refine, or retry</strong> right from the conversation.</li>
+      <li><strong>History stays local</strong> so you can quickly reload recent work.</li>
+    </ul>
+  </section>
+
+  <section class="how-it-works">
+    <h2>Help improve this chat</h2>
+    <ul>
+      <li><strong>User test flow:</strong> send prompt, switch target, retry on error, and reload from history.</li>
+      <li><strong>What to measure:</strong> time to first successful result, copy rate, and retry recovery.</li>
+      <li><strong>Quick feedback:</strong> use the Helpful / Needs work buttons under responses.</li>
+    </ul>
+  </section>
+
+  <section class="support">
+    <h2>Support this tool</h2>
+    <p>Each enhancement uses paid AI quota. If this saves you time, a small tip helps keep it free.</p>
     <div class="row">
-      <button id="copy-btn" class="secondary">Copy to clipboard</button>
+      <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Support on Ko-fi</a>
+      <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
     </div>
-  </div>
-
-  <h2>Recent prompts</h2>
-  <p class="muted">Saved locally on your device (last 5).</p>
-  <div class="row">
-    <button id="clear-history-btn" type="button" class="secondary">Clear history</button>
-  </div>
-  <div id="history-list" class="card"></div>
-
-  <h2>How this works</h2>
-  <ul>
-    <li><strong>You type a rough idea</strong> — one sentence, a few words, whatever you've got.</li>
-    <li><strong>Your text is sent to Google Gemini</strong> through a small server function. The AI key stays on the server — it never touches your browser.</li>
-    <li><strong>You get back a polished prompt</strong> shaped for the AI tool you picked. Copy it, paste it into the other tool, done.</li>
-    <li><strong>Only local history is saved.</strong> The last 5 requests stay in your browser so you can quickly reuse them.</li>
-    <li><strong>Fair-use limit.</strong> To keep the tool free for everyone, there's a cap on how often one person can hit it per hour.</li>
-  </ul>
-
-  <h2>Support this tool</h2>
-  <p>Each prompt uses a bit of paid AI quota. If this saves you time, a small tip keeps it free for everyone.</p>
-  <div class="row">
-    <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Donate on Ko-fi</a>
-    <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
-  </div>
+  </section>
 </main>
 
 <footer class="site-footer">

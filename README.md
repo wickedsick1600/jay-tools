@@ -1,128 +1,136 @@
 # multi-service
 
-Monorepo for the DevJay Tools suite. This file describes what is currently live in this workspace, how deployment works, and how to add new tools.
+Monorepo for the Juankit suite. This is the central documentation for project purpose, architecture, services, deployment model, standards, and maintenance workflow.
 
-## Brand
+## Project overview
 
-- Name: DevJay Tools
+Juankit is a suite of free, focused web utilities built for speed and privacy.
+
+- No signup
+- No tracking
+- Browser-first processing where possible
+- Revenue from optional donations only
+
+## Brand and product identity
+
+- Name: Juankit
 - Creator: Dev Jay (`devjaybusiness@gmail.com`)
-- Tagline: Free, simple tools that respect your time and your files.
-- Voice: Plain, non-technical.
-- Palette: black, blue, white, green only.
-- Current live URL: `https://jaytools.netlify.app/`
-- Planned custom domain: `devjaybusiness.com`
+- Tagline: Pick a utility, finish the job — free browser tools that keep files on your device.
+- Voice: Plain, non-technical
+- Palette: black, blue, white, green
+- Canonical site URL: `https://juankit.com/` (apex; add `og-image.png` at repo root for social previews — already referenced in hub meta tags)
 
-## What this suite is
+## Repository structure
 
-DevJay Tools is a set of free, focused web utilities. Each tool solves one repetitive task with minimal friction:
+This repository currently hosts the hub and multiple tool folders in one place.
 
-- no signup
-- no tracking
-- browser-first processing where possible
-- revenue from optional donations only
+- Hub root: `/` (`index.html`, `main.js`, `tools.js`)
+- Shared guidance: `_shared/`
+- Tool directories: each service under its own folder (for example `image-editor/`)
+- Optional future state: each tool can be split into an independent repo and subdomain
 
-Right now this repo hosts the hub and tool folders together. Tools can still be peeled into separate repos/subdomains later when needed.
+## Services in this monorepo
 
-## Tools currently in this repo
-
-| Tool | What it does | Path | Status |
+| Service | Purpose | Path | Runtime |
 |---|---|---|---|
-| Hub | Searchable homepage and tool registry. | `/` | Live |
-| Folder Creator | Visual builder + paste import (Excel/Word/text), ZIP + ASCII output. | `folder-tool` | Live |
-| Image Editor | Shapes/text/draw + rotate/flip + adjustments + undo/redo + export guard. | `image-editor` | Live |
-| Prompt Enhancer | Gemini-backed prompt rewrite + local recent history. | `prompt-enhancer` | Live |
-| Stopwatch with Splits | Split tracking with notes and copyable timecodes. | `stopwatch` | Live |
-| Pseudo Word Generator | Generate pronounceable fake words. | `pseudo-word` | Live |
-| JSON Formatter | Format/minify/validate JSON. | `json-formatter` | Live |
-| Regex Tester | Live regex highlighting + groups. | `regex-tester` | Live |
-| Web Dev Unit Converter | px/rem, hex/rgba, epoch/ISO converters. | `unit-converter` | Live |
-| Bulk Image Resizer | Batch resize/crop many images to exact output size. | `bulk-image-resizer` | Live |
-| Password Generator | Secure random password generation in-browser. | `password-generator` | Live |
-| QR Generator | Create and download QR code PNG. | `qr-generator` | Live |
-| Diff Checker | Compare two text blocks with highlighted changes. | `diff-checker` | Live |
-| PDF Editor | Add text, shapes, drawings, and signatures to PDFs in-browser. | `pdf-editor` | Live |
-| PDF Merger | Merge multiple PDFs in-browser. | `pdf-merger` | Live |
-| SVG Optimizer | Basic SVG cleanup/minification. | `svg-optimizer` | Live |
-| Audio Trimmer | Trim audio clip and download as WAV. | `audio-trimmer` | Live |
+| Hub | Searchable homepage and service registry | `/` | Static |
+| Folder Creator | Folder tree builder + paste import + ZIP/ASCII output | `folder-tool/` | Static |
+| Image Editor | Browser image editing with drawing, transforms, and export | `image-editor/` | Static |
+| Prompt Enhancer | Prompt rewriting with OpenAI-compatible backend function | `prompt-enhancer/` | Static + Netlify Function |
+| Stopwatch with Splits | Stopwatch with split notes and copyable timecodes | `stopwatch/` | Static |
+| Pseudo Word Generator | Generate pronounceable fake words | `pseudo-word/` | Static |
+| JSON Formatter | Format, minify, and validate JSON | `json-formatter/` | Static |
+| Regex Tester | Live regex matching and capture groups | `regex-tester/` | Static |
+| Web Dev Unit Converter | px/rem, hex/rgba, epoch/ISO conversions | `unit-converter/` | Static |
+| Bulk Image Resizer | Batch image resize/crop workflows | `bulk-image-resizer/` | Static |
+| Password Generator | Secure in-browser random password generation | `password-generator/` | Static |
+| QR Generator | Create and download QR code PNG | `qr-generator/` | Static |
+| Diff Checker | Compare two text blocks and show differences | `diff-checker/` | Static |
+| PDF Editor | Annotate/sign PDF and export | `pdf-editor/` | Static |
+| PDF Merger | Merge multiple PDFs in-browser | `pdf-merger/` | Static |
+| SVG Optimizer | Basic SVG cleanup/minification | `svg-optimizer/` | Static |
+| Audio Trimmer | Trim audio in-browser and export WAV | `audio-trimmer/` | Static |
+| YouTube Looper | Replay and loop YouTube videos | `youtube-looper/` | Static |
 
-## Hosting and deployment model (current)
+## Tech stack and conventions
 
-- Single repo deployed to Netlify (`publish = "."`).
-- Static HTML/CSS/JS by default; no build step.
-- Server logic only where needed via Netlify functions (`prompt-enhancer/netlify/functions/enhance.js`).
-- Domain migration to `devjaybusiness.com` is still pending.
+- Plain HTML, CSS, and JavaScript
+- No bundler/build step for static pages
+- CDN libraries only when they provide clear value
+- No browser ES modules in tool pages; keep `file://` compatibility
+- Prefer broad browser support and simple UI behavior
 
-## Stack conventions
+## Security and privacy model
 
-- Plain HTML, CSS, and JavaScript.
-- CDN libraries only when they clearly save time.
-- Keep browser compatibility broad.
-- Avoid browser-only modern features with weak support.
-- No ES modules in browser code; use plain `<script>` tags for `file://` compatibility.
-- Shared baseline files are copied across repos when updated.
+- Process user files in browser whenever possible
+- Keep secrets only in Netlify environment variables
+- Access secrets only from server-side functions
+- Never expose API keys in client JavaScript
+- Avoid analytics, trackers, and fingerprinting
 
-## UX and content principles
+## Prompt Enhancer backend configuration
 
-- Usefulness first; clean and restrained UI.
-- Plain language for non-technical users.
-- Mobile-first, single-column-friendly layouts.
-- Tap targets should be at least 44x44.
-- Include a short "How does this work?" section in each tool.
+Required in local `.env` and Netlify env vars:
 
-## What services should not do
+- `OPENAI_API_KEY`
 
-- No accounts, login, or OAuth.
-- No analytics, trackers, or fingerprinting.
-- No newsletter/email capture patterns by default.
-- No cookie banner unless legally required.
-- No paid tiers or feature paywalls.
-- No server upload of user files unless the feature absolutely requires it.
+Recommended defaults:
 
-## Security rules
+- `OPENAI_MODEL=gpt-4o-mini`
+- `GLOBAL_DAILY_LIMIT=100`
 
-- Secrets/API keys live only in Netlify environment variables.
-- Secrets are accessed only from serverless functions.
-- Never place secrets in client JavaScript.
-- Rate-limit functions that call paid/quota-limited APIs.
+Optional hardening:
 
-## Donations and feedback
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
+- `TURNSTILE_SECRET_KEY`
 
-- Primary donation link: Ko-fi.
-- Fallback donation link: PayPal.me.
-- Show donation links consistently in service footers.
-- Feedback is collected on the hub via Netlify Forms and sent to `devjaybusiness@gmail.com`.
-- Individual tools should link users back to the hub feedback page.
+Core serverless function path:
 
-## Legal baseline
+- `prompt-enhancer/netlify/functions/enhance.js`
 
-Every service includes:
+## Local development
 
-- `privacy.html` in plain language
-- `terms.html` with as-is use terms and change/discontinuation rights
+No build step is required.
 
-Both pages must be linked from each service footer.
+1. Open `index.html` directly in browser for quick local preview.
+2. For function testing and parity with production, run Netlify CLI locally if needed.
 
-## Hub local preview
+## Deployment model
 
-Open `index.html` directly in a browser. No build step required.
+Current model is single-repo deployment on Netlify.
 
-## Hub deployment
+- Publish directory: repository root (`.`)
+- Auto deploy: push to `main`
+- Mixed runtime: static pages + serverless functions where needed
 
-Push to `main` to auto-deploy on Netlify.
+Deployment runbook and domain/DNS procedures are documented in `DEPLOY.md`.
 
-## Deployment checklist
+## Legal and trust baseline
 
-- [x] Replace `YOUR_HANDLE` placeholders with production Ko-fi/PayPal links.
-- [ ] Add `og-image.png` (1200x630) and wire into all tool pages that need it.
-- [ ] Connect custom domain `devjaybusiness.com` in Netlify.
-- [ ] Add an OG image (`og-image.png`, 1200x630) referenced in `<meta property="og:image">`.
+Each service should include:
+
+- `privacy.html`
+- `terms.html`
+
+Both pages must be linked in service footers.
+
+Donations and feedback baseline:
+
+- Donations: Ko-fi primary, PayPal fallback
+- Feedback: hub Netlify Form routed to `devjaybusiness@gmail.com`
 
 ## Adding a new service
 
-1. Create a new GitHub repo.
-2. Copy in shared baseline files (including this README context conventions).
-3. Build `index.html` with shared layout conventions.
-4. Add `privacy.html`, `terms.html`, `README.md`, `TODO.md`, and `netlify.toml`.
-5. Register the new service in the hub `tools.js` list for discovery.
-6. Deploy to Netlify and attach `[tool].devjaybusiness.com`.
-7. Update the services table in this README.
+1. Create the new service folder (or new repo if splitting immediately).
+2. Build with the shared suite conventions.
+3. Add legal pages (`privacy.html`, `terms.html`) and `netlify.toml` if needed.
+4. Register the service in `tools.js`.
+5. Deploy and verify links, metadata, and navigation.
+6. Add the service entry to this README service table.
+
+## Documentation map
+
+- `README.md` - project source of truth (this file)
+- `TODO.md` - actionable checklist (backlog, deployment tasks, launch tasks)
+- `DEPLOY.md` - operational deployment runbook and troubleshooting

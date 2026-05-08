@@ -1,12 +1,12 @@
 # Deployment Guide
 
-Step-by-step for getting DevJay Tools live on Netlify. Written assuming you already have Netlify, Ko-fi, and PayPal accounts.
+Step-by-step for getting Juankit live on Netlify. Written assuming you already have Netlify, Ko-fi, and PayPal accounts.
 
 ---
 
 ## Path A — Ship everything as one Netlify site (recommended first)
 
-This is the fastest way to launch. All tools live at one root site (`jaytools.netlify.app` now, later `devjaybusiness.com/<tool>/`). You can peel individual tools out to subdomains later without breaking anything (Path B below).
+This is the fastest way to launch. All tools ship from one Netlify site with **apex domain** `https://juankit.com/` (you still get a `*.netlify.app` URL until DNS is wired). You can peel individual tools onto subdomains later without breaking Path A URLs (see Path B below).
 
 ### 1. Confirm production links
 
@@ -25,7 +25,7 @@ Quick check: `rg "YOUR_HANDLE" .` should return zero results.
 cd multi-service
 git init
 git add .
-git commit -m "Initial commit — DevJay Tools suite"
+git commit -m "Initial commit — Juankit suite"
 # Create a new GitHub repo (e.g. devjay/tools) via gh or the web UI
 git remote add origin https://github.com/YOUR_GH_USER/tools.git
 git push -u origin main
@@ -39,11 +39,17 @@ git push -u origin main
 
 ### 4. Point your domain at Netlify
 
-In Netlify → **Domain management** → **Add custom domain** → enter `devjaybusiness.com`.
+In Netlify → **Domain management** → **Add custom domain** → enter `juankit.com`.
 
 Netlify will ask you to either:
 - **Option 1 (easiest):** transfer DNS to Netlify — follow the instructions on screen.
-- **Option 2:** keep your current DNS, add an `A` record pointing to `75.2.60.5` and a `CNAME` for `www` pointing to the Netlify URL.
+- **Option 2:** keep your current DNS — use the **exact** `A` / `CNAME` values Netlify shows for `juankit.com` and `www.juankit.com` (they change occasionally; copying from the dashboard avoids stale IPs).
+
+Set **`juankit.com`** as the **primary domain** so canonical URLs match [sitemap.xml](sitemap.xml) and structured data (`https://juankit.com/...`). The repo includes **301 redirects** in [netlify.toml](netlify.toml) from `www.juankit.com` to the apex.
+
+**Optional (SEO):** In **Domain management**, also add your old `*.netlify.app` host as a domain alias, then add a Netlify **redirect rule** so `https://YOUR-OLD-SITE.netlify.app/*` → `https://juankit.com/:splat` (301). That consolidates backlinks from earlier deployments.
+
+**Social preview:** Add a static `og-image.png` (1200×630) at the **publish root** so `https://juankit.com/og-image.png` resolves. The hub already references it in `og:image` / `twitter:image`.
 
 Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS resolving.
 
@@ -55,27 +61,35 @@ Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS 
 4. Set recipient: `devjaybusiness@gmail.com`. Save.
 5. Go back to the live site, submit a test message. Within ~30 seconds you should get it in Gmail.
 
-### 6. Add `GEMINI_API_KEY` for the Prompt Enhancer
+### 6. Add `OPENAI_API_KEY` for the Prompt Enhancer
 
-1. In [Google AI Studio](https://aistudio.google.com/apikey), sign in with your Gmail, create an API key. Copy it.
+1. Create an API key in the [OpenAI dashboard (API keys)](https://platform.openai.com/api-keys). Copy it. (**`https://api.openai.com/v1` is not a website** — it’s the API base your server calls; opening it in a browser usually 404s.)
 2. Netlify dashboard → your site → **Site configuration** → **Environment variables** → **Add a variable**.
-3. Key: `GEMINI_API_KEY`. Value: your key. Scope: **All contexts** (production + deploy previews). Save.
-4. Trigger a redeploy: **Deploys** → **Trigger deploy** → **Deploy site**. The serverless function at `prompt-enhancer/netlify/functions/enhance.js` now has access to the key.
-5. Visit `/prompt-enhancer/`, type a rough prompt, click Enhance. Should work.
-6. View page source (Ctrl+U) and Ctrl+F for `GEMINI` and the first few characters of your key. **Neither should appear.** If either does, stop and investigate before publicizing the URL.
+3. Key: `OPENAI_API_KEY`. Value: your key. Scope: **All contexts** (production + deploy previews). Save.
+4. Baseline recommended settings:
+   - `OPENAI_MODEL=gpt-4o-mini`
+   - `GLOBAL_DAILY_LIMIT=100` (or your preferred cap)
+5. Optional provider settings:
+   - `OPENAI_API_BASE` for OpenAI-compatible providers (example Groq: `https://api.groq.com/openai/v1`)
+6. Optional abuse-protection settings:
+   - `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (distributed rate limit)
+   - `TURNSTILE_SECRET_KEY` (human verification on function)
+7. Trigger a redeploy: **Deploys** → **Trigger deploy** → **Deploy site**. The serverless function at `prompt-enhancer/netlify/functions/enhance.js` now has access to the key.
+8. Visit `/prompt-enhancer/`, type a rough prompt, click Enhance. Should work.
+9. View page source (Ctrl+U) and Ctrl+F for the first few characters of your key. **It must not appear.** If it does, stop and investigate before publicizing the URL.
 
 ### 7. Final checks before telling anyone
 
 - [ ] Every tool loads on mobile and desktop
 - [ ] Feedback form test message arrived in Gmail
-- [ ] Ko-fi donate button goes to the right page
-- [ ] PayPal donate button goes to the right page
+- [ ] Ko-fi support button goes to the right page
+- [ ] PayPal support button goes to the right page
 - [ ] View source on prompt-enhancer: no API key visible
 - [ ] Verify new tools: Password Generator, QR Generator, Diff Checker, PDF Merger, SVG Optimizer, Audio Trimmer
 
 ### 8. Submit to search engines
 
-- Google: [Google Search Console](https://search.google.com/search-console) → add `devjaybusiness.com` → verify via DNS TXT record → submit sitemap (Netlify auto-generates one at `/sitemap.xml` if you publish one; for now just let Google crawl).
+- Google: [Google Search Console](https://search.google.com/search-console) → add property `juankit.com` → verify via DNS TXT record → submit `https://juankit.com/sitemap.xml`.
 - Bing: [Bing Webmaster Tools](https://www.bing.com/webmasters) → import from Google Search Console (one click).
 
 ---
@@ -84,29 +98,29 @@ Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS 
 
 Pick this for a tool once it's getting real traffic or you want to isolate the blast radius.
 
-Target layout:
-- Hub → `devjaybusiness.com`
-- Image Editor → `imageeditor.devjaybusiness.com`
-- Folder Creator → `foldercreator.devjaybusiness.com`
-- Prompt Enhancer → `promptenhancer.devjaybusiness.com`
+Target layout (example — only if you split tools later):
+- Hub → `juankit.com`
+- Image Editor → `imageeditor.juankit.com`
+- Folder Creator → `foldercreator.juankit.com`
+- Prompt Enhancer → `promptenhancer.juankit.com`
 - …etc.
 
 ### Steps
 
 1. Create a new repo containing **just** that tool's directory contents. Copy `_shared/GLOBAL_CONTEXT.md` + `_shared/CLAUDE.md` in alongside.
-2. Add your own `privacy.html` + `terms.html` to the new repo (the tool currently links to `devjaybusiness.com/privacy.html` — once it's a separate site, it needs its own copy).
+2. Add your own `privacy.html` + `terms.html` to the new repo (the tool currently links to `juankit.com/privacy.html` — once it's a separate site, it needs its own copy).
 3. Push to GitHub. Create a new Netlify site from the repo. Deploy.
-4. Netlify → new site → **Domain management** → **Add custom domain** → `imageeditor.devjaybusiness.com` (or whichever). Netlify will show a CNAME record to add.
-5. In your DNS provider (wherever `devjaybusiness.com` is managed): add a CNAME record:
+4. Netlify → new site → **Domain management** → **Add custom domain** → `imageeditor.juankit.com` (or whichever). Netlify will show a CNAME record to add.
+5. In your DNS provider (wherever `juankit.com` is managed): add a CNAME record:
    - Name: `imageeditor`
    - Value: `<your-netlify-site>.netlify.app`
 6. Wait a minute for DNS to propagate. SSL provisions automatically.
-7. In the **hub** repo, edit `tools.js` — change that tool's `url` from the relative path (`./image-editor/`) to the full URL (`https://imageeditor.devjaybusiness.com/`). Commit + push. Hub redeploys automatically.
+7. In the **hub** repo, edit `tools.js` — change that tool's `url` from the relative path (`./image-editor/`) to the full URL (`https://imageeditor.juankit.com/`). Commit + push. Hub redeploys automatically.
 8. (Optional) Delete the tool's directory from this repo so the old path 404s. Or leave it in place as a fallback — it'll keep working.
 
 ### If the tool has serverless functions (currently just Prompt Enhancer)
 
-Add `GEMINI_API_KEY` as an environment variable on the **new** Netlify site too (each Netlify site has its own env vars).
+Add `OPENAI_API_KEY` as an environment variable on the **new** Netlify site too (each Netlify site has its own env vars).
 
 ---
 
@@ -129,7 +143,7 @@ Run a test donation with a second account (or friend) of $1–2 to confirm the w
 - Confirm the notification email is `devjaybusiness@gmail.com` in Netlify Forms settings.
 
 **"Prompt Enhancer returns 500 error."**
-- 90% of the time this means `GEMINI_API_KEY` isn't set on the Netlify site, or it's set but you haven't redeployed after adding it. Trigger a redeploy.
+- 90% of the time this means `OPENAI_API_KEY` isn't set on the Netlify site, or it's set but you haven't redeployed after adding it. Trigger a redeploy.
 - Check function logs: Netlify → **Functions** → `enhance` → **Function log**.
 
 **"Images on Bulk Image Resizer process but the .zip is empty."**

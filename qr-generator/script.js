@@ -26,5 +26,5 @@ document.getElementById('download-btn').addEventListener('click', () => {
   a.remove();
   flash('Downloaded.');
 });
-textEl.value = 'https://jaytools.netlify.app/';
+textEl.value = 'https://juankit.com/';
 generate();

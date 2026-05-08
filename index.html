@@ -3,225 +3,758 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DevJay Tools — Free online tools that respect your time</title>
-<meta name="description" content="A collection of free browser-based tools by Dev Jay: image editor, folder creator, AI prompt enhancer, and more. No signup. No tracking. Your files stay on your device.">
-<meta property="og:title" content="DevJay Tools — Free online tools">
-<meta property="og:description" content="Free browser-based tools. No signup. No tracking. Your files stay on your device.">
+<title>Free online tools for PDF, images & code | Juankit</title>
+<meta name="description" content="Juankit is a free suite of browser-based utilities for PDFs, images, developer workflows, audio, QR codes, and more. No signup, no tracking — most tools keep files on your device.">
+<meta property="og:title" content="Juankit — Free online tools that run in your browser">
+<meta property="og:description" content="Free utilities for PDFs, images, text, code, and media. No signup, no tracking. Most processing stays on your device.">
+<meta property="og:image" content="https://juankit.com/og-image.png">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0a0f1a">
-<link rel="canonical" href="https://jaytools.netlify.app/">
-<meta property="og:url" content="https://jaytools.netlify.app/">
-<meta property="og:site_name" content="DevJay Tools">
+<link rel="canonical" href="https://juankit.com/">
+<meta property="og:url" content="https://juankit.com/">
+<meta property="og:site_name" content="Juankit">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="DevJay Tools — Free online tools">
-<meta name="twitter:description" content="Free browser-based tools. No signup. No tracking. Your files stay on your device.">
+<meta name="twitter:title" content="Juankit — Free online tools that run in your browser">
+<meta name="twitter:description" content="Free utilities for PDFs, images, text, code, and media. No signup, no tracking. Most processing stays on your device.">
+<meta name="twitter:image" content="https://juankit.com/og-image.png">
 <meta name="robots" content="index, follow">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "DevJay Tools",
-  "url": "https://jaytools.netlify.app/",
-  "description": "Free browser-based tools: image editor, folder creator, AI prompt enhancer, and more. No signup. No tracking.",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://jaytools.netlify.app/?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Juankit",
+      "url": "https://juankit.com/",
+      "description": "Free browser-based utilities for PDFs, images, text, code, media, and AI prompts. No signup. No tracking.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://juankit.com/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Organization",
+      "name": "Juankit",
+      "url": "https://juankit.com/",
+      "logo": "https://juankit.com/og-image.png"
+    }
+  ]
 }
 </script>
 <link rel="stylesheet" href="style.css">
 <style>
-  .hero-card {
-    background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
-    color: var(--white);
-    border-radius: var(--radius-lg);
-    padding: 28px 24px;
-    margin-bottom: 24px;
-  }
-  .hero-card h1 { color: var(--white); margin: 10px 0 8px; }
-  .hero-card p { color: #cbd5e1; margin: 0; }
-  .hero-card .tag {
-    background: rgba(16, 185, 129, 0.15);
-    color: #6ee7b7;
+  header.site-header .wrap,
+  footer.site-footer .wrap {
+    max-width: 1180px;
   }
 
-  .search-wrap { margin: 20px 0 14px; }
-  .search-wrap label { display: none; }
-  .search-wrap input {
-    font-size: 16px;
-    padding: 14px 16px 14px 44px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%235a6477' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: 14px center;
+  header.site-header a.brand,
+  .home-main h1,
+  .home-main h2,
+  .home-main h3,
+  .home-main p,
+  .home-main a,
+  .home-main button {
+    letter-spacing: 0;
   }
 
-  .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 10px 0 24px;
+  .home-main {
+    max-width: 1180px;
+    padding: 16px 20px 56px;
   }
-  .tab {
-    background: var(--white);
-    color: var(--fg-muted);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 8px 14px;
-    font-size: 14px;
-    font-weight: 500;
-    min-height: 36px;
-    cursor: pointer;
-    box-shadow: none;
-    transition: all var(--transition);
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
-  .tab:hover { color: var(--fg); border-color: var(--border-strong); background: var(--off-white); }
-  .tab.active {
+
+  .hero-band {
+    width: 100%;
     background: var(--black);
     color: var(--white);
-    border-color: var(--black);
+    --hero-h1: clamp(1.75rem, 1.2rem + 3.2vw, 3rem);
+    --hero-lead: clamp(1.0625rem, 1rem + 0.45vw, 1.25rem);
+    --hero-body: clamp(0.9375rem, 0.9rem + 0.25vw, 1.125rem);
+    --hero-meta: clamp(0.75rem, 0.72rem + 0.2vw, 0.8125rem);
   }
 
-  #tool-list {
+  .hero-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 42px 20px 34px;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.85fr);
+    gap: 28px;
+    align-items: center;
+  }
+
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin: 0 0 14px;
+    color: #b7c3d7;
+    font-size: var(--hero-meta);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+  }
+
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    color: #b8f5d9;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+
+  .hero-pill #hero-tool-count {
+    font-weight: 800;
+    color: var(--white);
+  }
+
+  .hero-band h1 {
+    margin: 0;
+    color: var(--white);
+    max-width: 34rem;
+    font-size: var(--hero-h1);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  .hero-line {
+    max-width: 38rem;
+    margin: 12px 0 0;
+    color: #dbe4f0;
+    font-size: var(--hero-lead);
+    line-height: 1.45;
+    font-weight: 600;
+  }
+
+  .trust-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin: 18px 0 0;
+    list-style: none;
+  }
+
+  .trust-badges li {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #edf4ff;
+    font-size: var(--hero-meta);
+    font-weight: 800;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0 0;
+  }
+
+  .hero-actions .btn {
+    min-height: 48px;
+    padding: 12px 22px;
+    font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+    font-weight: 700;
+  }
+
+  .faq-section {
+    margin: 44px 0 0;
+    padding: 24px 20px 28px;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: var(--radius);
+    background: var(--black);
+  }
+
+  .faq-section h2 {
+    margin: 0 0 16px;
+    font-size: clamp(1.125rem, 1rem + 0.8vw, 1.375rem);
+  }
+
+  .faq-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 16px;
+  }
+
+  .faq-list dt {
+    margin: 0;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--white);
+  }
+
+  .faq-list dd {
+    margin: 6px 0 0;
+    color: #b7c3d7;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .hero-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .shortcut-card {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    min-height: 70px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--white);
+    text-decoration: none;
+    transition: transform var(--transition), background var(--transition), border-color var(--transition);
+  }
+
+  .shortcut-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(16, 185, 129, 0.6);
+    background: rgba(255, 255, 255, 0.13);
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .shortcut-card:focus-visible,
+  .tool-card:focus-visible,
+  .chip:focus-visible {
+    outline: 3px solid var(--green);
+    outline-offset: 3px;
+  }
+
+  .shortcut-icon,
+  .tool-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--blue-soft);
+    color: var(--accent);
+  }
+
+  .shortcut-icon {
+    background: rgba(16, 185, 129, 0.16);
+    color: #9af2cf;
+  }
+
+  .shortcut-title,
+  .shortcut-hint,
+  .tool-title,
+  .tool-hint {
+    display: block;
+  }
+
+  .shortcut-title {
+    color: var(--white);
+    font-size: clamp(0.875rem, 0.82rem + 0.35vw, 0.9375rem);
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .shortcut-hint {
+    margin-top: 3px;
+    color: #cbd5e1;
+    font-size: clamp(0.6875rem, 0.66rem + 0.2vw, 0.75rem);
+    line-height: 1.3;
+  }
+
+  .search-panel {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin: 0 0 30px;
+    padding: 0 0 14px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(247, 249, 252, 0.96);
+    backdrop-filter: blur(12px);
+  }
+
+  .search-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .search-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .search-wrap {
+    margin: 0;
+  }
+
+  .search-wrap input {
+    min-height: clamp(48px, 46px + 0.55vw, 56px);
+    border-color: var(--border-strong);
+    border-radius: 12px;
+    background-color: var(--white);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='19' viewBox='0 0 24 24' fill='none' stroke='%235a6477' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 16px center;
+    padding: clamp(12px, 11px + 0.35vw, 14px) 16px clamp(12px, 11px + 0.35vw, 14px) 48px;
+    font-size: clamp(1rem, 0.94rem + 0.38vw, 1.0625rem);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .clear-search {
+    display: none;
+    white-space: nowrap;
+  }
+
+  .clear-search.visible {
+    display: inline-flex;
+  }
+
+  .chips {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 8px 13px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--fg-muted);
+    box-shadow: none;
+    font-size: clamp(0.8125rem, 0.76rem + 0.28vw, 0.875rem);
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform var(--transition), border-color var(--transition), background var(--transition), color var(--transition);
+  }
+
+  .chip:hover {
+    transform: translateY(-1px);
+    border-color: var(--border-strong);
+    background: var(--off-white);
+    color: var(--fg);
+  }
+
+  .chip.active {
+    border-color: var(--black);
+    background: var(--black);
+    color: var(--white);
+  }
+
+  .catalog-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .catalog-head h2,
+  .support-panel h2,
+  .roadmap-section h2 {
+    margin: 0;
+  }
+
+  .catalog-head h2 {
+    font-size: clamp(1.25rem, 1.06rem + 0.95vw, 1.625rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .results-summary {
+    color: var(--fg-muted);
+    font-size: clamp(0.8125rem, 0.76rem + 0.25vw, 0.9375rem);
+    font-weight: 700;
+  }
+
+  .grouped-tools {
+    display: grid;
+    gap: 28px;
+  }
+
+  .tool-group {
+    display: grid;
     gap: 12px;
   }
-  @media (min-width: 640px) {
-    #tool-list { grid-template-columns: 1fr 1fr; }
-  }
 
-  .tool-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    position: relative;
-    transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
-    display: flex;
-    flex-direction: column;
-    min-height: 140px;
-  }
-  .tool-card.clickable {
-    cursor: pointer;
-  }
-  .tool-card:hover {
-    border-color: var(--accent);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-  }
-  .tool-card.coming-soon:hover {
-    transform: none;
-    border-color: var(--border);
-    box-shadow: none;
-  }
-
-  .tool-card header {
+  .tool-group-header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 6px;
+    gap: 12px;
+    padding-top: 2px;
   }
-  .tool-title {
-    font-size: 17px;
-    font-weight: 700;
+
+  .tool-group-title {
+    margin: 0;
+    font-size: clamp(1.0625rem, 0.95rem + 0.45vw, 1.125rem);
+    line-height: 1.2;
+  }
+
+  .tool-group-count {
+    color: var(--fg-muted);
+    font-size: clamp(0.75rem, 0.72rem + 0.2vw, 0.8125rem);
+    font-weight: 800;
+  }
+
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .tool-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 178px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
     color: var(--fg);
     text-decoration: none;
-    letter-spacing: -0.01em;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition), background var(--transition);
   }
-  .tool-card.clickable .tool-title {
-    cursor: pointer;
+
+  .tool-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    background: #fbfdff;
+    box-shadow: var(--shadow-lg);
+    color: var(--fg);
+    text-decoration: none;
   }
-  a.tool-title:hover { color: var(--accent); text-decoration: none; }
-  .tool-cat {
-    font-size: 11px;
-    color: var(--accent);
-    background: var(--accent-soft);
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+
+  .tool-card:active {
+    transform: translateY(0);
   }
-  .tool-desc {
-    color: var(--fg-muted);
-    margin: 0 0 12px;
-    font-size: 14px;
-    line-height: 1.5;
+
+  .tool-card.coming-soon {
+    opacity: 0.78;
+  }
+
+  .tool-card.coming-soon:hover {
+    transform: none;
+    border-color: var(--border);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tool-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .tool-body {
+    display: flex;
     flex: 1;
+    flex-direction: column;
+    min-width: 0;
   }
+
+  .tool-title {
+    display: block;
+    color: var(--fg);
+    font-size: clamp(1rem, 0.94rem + 0.3vw, 1.0625rem);
+    line-height: 1.18;
+    font-weight: 850;
+    letter-spacing: 0;
+  }
+
+  .tool-category {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-height: 22px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-hover);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 850;
+  }
+
+  .tool-hint {
+    margin-top: 5px;
+    color: var(--fg-muted);
+    font-size: clamp(0.8125rem, 0.78rem + 0.22vw, 0.9375rem);
+    line-height: 1.45;
+  }
+
   .tool-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    margin-top: 10px;
   }
+
   .tool-tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 4px 7px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
     background: var(--off-white);
     color: var(--fg-muted);
     font-size: 11px;
-    padding: 3px 9px;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-  }
-
-  .tool-card.coming-soon { opacity: 0.7; }
-  .tool-card.coming-soon .tool-title { color: var(--fg-muted); }
-  .tool-card.coming-soon .tool-cat {
-    background: var(--off-white);
-    color: var(--fg-muted);
-  }
-  .tool-badge {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    font-size: 10px;
-    background: var(--green-soft);
-    color: var(--green-hover);
-    padding: 3px 10px;
-    border-radius: 999px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 700;
+    line-height: 1;
+    font-weight: 650;
   }
 
   #empty {
     display: none;
-    text-align: center;
-    color: var(--fg-muted);
-    padding: 40px 16px;
-    background: var(--white);
-    border: 1px dashed var(--border);
+    padding: 34px 18px;
+    border: 1px dashed var(--border-strong);
     border-radius: var(--radius);
+    background: var(--white);
+    color: var(--fg-muted);
+    text-align: center;
+    font-weight: 700;
   }
 
-  .feedback-card {
-    background: var(--white);
+  .roadmap-section {
+    display: none;
+    margin-top: 34px;
+  }
+
+  .roadmap-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .support-panel {
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .support-card {
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 24px;
-    margin-top: 12px;
+    background: var(--white);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
   }
+
+  .support-card p {
+    margin: 6px 0 0;
+    color: var(--fg-muted);
+  }
+
   .feedback-card .success-msg {
     display: none;
+    margin-top: 14px;
+    padding: 13px;
+    border-radius: var(--radius);
     background: var(--green-soft);
     color: var(--green-hover);
-    padding: 14px;
-    border-radius: var(--radius);
+    font-weight: 800;
     text-align: center;
-    font-weight: 500;
   }
-  .feedback-card.submitted .success-msg { display: block; }
-  .feedback-card.submitted form { display: none; }
 
-  .donate-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
+  .feedback-card.submitted .success-msg {
+    display: block;
   }
-  @media (min-width: 480px) {
-    .donate-grid { grid-template-columns: 1fr 1fr; }
+
+  .feedback-card.submitted form {
+    display: none;
+  }
+
+  .feedback-card form {
+    margin-top: 8px;
+  }
+
+  .feedback-card textarea {
+    min-height: 118px;
+  }
+
+  .support-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .mini-list {
+    display: grid;
+    gap: 8px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mini-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--fg-muted);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .mini-list li::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  @media (max-width: 1060px) {
+    .tool-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 860px) {
+    .hero-inner,
+    .support-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-inner {
+      align-items: start;
+    }
+
+    .tool-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    header.site-header .wrap {
+      display: block;
+    }
+
+    header.site-header nav {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    header.site-header a.brand {
+      font-size: clamp(1rem, 0.96rem + 0.6vw, 1.0625rem);
+    }
+
+    header.site-header nav a {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 44px;
+      padding-left: 6px;
+      padding-right: 6px;
+      font-size: clamp(0.8125rem, 0.78rem + 0.35vw, 0.9375rem);
+      text-align: center;
+    }
+
+    .home-main {
+      padding-left: 14px;
+      padding-right: 14px;
+      padding-bottom: 42px;
+    }
+
+    .hero-inner {
+      padding: 34px 14px 28px;
+      gap: 24px;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .hero-actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .hero-shortcuts {
+      grid-template-columns: 1fr;
+    }
+
+    .search-panel {
+      padding-bottom: 12px;
+    }
+
+    .search-row {
+      grid-template-columns: 1fr;
+    }
+
+    .clear-search.visible {
+      width: 100%;
+    }
+
+    .catalog-head,
+    .roadmap-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tool-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tool-card {
+      min-height: 0;
+    }
   }
 </style>
 </head>
@@ -231,84 +764,142 @@
   <div class="wrap">
     <a class="brand" href="/">
       <span class="dot"></span>
-      DevJay Tools
+      Juankit
     </a>
     <nav>
       <a href="#tools">Tools</a>
       <a href="#feedback">Feedback</a>
-      <a class="cta" href="#donate">Donate</a>
+      <a class="cta" href="#support">Support</a>
     </nav>
   </div>
 </header>
 
-<main>
-  <section class="hero-card">
-    <span class="tag">Free · No signup · No tracking</span>
-    <h1>Simple tools that respect your time</h1>
-    <p>A small collection of free browser-based utilities by Dev Jay. Most run entirely on your device — your files never touch a server.</p>
-  </section>
-
-  <div class="search-wrap">
-    <label for="search">Search</label>
-    <input type="search" id="search" placeholder="Search tools: compress, prompt, folder..." autocomplete="off">
-  </div>
-
-  <div id="tabs" class="tabs" role="tablist" aria-label="Tool categories"></div>
-
-  <section id="tools">
-    <div id="tool-list"></div>
-    <div id="empty">No tools match your search. Try a different category or word.</div>
-  </section>
-
-  <h2 id="feedback">Have a suggestion?</h2>
-  <p>Found a bug? Want a new tool built? Just want to say hi? Messages go straight to my inbox.</p>
-
-  <div class="feedback-card" id="feedback-card">
-    <div class="success-msg">Thanks! Your message is on its way. I'll get back to you when I can.</div>
-    <form
-      name="feedback"
-      method="POST"
-      data-netlify="true"
-      netlify-honeypot="bot-field"
-      action="/?thanks=1#feedback"
-    >
-      <input type="hidden" name="form-name" value="feedback">
-      <p style="display:none;">
-        <label>Don't fill this out: <input name="bot-field"></label>
+<section class="hero-band" aria-labelledby="hero-title">
+  <div class="hero-inner">
+    <div>
+      <p class="eyebrow">
+        <span class="hero-pill" aria-label="Number of live tools"><span id="hero-tool-count">–</span> free tools</span>
+        <span>One trusted site · No accounts</span>
       </p>
-
-      <label for="fb-name">Your name (optional)</label>
-      <input type="text" id="fb-name" name="name" autocomplete="name">
-
-      <label for="fb-email">Your email (optional — only if you want a reply)</label>
-      <input type="email" id="fb-email" name="email" autocomplete="email">
-
-      <label for="fb-type">What's this about?</label>
-      <select id="fb-type" name="type">
-        <option value="suggestion">Tool suggestion</option>
-        <option value="bug">Bug report</option>
-        <option value="feedback">General feedback</option>
-        <option value="hi">Just saying hi</option>
-      </select>
-
-      <label for="fb-message">Your message</label>
-      <textarea id="fb-message" name="message" required placeholder="Tell me what's on your mind..."></textarea>
-
-      <div class="row">
-        <button type="submit">Send message</button>
+      <h1 id="hero-title">Find the tool. Do the thing. Done</h1>
+      <p class="hero-line">Juankit gives you clean, fast browser tools without signup walls, tracker bloat, or upload traps.</p>
+      <div class="hero-actions">
+        <a href="#tools" class="btn success" id="hero-cta-primary">Get started</a>
       </div>
-    </form>
+      <ul class="trust-badges" aria-label="Trust signals">
+        <li>No signup</li>
+        <li>Runs in browser</li>
+        <li>No tracking</li>
+      </ul>
+    </div>
+    <div id="popular-tools" class="hero-shortcuts" aria-label="Popular tools"></div>
   </div>
+</section>
 
-  <h2 id="donate">Support this project</h2>
-  <p>Everything here is free and always will be. If these tools save you time, a one-time tip helps cover hosting and build new tools.</p>
-  <div class="donate-grid">
-    <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Donate on Ko-fi</a>
-    <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">Donate via PayPal</a>
-  </div>
+<main class="home-main">
+  <section id="tools" class="search-panel" aria-labelledby="tools-title">
+    <div class="search-inner">
+      <h2 id="tools-title" class="visually-hidden">Find a tool</h2>
+      <div class="search-row">
+        <div class="search-wrap">
+          <label class="visually-hidden" for="search">Search tools</label>
+          <input type="search" id="search" placeholder="Search PDF, resize, JSON, prompt..." autocomplete="off">
+        </div>
+        <button id="clear-search" class="secondary clear-search" type="button">Clear</button>
+      </div>
+      <div id="tabs" class="chips" role="tablist" aria-label="Tool groups"></div>
+    </div>
+  </section>
 
-  <h2>Why these tools exist</h2>
-  <p>Most "free" online tools force signups, push ads, or upload your files to unknown servers. These don't. Every tool here is small, focused, and built with one goal: be useful without getting in the way.</p>
+  <section class="catalog" aria-labelledby="catalog-title">
+    <div class="catalog-head">
+      <h2 id="catalog-title">Choose a tool</h2>
+      <div id="results-summary" class="results-summary" aria-live="polite">Loading tools...</div>
+    </div>
+    <div id="tool-list" class="grouped-tools"></div>
+    <div id="empty">No matching tools. Try PDF, image, JSON, prompt, or audio.</div>
+  </section>
+
+  <section id="coming-section" class="roadmap-section" aria-labelledby="coming-title">
+    <div class="roadmap-head">
+      <h2 id="coming-title">Coming Soon</h2>
+      <div class="results-summary">Roadmap matches</div>
+    </div>
+    <div id="coming-list" class="grouped-tools"></div>
+  </section>
+
+  <section class="faq-section" aria-labelledby="faq-heading">
+    <h2 id="faq-heading">Quick answers</h2>
+    <dl class="faq-list">
+      <div>
+        <dt>Why is there no signup?</dt>
+        <dd>Juankit is built for speed. You open a tool, use it, leave. Accounts add friction and privacy questions we do not need for one-off tasks.</dd>
+      </div>
+      <div>
+        <dt>Do my files upload to your servers?</dt>
+        <dd>Most tools process files entirely in your browser on your device. A few features (like the prompt enhancer) call a small backend to talk to an AI provider — that path only sends what you type in that tool, not your other files.</dd>
+      </div>
+      <div>
+        <dt>Is Juankit tracked with ads or analytics?</dt>
+        <dd>No third-party analytics or ad trackers are embedded in the suite. Hosting may log normal server requests like any website.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="support-panel" aria-label="Feedback and support">
+    <div class="support-card feedback-card" id="feedback-card">
+      <h2 id="feedback">Feedback</h2>
+      <p>Bug, idea, or tool request.</p>
+      <div class="success-msg">Thanks. Your message is on its way.</div>
+      <form
+        name="feedback"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        action="/?thanks=1#feedback"
+      >
+        <input type="hidden" name="form-name" value="feedback">
+        <p style="display:none;">
+          <label>Don't fill this out: <input name="bot-field"></label>
+        </p>
+
+        <label for="fb-name">Name (optional)</label>
+        <input type="text" id="fb-name" name="name" autocomplete="name">
+
+        <label for="fb-email">Email (optional)</label>
+        <input type="email" id="fb-email" name="email" autocomplete="email">
+
+        <label for="fb-type">Type</label>
+        <select id="fb-type" name="type">
+          <option value="suggestion">Tool suggestion</option>
+          <option value="bug">Bug report</option>
+          <option value="feedback">General feedback</option>
+          <option value="hi">Just saying hi</option>
+        </select>
+
+        <label for="fb-message">Message</label>
+        <textarea id="fb-message" name="message" required placeholder="Tell me what would help..."></textarea>
+
+        <div class="row">
+          <button type="submit">Send message</button>
+        </div>
+      </form>
+    </div>
+
+    <aside class="support-card" id="support">
+      <h2>Support</h2>
+      <p>Free tools, optional tips.</p>
+      <div class="support-actions">
+        <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a>
+        <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
+      </div>
+      <ul class="mini-list" aria-label="Site principles">
+        <li>No accounts</li>
+        <li>No analytics scripts</li>
+        <li>Focused task screens</li>
+      </ul>
+    </aside>
+  </section>
 </main>
 
 <footer class="site-footer">
