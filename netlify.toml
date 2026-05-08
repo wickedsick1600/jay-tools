@@ -2,6 +2,18 @@
   publish = "."
   functions = "prompt-enhancer/netlify/functions"
 
+[[redirects]]
+  from = "https://www.juankit.com/*"
+  to = "https://juankit.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.juankit.com/*"
+  to = "https://juankit.com/:splat"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]

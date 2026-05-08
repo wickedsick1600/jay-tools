@@ -1,4 +1,4 @@
-// DevJay Tools - central tool registry. Single source of truth for the hub.
+// Juankit - central tool registry. Single source of truth for the hub.
 // The long metadata powers search. The short display fields power the homepage cards.
 
 const CATEGORIES = [
@@ -59,7 +59,7 @@ const TOOLS = [
     shortTitle: 'Prompt Enhancer',
     hint: 'Rewrite better prompts',
     description: 'Turn a rough idea into a detailed AI prompt for ChatGPT, Claude, Midjourney, or Stable Diffusion.',
-    longDescription: 'Paste a vague prompt, pick the AI tool you use, and get back a polished version that gives better results. Powered by Google Gemini. Free to use.',
+    longDescription: 'Paste a vague prompt, pick the AI tool you use, and get back a polished version that gives better results. Runs through a small secure backend using an OpenAI-compatible API — your key stays on the server, not in the page. Free to use.',
     category: 'ai',
     group: 'ai',
     icon: 'prompt',
@@ -92,6 +92,7 @@ const TOOLS = [
     category: 'audio',
     group: 'media',
     icon: 'audio',
+    featured: true,
     browserOnly: true,
     tags: ['audio', 'mp3', 'wav', 'trim', 'cut', 'fade', 'edit', 'music'],
     url: './audio-trimmer/',
@@ -195,11 +196,11 @@ const TOOLS = [
     shortTitle: 'Exam Generator',
     hint: 'Practice questions',
     description: 'Paste a topic or notes, get 10-50 multiple-choice questions for practice.',
-    longDescription: 'Drop in a topic, a block of notes, or a text file, pick how many questions you want, and get a practice quiz with answers. Powered by Google Gemini.',
+    longDescription: 'Drop in a topic, a block of notes, or a text file, pick how many questions you want, and get a practice quiz with answers. Planned: same secure AI-backend pattern as the Prompt Enhancer.',
     category: 'ai',
     group: 'ai',
     icon: 'exam',
-    tags: ['quiz', 'exam', 'reviewer', 'multiple choice', 'study', 'flashcards', 'test', 'gemini'],
+    tags: ['quiz', 'exam', 'reviewer', 'multiple choice', 'study', 'flashcards', 'test', 'ai'],
     url: '#',
     status: 'coming-soon',
   },
@@ -289,6 +290,7 @@ const TOOLS = [
     category: 'image',
     group: 'image',
     icon: 'svg',
+    featured: true,
     browserOnly: true,
     tags: ['svg', 'optimize', 'compress', 'minify', 'vector', 'icon'],
     url: './svg-optimizer/',

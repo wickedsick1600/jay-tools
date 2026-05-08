@@ -15,7 +15,7 @@ const GROUPS = typeof TOOL_GROUPS !== 'undefined'
 const searchInput = document.getElementById('search');
 const tabsContainer = document.getElementById('tabs');
 const listContainer = document.getElementById('tool-list');
-const heroShortcuts = document.getElementById('hero-shortcuts');
+const heroShortcuts = document.getElementById('popular-tools');
 const comingSection = document.getElementById('coming-section');
 const comingList = document.getElementById('coming-list');
 const emptyState = document.getElementById('empty');
@@ -371,6 +371,17 @@ clearSearchButton.addEventListener('click', () => {
   searchInput.focus();
 });
 
+function initHeroChrome() {
+  const countEl = document.getElementById('hero-tool-count');
+  if (countEl && typeof TOOLS !== 'undefined') {
+    countEl.textContent = `${liveTools().length}+`;
+  }
+  document.getElementById('hero-cta-primary')?.addEventListener('click', () => {
+    requestAnimationFrame(() => searchInput?.focus());
+  });
+}
+
+initHeroChrome();
 renderHeroShortcuts();
 render();
 

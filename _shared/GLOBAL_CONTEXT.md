@@ -1,4 +1,4 @@
-# Global Context — DevJay Tools
+# Global Context — Juankit
 
 This file is **copy-pasted unchanged into every service repo in the suite**. It gives any human or AI opening the repo cold the full context of what the suite is, how its pieces fit together, and the conventions every service follows.
 
@@ -9,13 +9,13 @@ When starting a new service in the suite, your prompt becomes:
 
 ## Brand
 
-- **Name:** DevJay Tools
+- **Name:** Juankit
 - **Creator:** Dev Jay (contact: devjaybusiness@gmail.com)
-- **Tagline:** Free, simple tools that respect your time and your files.
+- **Tagline:** Pick a utility, finish the job — free browser tools that keep files on your device.
 - **Voice:** Plain, non-technical. Imagine explaining to a friend who isn't a developer.
 - **Palette:** Black, blue, white, green. No other accent colors.
-- **Hub domain:** `devjaybusiness.com` (root)
-- **Tool subdomains:** `[tool].devjaybusiness.com` (e.g., `foldercreator.devjaybusiness.com`, `imageeditor.devjaybusiness.com`)
+- **Hub domain:** `juankit.com` (root, apex canonical)
+- **Tool subdomains (optional split):** `[tool].juankit.com` (e.g., `foldercreator.juankit.com`, `imageeditor.juankit.com`)
 
 ## What the suite is
 
@@ -27,10 +27,10 @@ The suite is **deliberately fragmented**: each tool is its own repo, its own Net
 
 | Service | What it does | Repo | Subdomain |
 |---|---|---|---|
-| **Hub** | Landing page. Lists all tools, provides search + categories, donation links, feedback form. | `multi-service` | `devjaybusiness.com` |
-| **Folder Creator** | Type a folder layout, get it as a downloadable .zip. Also makes clean ASCII trees for READMEs. | `folder-tool` | `foldercreator.devjaybusiness.com` |
-| **Image Editor** | Crop, resize, compress, draw shapes, add text. Runs in the browser — your files never leave your device. | `image-editor` | `imageeditor.devjaybusiness.com` |
-| **Prompt Enhancer** | Turn a rough prompt into a polished one for ChatGPT, Claude, Midjourney, or Stable Diffusion. | `prompt-enhancer` | `promptenhancer.devjaybusiness.com` |
+| **Hub** | Landing page. Lists all tools, provides search + categories, donation links, feedback form. | `multi-service` | `juankit.com` |
+| **Folder Creator** | Type a folder layout, get it as a downloadable .zip. Also makes clean ASCII trees for READMEs. | `folder-tool` | `foldercreator.juankit.com` |
+| **Image Editor** | Crop, resize, compress, draw shapes, add text. Runs in the browser — your files never leave your device. | `image-editor` | `imageeditor.juankit.com` |
+| **Prompt Enhancer** | Turn a rough prompt into a polished one for ChatGPT, Claude, Midjourney, or Stable Diffusion. | `prompt-enhancer` | `promptenhancer.juankit.com` |
 
 More services will be added over time using the same conventions.
 
@@ -38,7 +38,7 @@ More services will be added over time using the same conventions.
 
 - **Netlify free tier** for every service. 100 GB bandwidth/month per site is enough to start.
 - **One GitHub repo per service.** Push to `main` → Netlify auto-deploys.
-- **Subdomain per service.** Point `[tool].devjaybusiness.com` at the tool's Netlify site via a CNAME record or Netlify's "Custom domain" settings.
+- **Subdomain per service (when split).** Point `[tool].juankit.com` at the tool's Netlify site via a CNAME record or Netlify's "Custom domain" settings.
 - **Static HTML/CSS/JS.** No build step. Open `index.html` locally and it just works (except serverless tools, which need `netlify dev`).
 - Tools that need server logic use **Netlify serverless functions** at `netlify/functions/*.js`. Nothing else runs server-side.
 
@@ -98,5 +98,5 @@ Every service has:
 3. Write `index.html` using the shared header/footer/CSS.
 4. Add `privacy.html`, `terms.html`, `README.md`, `TODO.md`, `netlify.toml`.
 5. Add the service to the hub's `tools.js` registry so it shows up in search and the right category tab.
-6. Deploy to Netlify, then add a CNAME for `[tool].devjaybusiness.com`.
+6. Deploy to Netlify, then add a CNAME for `[tool].juankit.com`.
 7. Update the "Services in the suite" table in this file, then paste the updated version into every repo.
