@@ -30,6 +30,9 @@ const downloadBtn = document.getElementById('download-btn');
 const resetBtn = document.getElementById('reset-btn');
 const stats = document.getElementById('stats');
 const msg = document.getElementById('msg');
+const cropActionsEl = document.getElementById('crop-actions');
+const applyCropBtn = document.getElementById('apply-crop-btn');
+const cancelCropBtn = document.getElementById('cancel-crop-btn');
 
 const MAX_CANVAS_W = 900;
 const MAX_EXPORT_PIXELS = 16000000;
@@ -41,6 +44,8 @@ let displayScale = 1;
 let activeTool = 'select';
 let drawing = null;
 let startPt = null;
+let cropSelection = null;
+let cropDrag = null;
 let historyStack = [];
 let historyIndex = -1;
 let isRestoringHistory = false;
@@ -77,7 +82,7 @@ function getBgState() {
 function saveHistory() {
   if (!canvas || isRestoringHistory) return;
   const state = {
-    objects: canvas.getObjects().map((o) => o.toObject()),
+    objects: canvas.getObjects().filter((o) => !o.cropOverlay).map((o) => o.toObject()),
     bg: getBgState(),
   };
   historyStack = historyStack.slice(0, historyIndex + 1);
@@ -162,6 +167,138 @@ document.addEventListener('paste', (e) => {
   }
 });
 
+function removeCropOverlay() {
+  if (!canvas) return;
+  if (cropSelection) {
+    canvas.remove(cropSelection);
+    cropSelection = null;
+  }
+  if (cropDrag) {
+    canvas.remove(cropDrag);
+    cropDrag = null;
+  }
+  updateCropActionsVisibility();
+  canvas.requestRenderAll();
+}
+
+function updateCropActionsVisibility() {
+  if (!cropActionsEl || !applyCropBtn) return;
+  const has = !!cropSelection;
+  cropActionsEl.classList.toggle('show', has);
+  applyCropBtn.disabled = !has;
+}
+
+function applyCrop() {
+  if (!canvas || !originalImage || !cropSelection) return;
+
+  const br = cropSelection.getBoundingRect(true);
+  let left = Math.max(0, Math.floor(br.left));
+  let top = Math.max(0, Math.floor(br.top));
+  let width = Math.ceil(br.width);
+  let height = Math.ceil(br.height);
+  left = Math.min(left, canvas.width - 1);
+  top = Math.min(top, canvas.height - 1);
+  width = Math.min(width, canvas.width - left);
+  height = Math.min(height, canvas.height - top);
+
+  if (width < 4 || height < 4) {
+    flash('Crop area too small.', true);
+    return;
+  }
+
+  canvas.remove(cropSelection);
+  cropSelection = null;
+  updateCropActionsVisibility();
+  canvas.discardActiveObject();
+  canvas.requestRenderAll();
+
+  const mult = originalImage.width / canvas.width;
+  const destW = Math.round(width * mult);
+  const destH = Math.round(height * mult);
+
+  if (destW < 1 || destH < 1) {
+    flash('Crop area too small.', true);
+    return;
+  }
+  if (destW * destH > MAX_EXPORT_PIXELS) {
+    flash('Cropped image too large (max 16 MP).', true);
+    return;
+  }
+
+  let fullDataUrl;
+  try {
+    fullDataUrl = canvas.toDataURL({
+      format: 'png',
+      quality: 1,
+      multiplier: mult,
+    });
+  } catch (err) {
+    flash('Crop failed: ' + (err && err.message ? err.message : String(err)), true);
+    return;
+  }
+
+  const sliceImg = new Image();
+  sliceImg.onload = () => {
+    const fullW = sliceImg.naturalWidth;
+    const fullH = sliceImg.naturalHeight;
+    const sx = Math.round(left * mult);
+    const sy = Math.round(top * mult);
+    let sw = Math.round(width * mult);
+    let sh = Math.round(height * mult);
+    sw = Math.min(sw, fullW - sx);
+    sh = Math.min(sh, fullH - sy);
+    if (sw < 1 || sh < 1) {
+      flash('Crop failed: invalid region.', true);
+      return;
+    }
+
+    const temp = document.createElement('canvas');
+    temp.width = sw;
+    temp.height = sh;
+    temp.getContext('2d').drawImage(sliceImg, sx, sy, sw, sh, 0, 0, sw, sh);
+    const croppedDataUrl = temp.toDataURL('image/png');
+
+    fabric.Image.fromURL(croppedDataUrl, (newImg) => {
+      originalImage = newImg;
+      const w = newImg.width;
+      const h = newImg.height;
+      displayScale = w > MAX_CANVAS_W ? MAX_CANVAS_W / w : 1;
+      const displayW = Math.round(w * displayScale);
+      const displayH = Math.round(h * displayScale);
+
+      canvas.clear();
+      canvas.setDimensions({ width: displayW, height: displayH });
+
+      newImg.set({
+        selectable: false,
+        evented: false,
+        scaleX: displayScale,
+        scaleY: displayScale,
+        left: 0,
+        top: 0,
+      });
+      canvas.setBackgroundImage(newImg, canvas.renderAll.bind(canvas));
+
+      brightnessEl.value = 0;
+      contrastEl.value = 0;
+      saturationEl.value = 0;
+      applyBackgroundAdjustments();
+
+      outWidth.value = w;
+      outHeight.value = h;
+      stats.textContent = `Original: ${w}×${h} (cropped)`;
+
+      historyStack = [];
+      historyIndex = -1;
+      saveHistory();
+      setTool('select');
+      flash('Crop applied.');
+    });
+  };
+  sliceImg.onerror = () => flash('Crop failed loading render.', true);
+  sliceImg.src = fullDataUrl;
+}
+
 function loadFile(file) {
   if (!file.type.startsWith('image/')) { flash('That file is not an image.', true); return; }
   originalFile = file;
@@ -169,6 +306,9 @@ function loadFile(file) {
   const reader = new FileReader();
   reader.onload = () => {
     fabric.Image.fromURL(reader.result, (img) => {
+      cropSelection = null;
+      cropDrag = null;
+      updateCropActionsVisibility();
       originalImage = img;
       const w = img.width;
       const h = img.height;
@@ -225,14 +365,18 @@ function setTool(tool) {
   textOptions.classList.toggle('show', tool === 'text');
 
   if (!canvas) return;
+
   canvas.isDrawingMode = (tool === 'draw');
   if (tool === 'draw') {
     canvas.freeDrawingBrush.color = fillColor.value;
     canvas.freeDrawingBrush.width = 3;
   }
-  canvas.selection = (tool === 'select');
-  canvas.forEachObject(o => { o.selectable = (tool === 'select'); });
-  canvas.defaultCursor = tool === 'select' ? 'default' : 'crosshair';
+  const selectLike = tool === 'select';
+  canvas.selection = selectLike;
+  canvas.forEachObject((o) => {
+    o.selectable = selectLike;
+  });
+  canvas.defaultCursor = selectLike ? 'default' : 'crosshair';
 }
 
 document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
@@ -242,6 +386,7 @@ document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
 fillColor.addEventListener('change', () => {
   if (canvas && canvas.isDrawingMode) canvas.freeDrawingBrush.color = fillColor.value;
   const active = canvas?.getActiveObject();
+  if (active?.cropOverlay) return;
   if (active) {
     if (active.type === 'line') active.set('stroke', fillColor.value);
     else if (active.type === 'i-text' || active.type === 'text') active.set('fill', fillColor.value);
@@ -252,13 +397,49 @@ fillColor.addEventListener('change', () => {
 
 function wireCanvas() {
   canvas.on('object:modified', saveHistory);
-  canvas.on('object:added', saveHistory);
-  canvas.on('object:removed', saveHistory);
+  canvas.on('object:added', (e) => {
+    if (e.target?.cropOverlay) return;
+    saveHistory();
+  });
+  canvas.on('object:removed', (e) => {
+    if (e.target?.cropOverlay) return;
+    saveHistory();
+  });
   canvas.on('path:created', saveHistory);
   canvas.on('text:editing:exited', saveHistory);
 
   canvas.on('mouse:down', (e) => {
     if (activeTool === 'select' || activeTool === 'draw') return;
+
+    if (activeTool === 'crop') {
+      if (e.target?.cropOverlay) {
+        setTool('select');
+        canvas.setActiveObject(e.target);
+        canvas.requestRenderAll();
+        return;
+      }
+      removeCropOverlay();
+      const p = canvas.getPointer(e.e);
+      startPt = p;
+      cropDrag = new fabric.Rect({
+        left: p.x,
+        top: p.y,
+        width: 1,
+        height: 1,
+        fill: 'rgba(0,0,0,0.12)',
+        stroke: '#22c55e',
+        strokeWidth: 2,
+        strokeDashArray: [8, 5],
+        selectable: false,
+        evented: false,
+        lockRotation: true,
+      });
+      cropDrag.cropOverlay = true;
+      canvas.add(cropDrag);
+      canvas.bringToFront(cropDrag);
+      return;
+    }
+
     const p = canvas.getPointer(e.e);
     startPt = p;
 
@@ -301,6 +482,17 @@ function wireCanvas() {
   });
 
   canvas.on('mouse:move', (e) => {
+    if (cropDrag && startPt) {
+      const p = canvas.getPointer(e.e);
+      cropDrag.set({
+        left: Math.min(p.x, startPt.x),
+        top: Math.min(p.y, startPt.y),
+        width: Math.abs(p.x - startPt.x),
+        height: Math.abs(p.y - startPt.y),
+      });
+      canvas.requestRenderAll();
+      return;
+    }
     if (!drawing || !startPt) return;
     const p = canvas.getPointer(e.e);
 
@@ -325,6 +517,26 @@ function wireCanvas() {
   });
 
   canvas.on('mouse:up', () => {
+    if (cropDrag) {
+      cropDrag.setCoords();
+      const br = cropDrag.getBoundingRect(true);
+      if (br.width < 4 || br.height < 4) {
+        canvas.remove(cropDrag);
+        cropDrag = null;
+        startPt = null;
+        updateCropActionsVisibility();
+        return;
+      }
+      cropSelection = cropDrag;
+      cropDrag = null;
+      startPt = null;
+      cropSelection.set({ lockRotation: true, evented: true });
+      cropSelection.setCoords();
+      canvas.bringToFront(cropSelection);
+      canvas.requestRenderAll();
+      updateCropActionsVisibility();
+      return;
+    }
     if (drawing) { drawing.setCoords(); drawing = null; }
     startPt = null;
   });
@@ -335,14 +547,26 @@ deleteBtn.addEventListener('click', () => {
   const active = canvas.getActiveObjects();
   if (active.length) {
     active.forEach(o => canvas.remove(o));
+    if (active.some((o) => o === cropSelection)) {
+      cropSelection = null;
+      updateCropActionsVisibility();
+    }
     canvas.discardActiveObject();
     canvas.requestRenderAll();
   }
 });
 
+applyCropBtn.addEventListener('click', () => applyCrop());
+
+cancelCropBtn.addEventListener('click', () => {
+  removeCropOverlay();
+  flash('Crop cancelled.');
+});
+
 clearBtn.addEventListener('click', () => {
   if (!canvas) return;
   if (!confirm('Remove all shapes and drawings from the image? (The image itself stays.)')) return;
+  removeCropOverlay();
   canvas.getObjects().forEach(o => canvas.remove(o));
   canvas.requestRenderAll();
   saveHistory();
@@ -417,6 +641,14 @@ document.addEventListener('keydown', (e) => {
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
   const obj = canvas.getActiveObject();
   if (obj?.isEditing) return;
+
+  if (e.key === 'Escape' && (cropSelection || cropDrag)) {
+    e.preventDefault();
+    removeCropOverlay();
+    flash('Crop cancelled.');
+    return;
+  }
+
   const saveMod = e.ctrlKey || e.metaKey;
   if (saveMod && (e.key === 's' || e.key === 'S')) {
     e.preventDefault();
@@ -452,6 +684,9 @@ resetBtn.addEventListener('click', () => {
   if (canvas) { canvas.dispose(); canvas = null; }
   originalFile = null;
   originalImage = null;
+  cropSelection = null;
+  cropDrag = null;
+  updateCropActionsVisibility();
   fileInput.value = '';
   editor.classList.remove('active');
   dropZone.style.display = '';
