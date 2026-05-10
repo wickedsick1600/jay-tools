@@ -129,6 +129,11 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: JSON.stringify({ error: 'Server not configured.' }) };
   }
 
+  const model = process.env.OPENAI_MODEL?.trim();
+  if (!model) {
+    return { statusCode: 500, body: JSON.stringify({ error: 'Server not configured.' }) };
+  }
+
   const ip = event.headers['x-forwarded-for']?.split(',')[0].trim() || event.headers['client-ip'] || 'unknown';
   const distributedAllowed = await distributedRateLimit(ip);
   const allowed = distributedAllowed === null ? rateLimit(ip) : distributedAllowed;
@@ -159,7 +164,6 @@ exports.handler = async (event) => {
   // REST base for Chat Completions — not a browser URL; default is OpenAI's API host.
   const baseRaw = process.env.OPENAI_API_BASE || 'https://api.openai.com/v1';
   const base = baseRaw.replace(/\/$/, '');
-  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
   const url = `${base}/chat/completions`;
 
   const payload = {

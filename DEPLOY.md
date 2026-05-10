@@ -66,17 +66,17 @@ Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS 
 1. Create an API key in the [OpenAI dashboard (API keys)](https://platform.openai.com/api-keys). Copy it. (**`https://api.openai.com/v1` is not a website** — it’s the API base your server calls; opening it in a browser usually 404s.)
 2. Netlify dashboard → your site → **Site configuration** → **Environment variables** → **Add a variable**.
 3. Key: `OPENAI_API_KEY`. Value: your key. Scope: **All contexts** (production + deploy previews). Save.
-4. Baseline recommended settings:
-   - `OPENAI_MODEL=gpt-4o-mini`
+4. Add another variable: Key **`OPENAI_MODEL`**, Value: your provider’s chat model id (required). Scope: **All contexts**. Save.
+5. Baseline optional cap:
    - `GLOBAL_DAILY_LIMIT=100` (or your preferred cap)
-5. Optional provider settings:
+6. Optional provider settings:
    - `OPENAI_API_BASE` for OpenAI-compatible providers (example Groq: `https://api.groq.com/openai/v1`)
-6. Optional abuse-protection settings:
+7. Optional abuse-protection settings:
    - `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (distributed rate limit)
    - `TURNSTILE_SECRET_KEY` (human verification on function)
-7. Trigger a redeploy: **Deploys** → **Trigger deploy** → **Deploy site**. The serverless function at `prompt-enhancer/netlify/functions/enhance.js` now has access to the key.
-8. Visit `/prompt-enhancer/`, type a rough prompt, click Enhance. Should work.
-9. View page source (Ctrl+U) and Ctrl+F for the first few characters of your key. **It must not appear.** If it does, stop and investigate before publicizing the URL.
+8. Trigger a redeploy: **Deploys** → **Trigger deploy** → **Deploy site**. The serverless function at `prompt-enhancer/netlify/functions/enhance.js` now has access to the key.
+9. Visit `/prompt-enhancer/`, type a rough prompt, click Enhance. Should work.
+10. View page source (Ctrl+U) and Ctrl+F for the first few characters of your key. **It must not appear.** If it does, stop and investigate before publicizing the URL.
 
 ### 7. Final checks before telling anyone
 
