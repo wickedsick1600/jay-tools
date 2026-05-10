@@ -90,7 +90,7 @@ Required in local `.env` and Netlify env vars:
 
 Recommended defaults:
 
-- `OPENAI_MODEL` — chat completions model id from your provider’s docs (omit to use the function’s built-in default)
+- `OPENAI_MODEL` — required chat completions model id from your provider’s docs (set in Netlify; do not commit)
 - `GLOBAL_DAILY_LIMIT=100`
 
 Optional hardening:
