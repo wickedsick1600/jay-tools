@@ -386,5 +386,8 @@ renderHeroShortcuts();
 render();
 
 if (initialParams.get('thanks') === '1') {
-  feedbackCard.classList.add('submitted');
+  feedbackCard?.classList.add('submitted');
+  requestAnimationFrame(() => {
+    document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 }
