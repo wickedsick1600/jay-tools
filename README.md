@@ -84,13 +84,13 @@ File: **`bookmark-hint.js`** at the publish root.
 
 ## Prompt Enhancer backend configuration
 
-Required in local `.env` and Netlify env vars:
+Required in local `.env` (for `netlify dev`) and in Netlify **Site configuration → Environment variables**:
 
 - `OPENAI_API_KEY`
+- `OPENAI_MODEL` — chat completions model id from your provider (no default in code; the function returns 500 if unset)
 
-Recommended defaults:
+Recommended:
 
-- `OPENAI_MODEL` — required chat completions model id from your provider’s docs (set in Netlify; do not commit)
 - `GLOBAL_DAILY_LIMIT=100`
 
 Optional hardening:
@@ -102,6 +102,14 @@ Optional hardening:
 Core serverless function path:
 
 - `prompt-enhancer/netlify/functions/enhance.js`
+
+### Netlify secrets scanning
+
+Netlify compares environment variable **values** to files in the deployed repo. If a tracked file contains the **exact same string** as `OPENAI_MODEL` (or another sensitive env value), the build fails. Do **not** paste real model ids, API keys, or tokens into HTML, JS, Markdown, or examples that get committed. Keep values only in Netlify (and local `.env`, which must stay gitignored).
+
+### Hub feedback form (Netlify Forms)
+
+After a successful submit, users are redirected to **`/index.html?thanks=1`**. The hub’s `main.js` reads `thanks=1`, shows the inline success message, and scrolls to the feedback section. Avoid using only `/?thanks=1#fragment` as the form `action`; that pattern has triggered **404** redirects on Netlify for this site.
 
 ## Local development
 
@@ -132,7 +140,7 @@ Both pages must be linked in service footers.
 Donations and feedback baseline:
 
 - Donations: Ko-fi primary, PayPal fallback
-- Feedback: hub Netlify Form routed to `devjaybusiness@gmail.com`
+- Feedback: hub Netlify Form on `index.html`, notifications to `devjaybusiness@gmail.com` (configure in Netlify **Forms → Form notifications**)
 
 ## Adding a new service
 
@@ -149,5 +157,5 @@ Donations and feedback baseline:
 
 - `README.md` - project source of truth (this file)
 - `TODO.md` - actionable checklist (backlog, deployment tasks, launch tasks)
-- `DEPLOY.md` - operational deployment runbook and troubleshooting
+- `DEPLOY.md` - operational deployment runbook (DNS, forms success URL, secrets scanning, troubleshooting)
 - `bookmark-hint.js` - site-wide dismissible bookmark reminder ([details](#bookmark-hint-script))

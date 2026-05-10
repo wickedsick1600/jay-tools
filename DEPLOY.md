@@ -60,8 +60,11 @@ Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS 
 3. Click **Forms** → **Form notifications** → **Add notification** → **Email notification**.
 4. Set recipient: `devjaybusiness@gmail.com`. Save.
 5. Go back to the live site, submit a test message. Within ~30 seconds you should get it in Gmail.
+6. After submit, the browser should land on **`/index.html?thanks=1`** (Netlify follows the form `action`). You should see the green “Thanks…” line on the feedback card and be scrolled to that section. If you ever change the form `action`, use this pattern — **`/?thanks=1#…` alone caused HTTP 404 redirects** on Netlify for this project.
 
-### 6. Add `OPENAI_API_KEY` for the Prompt Enhancer
+### 6. Configure Prompt Enhancer env vars (`OPENAI_API_KEY`, `OPENAI_MODEL`)
+
+**Secrets scanning:** Netlify fails builds if any committed file contains the **exact value** of an environment variable such as `OPENAI_MODEL` or `OPENAI_API_KEY`. Keep model ids and keys **only** in Netlify env vars (and local `.env`). Do not put real values in README/DEPLOY examples or in JS defaults. See `README.md` → Netlify secrets scanning.
 
 1. Create an API key in the [OpenAI dashboard (API keys)](https://platform.openai.com/api-keys). Copy it. (**`https://api.openai.com/v1` is not a website** — it’s the API base your server calls; opening it in a browser usually 404s.)
 2. Netlify dashboard → your site → **Site configuration** → **Environment variables** → **Add a variable**.
@@ -120,7 +123,7 @@ Target layout (example — only if you split tools later):
 
 ### If the tool has serverless functions (currently just Prompt Enhancer)
 
-Add `OPENAI_API_KEY` as an environment variable on the **new** Netlify site too (each Netlify site has its own env vars).
+Add `OPENAI_API_KEY` and **`OPENAI_MODEL`** as environment variables on the **new** Netlify site too (each Netlify site has its own env vars). There is no default model id in code — without `OPENAI_MODEL`, the function returns 500.
 
 ---
 
@@ -137,13 +140,19 @@ Run a test donation with a second account (or friend) of $1–2 to confirm the w
 
 ## Troubleshooting
 
+**"After submitting feedback I get HTTP 404."**
+- Confirm the hub form’s `action` in `index.html` is **`/index.html?thanks=1`** (not only `/?thanks=1#feedback`). Netlify’s post-submit redirect must resolve to a real deployed asset; the fragment-only pattern broke redirects here.
+
+**"Netlify build failed: Secrets scanning found secrets."**
+- A file in the repo matches the **literal value** of an env var (often `OPENAI_MODEL`). Remove that string from tracked files, redeploy, and keep secrets only in Netlify. Do not disable scanning for real secrets.
+
 **"The feedback form submits but I don't get email."**
 - Netlify Forms only detects forms on the **deployed** version, not local previews. Deploy first, then check.
 - Check spam folder.
 - Confirm the notification email is `devjaybusiness@gmail.com` in Netlify Forms settings.
 
 **"Prompt Enhancer returns 500 error."**
-- 90% of the time this means `OPENAI_API_KEY` isn't set on the Netlify site, or it's set but you haven't redeployed after adding it. Trigger a redeploy.
+- Most often: `OPENAI_API_KEY` missing, or **`OPENAI_MODEL` missing** (there is no default model id in code anymore — both must be set in Netlify). Redeploy after changing env vars.
 - Check function logs: Netlify → **Functions** → `enhance` → **Function log**.
 
 **"Images on Bulk Image Resizer process but the .zip is empty."**
