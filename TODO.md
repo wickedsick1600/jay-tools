@@ -18,7 +18,7 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [x] Rebrand to Juankit; apex URLs in `sitemap.xml`, `robots.txt`, hub + tool meta, and `netlify.toml` www→apex redirects
 - [ ] Confirm `juankit.com` DNS is pointed at Netlify and set as primary (apex canonical)
 - [x] Replace all `YOUR_HANDLE` placeholders (Ko-fi + PayPal)
-- [ ] Add `og-image.jpg` (1200×630) at repo root (hub meta tags already point at `https://juankit.com/og-image.jpg`)
+- [x] Add `og-image.png` at repo root (hub meta tags point at `https://juankit.com/og-image.png`)
 - [ ] Push repo to GitHub
 - [ ] Create Netlify site and connect repository
 - [ ] Enable Forms and email notification to `devjaybusiness@gmail.com`
