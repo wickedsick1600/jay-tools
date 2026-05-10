@@ -27,7 +27,7 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ## Prompt Enhancer deployment checklist
 - [ ] Create OpenAI API key
 - [ ] Add `OPENAI_API_KEY` in Netlify env vars
-- [ ] Set `OPENAI_MODEL=gpt-4o-mini`
+- [ ] Set `OPENAI_MODEL` to a chat model id from your provider (see OpenAI or compatible provider docs)
 - [ ] Set `GLOBAL_DAILY_LIMIT`
 - [ ] Deploy and verify Enhance flow works
 - [ ] Verify API key is not exposed in client source

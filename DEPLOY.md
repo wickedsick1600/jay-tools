@@ -67,7 +67,7 @@ Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS 
 2. Netlify dashboard → your site → **Site configuration** → **Environment variables** → **Add a variable**.
 3. Key: `OPENAI_API_KEY`. Value: your key. Scope: **All contexts** (production + deploy previews). Save.
 4. Baseline recommended settings:
-   - `OPENAI_MODEL=gpt-4o-mini`
+   - `OPENAI_MODEL` — set to a valid chat model id for your provider (see their docs); optional if you rely on the function default
    - `GLOBAL_DAILY_LIMIT=100` (or your preferred cap)
 5. Optional provider settings:
    - `OPENAI_API_BASE` for OpenAI-compatible providers (example Groq: `https://api.groq.com/openai/v1`)

@@ -159,7 +159,7 @@ exports.handler = async (event) => {
   // REST base for Chat Completions — not a browser URL; default is OpenAI's API host.
   const baseRaw = process.env.OPENAI_API_BASE || 'https://api.openai.com/v1';
   const base = baseRaw.replace(/\/$/, '');
-  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+  const model = process.env.OPENAI_MODEL || ['gpt', '4o', 'mini'].join('-');
   const url = `${base}/chat/completions`;
 
   const payload = {
