@@ -5,6 +5,7 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ## Documentation maintenance
 - [x] Make `README.md` the complete project documentation source of truth
 - [x] Convert `TODO.md` to checklist-only tracker (backlog + deployment + launch)
+- [x] Document Netlify secrets scanning (`OPENAI_*` values must not appear in repo), required `OPENAI_MODEL`, and feedback form success URL (`/index.html?thanks=1`)
 
 ## Core platform status
 - [x] Homepage with category tabs
@@ -16,22 +17,22 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
 ## Pre-deployment checklist
 - [x] Rebrand to Juankit; apex URLs in `sitemap.xml`, `robots.txt`, hub + tool meta, and `netlify.toml` www→apex redirects
-- [ ] Confirm `juankit.com` DNS is pointed at Netlify and set as primary (apex canonical)
+- [x] Confirm `juankit.com` DNS is pointed at Netlify and set as primary (apex canonical)
 - [x] Replace all `YOUR_HANDLE` placeholders (Ko-fi + PayPal)
 - [x] Add `og-image.png` at repo root (hub meta tags point at `https://juankit.com/og-image.png`)
-- [ ] Push repo to GitHub
-- [ ] Create Netlify site and connect repository
-- [ ] Enable Forms and email notification to `devjaybusiness@gmail.com`
-- [ ] Submit test feedback and verify email receipt
+- [x] Push repo to GitHub
+- [x] Create Netlify site and connect repository
+- [x] Enable Forms and email notification to `devjaybusiness@gmail.com`
+- [x] Submit test feedback and verify email receipt (form `action`: `/index.html?thanks=1`)
 
 ## Prompt Enhancer deployment checklist
-- [ ] Create OpenAI API key
-- [ ] Add `OPENAI_API_KEY` in Netlify env vars
-- [ ] Set `OPENAI_MODEL` to a chat model id from your provider (see OpenAI or compatible provider docs)
-- [ ] Set `GLOBAL_DAILY_LIMIT`
-- [ ] Deploy and verify Enhance flow works
-- [ ] Verify API key is not exposed in client source
-- [ ] Validate rate-limiting behavior
+- [x] Create OpenAI API key
+- [x] Add `OPENAI_API_KEY` in Netlify env vars
+- [x] Set `OPENAI_MODEL` in Netlify only (never commit the value — Netlify secrets scanning matches repo text to env values)
+- [ ] Set `GLOBAL_DAILY_LIMIT` (optional; code defaults to **300**/day if unset)
+- [x] Deploy and verify Enhance flow works
+- [x] Verify API key is not exposed in client source
+- [ ] Validate rate-limiting behavior under load
 
 ## Tool split and subdomain checklist
 - [ ] Move `image-editor` to own repo
@@ -47,21 +48,22 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [ ] Mobile search QA
 - [ ] Cross-browser test (Safari, Firefox, Chrome, Edge)
 - [ ] Load-test layout with 20+ tools in registry
-- [ ] Submit site to Google Search Console
-- [ ] Submit site to Bing Webmaster Tools
+- [x] Submit site to Google Search Console (DNS TXT + sitemap)
+- [x] Submit site to Bing Webmaster Tools (import / manual)
 
 ## Service deployment tracker
 - [ ] Folder Creator independently deployed
 - [ ] Image Editor independently deployed
 - [ ] Prompt Enhancer independently deployed
-- [ ] Stopwatch deployed with hub
-- [ ] Pseudo Word Generator deployed with hub
-- [ ] JSON Formatter deployed with hub
-- [ ] Regex Tester deployed with hub
-- [ ] Web Dev Unit Converter deployed with hub
-- [ ] PDF Editor deployed with hub
-- [ ] Bulk Image Resizer deployed with hub
-- [ ] YouTube Looper deployed with hub
+- [x] Stopwatch deployed with hub
+- [x] Pseudo Word Generator deployed with hub
+- [x] JSON Formatter deployed with hub
+- [x] Regex Tester deployed with hub
+- [x] Web Dev Unit Converter deployed with hub
+- [x] PDF Editor deployed with hub
+- [x] Bulk Image Resizer deployed with hub
+- [x] YouTube Looper deployed with hub
+- [x] Password Generator, QR Generator, Diff Checker, PDF Merger, SVG Optimizer, Audio Trimmer deployed with hub (see hub registry)
 
 ## Growth and operations backlog
 - [x] Dismissible bookmark hint (`bookmark-hint.js`, `localStorage` key `juankit_bookmark_hint_v1`)

@@ -51,7 +51,8 @@ More services will be added over time using the same conventions.
 ## Feedback
 
 - The hub collects feedback via **Netlify Forms** (built into the hosting platform). Form submissions are emailed to `devjaybusiness@gmail.com`. No third-party form service required.
-- Individual tools don't have their own feedback forms — they link to the hub's feedback page.
+- The hub form’s **`action`** is **`/index.html?thanks=1`** so Netlify’s post-submit redirect resolves reliably; **`/?thanks=1#…` alone caused 404** on redirect for this suite. Client JS shows the thank-you state and scrolls to the feedback block.
+- Individual tools don't have their own feedback forms — they link to the hub's feedback section (`/#feedback`).
 
 ## Stack conventions
 
@@ -83,6 +84,8 @@ More services will be added over time using the same conventions.
 ## Security rules
 
 - API keys live **only in Netlify environment variables**, accessed **only from serverless functions**. Never in client JS. Never committed to the repo.
+- **`OPENAI_MODEL` is required** for the Prompt Enhancer function — there is no hardcoded default model id in code.
+- Netlify **secrets scanning** compares env var **values** to repository files. Never paste real model ids, API keys, or tokens into Markdown, HTML, or JS that gets committed, or builds can fail.
 - The `netlify/functions/` directory is the only place that touches secrets.
 - Rate-limit any serverless function that calls a paid or quota-limited third-party API.
 
