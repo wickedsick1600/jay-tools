@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Free AI Prompt Enhancer — Turn Rough Ideas into Polished Prompts | Juankit</title>
-<meta name="description" content="Paste a rough prompt idea and get back a detailed, structured prompt ready for ChatGPT, Midjourney, Claude, or any AI tool. Free, no signup.">
-<meta property="og:title" content="Free AI Prompt Enhancer — Juankit">
-<meta property="og:description" content="Turn a rough prompt into a polished one for any AI tool.">
+<title>Free AI Prompt Enhancer - Prompt Studio | Juankit</title>
+<meta name="description" content="Turn rough ideas into structured, model-aware prompts with privacy checks, variants, scoring, and local prompt collections. Free, no signup.">
+<meta property="og:title" content="Free AI Prompt Enhancer - Juankit">
+<meta property="og:description" content="Create polished prompts for ChatGPT, Claude, Gemini, image models, coding, research, and more.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0a0f1a">
 <link rel="canonical" href="https://juankit.com/prompt-enhancer/">
@@ -16,7 +16,7 @@
 <meta name="robots" content="index, follow">
 <meta name="turnstile-site-key" content="">
 <link rel="stylesheet" href="style.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free AI Prompt Enhancer — Turn Rough Ideas into Polished Prompts","url":"https://juankit.com/prompt-enhancer/","description":"Paste a rough prompt idea and get back a detailed, structured prompt ready for ChatGPT, Midjourney, Claude, or any AI tool. Free, no signup.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free AI Prompt Enhancer - Prompt Studio","url":"https://juankit.com/prompt-enhancer/","description":"Turn rough ideas into structured, model-aware prompts with privacy checks, variants, scoring, and local prompt collections. Free, no signup.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 
@@ -34,90 +34,291 @@
   </div>
 </header>
 
-<main class="chat-page">
-  <section class="hero">
-    <span class="tag">Free · AI-powered</span>
+<main class="studio-page">
+  <section class="hero studio-hero">
+    <span class="tag">Free AI-powered</span>
     <h1>Prompt Enhancer</h1>
-    <p>Chat with the enhancer. Type a rough idea and get a polished prompt you can paste into ChatGPT, Claude, Midjourney, or any other AI tool.</p>
+    <p>Paste a rough idea and get a cleaner prompt. Use templates, advanced controls, and saved prompts only when you need them.</p>
   </section>
 
   <div class="notice">
-    <strong>Heads up:</strong> your text is sent to a configured AI API through a server function. Avoid confidential, private, or sensitive data.
+    <strong>Privacy note:</strong> prompts are sent through a server function to the configured AI provider. The privacy guard checks common sensitive data before submission.
   </div>
 
-  <section class="chat-layout" aria-label="Prompt enhancer chat interface">
-    <aside class="history-panel card" aria-label="Recent prompts">
-      <div class="history-head">
-        <h2>Recent prompts</h2>
-        <button id="clear-history-btn" type="button" class="secondary">Clear</button>
-      </div>
-      <p class="muted">Saved locally on your device (last 5).</p>
-      <div id="history-list"></div>
-    </aside>
-
-    <section class="chat-panel card">
-      <div id="chat-thread" class="chat-thread" aria-live="polite" aria-label="Conversation thread"></div>
-
-      <div class="quick-targets" aria-label="Quick target selection">
-        <button type="button" class="chip" data-target-chip="chatgpt">ChatGPT</button>
-        <button type="button" class="chip" data-target-chip="claude">Claude</button>
-        <button type="button" class="chip" data-target-chip="midjourney">Midjourney</button>
-        <button type="button" class="chip" data-target-chip="generic">Not sure</button>
+  <section class="studio-grid" aria-label="Prompt enhancer studio">
+    <section class="studio-main card" aria-label="Prompt editor">
+      <div class="panel-head studio-main-head">
+        <div>
+          <h2>Draft input</h2>
+          <p class="muted">Choose a target, paste your idea, then improve it.</p>
+        </div>
+        <button id="new-chat-btn" type="button" class="secondary small-btn">Reset</button>
       </div>
 
-      <label for="target">Target AI tool</label>
-      <select id="target">
-        <option value="chatgpt">ChatGPT / GPT-4 (text)</option>
-        <option value="midjourney">Midjourney (image)</option>
-        <option value="stable-diffusion">Stable Diffusion (image)</option>
-        <option value="claude">Claude (text)</option>
-        <option value="gemini">Gemini (text)</option>
-        <option value="linkedin-post">LinkedIn post</option>
-        <option value="email-draft">Professional email draft</option>
-        <option value="youtube-script">YouTube script outline</option>
-        <option value="generic">Something else / not sure</option>
-      </select>
+      <div class="field">
+        <label for="target">Target</label>
+        <select id="target">
+          <optgroup label="Text models">
+            <option value="chatgpt">ChatGPT / OpenAI</option>
+            <option value="claude">Claude</option>
+            <option value="gemini">Gemini</option>
+            <option value="generic">Generic AI tool</option>
+          </optgroup>
+          <optgroup label="Workflows">
+            <option value="coding">Coding assistant</option>
+            <option value="research">Research assistant</option>
+            <option value="data-analysis">Data analysis</option>
+            <option value="agent-workflow">Agent workflow</option>
+            <option value="email-draft">Professional email</option>
+            <option value="linkedin-post">LinkedIn post</option>
+            <option value="youtube-script">YouTube script</option>
+          </optgroup>
+          <optgroup label="Image prompts">
+            <option value="midjourney">Midjourney</option>
+            <option value="stable-diffusion">Stable Diffusion</option>
+          </optgroup>
+        </select>
+      </div>
 
       <label for="prompt">Your rough idea</label>
-      <div class="composer">
-        <textarea id="prompt" spellcheck="false" placeholder="Type your rough idea. Press Enter to enhance, Shift+Enter for a new line."></textarea>
-        <div class="composer-privacy">
-          <label class="inline-check" for="save-history-toggle">
-            <input id="save-history-toggle" type="checkbox">
-            Save local history on this device
-          </label>
-          <p class="muted">Turn off on shared devices.</p>
+      <textarea id="prompt" spellcheck="false" placeholder="Example: Help me write a professional follow-up email after a client meeting. Press Ctrl+Enter to improve it."></textarea>
+
+      <section id="privacy-panel" class="privacy-panel" hidden aria-live="polite">
+        <div>
+          <strong>Privacy guard found sensitive-looking text.</strong>
+          <p id="privacy-summary" class="muted"></p>
         </div>
-        <div id="turnstile-wrap" class="turnstile-wrap" style="display:none;">
-          <div id="turnstile-container"></div>
+        <div class="row privacy-actions">
+          <button id="redact-btn" type="button" class="secondary small-btn">Redact and continue</button>
+          <button id="send-anyway-btn" type="button" class="secondary small-btn">Send anyway</button>
         </div>
-        <div class="composer-actions">
-          <button id="new-chat-btn" type="button" class="secondary">New chat</button>
-          <button id="enhance-btn" class="success">Enhance</button>
+      </section>
+
+      <div id="turnstile-wrap" class="turnstile-wrap" hidden>
+        <div id="turnstile-container"></div>
+      </div>
+
+      <div class="primary-actions" aria-label="Prompt actions">
+        <div id="msg" class="muted" role="status" aria-live="polite">Ready.</div>
+        <button id="enhance-btn" class="success" type="button" data-default-label="Improve prompt">Improve prompt</button>
+      </div>
+
+      <div class="progressive-tools" aria-label="Optional prompt tools">
+        <details class="tool-details">
+          <summary>Templates</summary>
+          <p class="muted">Load a starter prompt only if you do not want to begin from scratch.</p>
+          <div id="template-list" class="template-list"></div>
+        </details>
+
+        <details class="tool-details">
+          <summary>Advanced options</summary>
+          <div class="form-grid">
+            <fieldset class="mode-field field-wide">
+              <legend>Processing mode</legend>
+              <label class="segmented-option">
+                <input type="radio" name="prompt-mode" value="enhance" checked>
+                <span>Improve with assumptions</span>
+              </label>
+              <label class="segmented-option">
+                <input type="radio" name="prompt-mode" value="clarify">
+                <span>Ask clarifying questions</span>
+              </label>
+            </fieldset>
+
+            <div class="field">
+              <label for="tone">Tone</label>
+              <select id="tone">
+                <option value="clear">Clear</option>
+                <option value="professional">Professional</option>
+                <option value="concise">Concise</option>
+                <option value="creative">Creative</option>
+                <option value="technical">Technical</option>
+                <option value="friendly">Friendly</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="output-format">Output format</label>
+              <select id="output-format">
+                <option value="structured">Structured sections</option>
+                <option value="bullets">Bullets</option>
+                <option value="json">JSON</option>
+                <option value="table">Table</option>
+                <option value="paragraph">Paragraph</option>
+                <option value="prompt-only">Prompt only</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="length">Length</label>
+              <select id="length">
+                <option value="balanced">Balanced</option>
+                <option value="short">Short</option>
+                <option value="detailed">Detailed</option>
+                <option value="comprehensive">Comprehensive</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="creativity">Creativity <span id="creativity-value">50</span></label>
+              <input id="creativity" type="range" min="0" max="100" value="50">
+            </div>
+
+            <div class="field field-wide">
+              <label for="audience">Audience or user</label>
+              <input id="audience" type="text" maxlength="160" placeholder="Example: junior developer, hiring manager, first-time customer">
+            </div>
+
+            <div class="field field-wide">
+              <label for="constraints">Important constraints</label>
+              <input id="constraints" type="text" maxlength="240" placeholder="Example: cite sources, avoid jargon, keep under 500 words">
+            </div>
+
+            <div class="field field-wide">
+              <label for="examples">Optional examples or source notes</label>
+              <textarea id="examples" class="compact-textarea" spellcheck="false" placeholder="Add examples, reference style, test data, or context the prompt should preserve."></textarea>
+            </div>
+          </div>
+        </details>
+
+        <details class="tool-details">
+          <summary>Saved prompts</summary>
+          <section aria-labelledby="history-title">
+            <div class="panel-head compact-head">
+              <div>
+                <h3 id="history-title">Local history</h3>
+                <p class="muted">Opt-in, stored on this device.</p>
+              </div>
+              <button id="clear-history-btn" type="button" class="secondary small-btn">Clear</button>
+            </div>
+            <label class="inline-check local-toggle" for="save-history-toggle">
+              <input id="save-history-toggle" type="checkbox">
+              Save successful prompts locally
+            </label>
+            <div id="history-list" class="history-list"></div>
+          </section>
+
+          <section aria-labelledby="collection-title" class="collection-block">
+            <div class="panel-head compact-head">
+              <div>
+                <h3 id="collection-title">Collection</h3>
+                <p class="muted">Saved prompts never leave this browser.</p>
+              </div>
+            </div>
+            <div class="collection-actions">
+              <button id="export-json-btn" type="button" class="secondary small-btn">Export JSON</button>
+              <button id="export-md-btn" type="button" class="secondary small-btn">Export Markdown</button>
+            </div>
+            <div id="collection-list" class="history-list"></div>
+          </section>
+        </details>
+      </div>
+    </section>
+
+    <section id="result-panel" class="studio-output card" aria-label="Enhanced prompt results" hidden>
+      <div class="panel-head">
+        <div>
+          <h2 id="result-title">Result</h2>
+          <p id="result-meta" class="muted">No result yet.</p>
+        </div>
+        <div id="result-actions" class="result-actions" hidden>
+          <button id="copy-result-btn" class="secondary small-btn" type="button" disabled>Copy</button>
+          <button id="save-result-btn" type="button" class="secondary small-btn" disabled>Save</button>
         </div>
       </div>
 
-      <div id="msg" class="muted" role="status" aria-live="polite"></div>
+      <div id="result-empty" class="empty-state" hidden>
+        <h3>Ready for a stronger prompt</h3>
+        <p>Results will show here after processing.</p>
+      </div>
+
+      <div id="processing-card" class="processing-card" role="status" aria-live="polite" hidden>
+        <div class="processing-head">
+          <span class="processing-spinner" aria-hidden="true"></span>
+          <div>
+            <h3 id="processing-title">Preparing your prompt</h3>
+            <p id="processing-detail">This usually takes a few seconds.</p>
+          </div>
+        </div>
+        <div class="skeleton-lines" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <article id="result-card" class="result-card" hidden>
+        <pre id="result-text" class="result-text"></pre>
+
+        <div id="assumptions-panel" class="result-section" hidden>
+          <h3>Assumptions</h3>
+          <ul id="assumptions-list"></ul>
+        </div>
+
+        <div id="warnings-panel" class="result-section" hidden>
+          <h3>Warnings</h3>
+          <ul id="warnings-list"></ul>
+        </div>
+
+        <details id="score-panel" class="score-panel" hidden>
+          <summary><span id="score-total">0</span> Prompt score</summary>
+          <div id="score-breakdown" class="score-breakdown"></div>
+          <div id="score-suggestions" class="score-suggestions"></div>
+          <button id="apply-suggestions-btn" type="button" class="secondary small-btn">Apply suggestions</button>
+        </details>
+      </article>
+
+      <section id="clarify-panel" class="result-section" hidden>
+        <h3>Clarifying questions</h3>
+        <ol id="clarify-list"></ol>
+        <button id="answer-questions-btn" type="button" class="secondary small-btn">Answer in editor</button>
+      </section>
+
+      <section id="error-panel" class="error-card" role="alert" hidden>
+        <h3>Something went wrong</h3>
+        <p id="error-text">The request failed. Check your input and try again.</p>
+        <button id="retry-btn" type="button" class="secondary small-btn">Try again</button>
+      </section>
+
+      <div id="post-result-actions" class="post-result-actions" hidden>
+        <button id="variants-btn" class="secondary small-btn" type="button" data-default-label="Generate variants" disabled>Generate variants</button>
+        <button id="test-btn" class="secondary small-btn" type="button" disabled>Test prompt</button>
+      </div>
+
+      <section id="variants-panel" class="result-section" hidden>
+        <div class="panel-head">
+          <div>
+            <h3>Variants</h3>
+            <p class="muted">Compare and copy the best fit.</p>
+          </div>
+        </div>
+        <div id="variants-list" class="variants-list"></div>
+      </section>
+
+      <section id="test-panel" class="result-section" hidden>
+        <h3>Test preview</h3>
+        <label for="test-input">Sample task or input</label>
+        <textarea id="test-input" class="compact-textarea" spellcheck="false" placeholder="Optional sample input for the enhanced prompt."></textarea>
+        <button id="run-test-btn" type="button" class="secondary small-btn" data-default-label="Run test preview">Run test preview</button>
+        <div id="test-output" class="test-output"></div>
+      </section>
+
+      <details id="feedback-panel" class="feedback-panel" hidden>
+        <summary>Feedback</summary>
+        <div class="feedback-actions" role="group" aria-label="Rate result">
+          <button type="button" class="secondary small-btn" data-feedback-rating="helpful">Helpful</button>
+          <button type="button" class="secondary small-btn" data-feedback-rating="needs-work">Needs work</button>
+        </div>
+        <div id="feedback-reasons" class="feedback-reasons" hidden>
+          <label><input type="checkbox" value="unclear"> Unclear</label>
+          <label><input type="checkbox" value="too-long"> Too long</label>
+          <label><input type="checkbox" value="wrong-target"> Wrong target</label>
+          <label><input type="checkbox" value="unsafe"> Safety issue</label>
+          <label class="inline-check"><input id="feedback-include-content" type="checkbox"> Include anonymized prompt/result</label>
+          <button id="submit-feedback-btn" type="button" class="secondary small-btn">Submit feedback</button>
+        </div>
+      </details>
     </section>
-  </section>
-
-  <section class="how-it-works">
-    <h2>How this works</h2>
-    <ul>
-      <li><strong>You send a rough idea</strong> in chat.</li>
-      <li><strong>The enhancer rewrites it</strong> based on your selected target.</li>
-      <li><strong>You can copy, refine, or retry</strong> right from the conversation.</li>
-      <li><strong>History stays local</strong> so you can quickly reload recent work.</li>
-    </ul>
-  </section>
-
-  <section class="how-it-works">
-    <h2>Help improve this chat</h2>
-    <ul>
-      <li><strong>User test flow:</strong> send prompt, switch target, retry on error, and reload from history.</li>
-      <li><strong>What to measure:</strong> time to first successful result, copy rate, and retry recovery.</li>
-      <li><strong>Quick feedback:</strong> use the Helpful / Needs work buttons under responses.</li>
-    </ul>
   </section>
 
   <section class="support">
