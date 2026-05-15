@@ -97,11 +97,15 @@ Optional hardening:
 
 - `UPSTASH_REDIS_REST_URL`
 - `UPSTASH_REDIS_REST_TOKEN`
+- `TURNSTILE_SITE_KEY`
 - `TURNSTILE_SECRET_KEY`
 
 Core serverless function path:
 
 - `prompt-enhancer/netlify/functions/enhance.js`
+- `prompt-enhancer/netlify/functions/config.js`
+- `prompt-enhancer/netlify/functions/feedback.js`
+- `prompt-enhancer/netlify/functions/test-prompt.js`
 
 ### Netlify secrets scanning
 
