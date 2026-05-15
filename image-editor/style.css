@@ -355,6 +355,72 @@ input[type="file"] { padding: 8px; }
 
 .card h3 { margin-top: 0; }
 
+.related-tools {
+  margin-top: 28px;
+}
+
+.related-tools__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.related-tools__card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 96px;
+  padding: 14px;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.related-tools__card:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+.related-tools__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--blue-soft);
+  color: var(--accent);
+}
+
+.related-tools__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.related-tools__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.related-tools__hint {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .related-tools__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ---------- Hero / callouts ---------- */
 
 .hero {

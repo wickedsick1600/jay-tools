@@ -69,6 +69,8 @@ More services will be added over time using the same conventions.
 - **Mobile-first, single-column layouts.** Tap targets at least 44×44px.
 - **Palette: black, blue, white, green only.** No other accent colors.
 - Every tool should include a small **"How does this work?"** section in plain English.
+- Every tool should include a **"Support this tool"** section before the footer, then a related tools placeholder: `<section class="related-tools" data-related-tools></section>`.
+- One-level-deep tool pages should load `../tools.js` and `../related-tools.js` before `../bookmark-hint.js`; `related-tools.js` picks 3 random live tools from the central registry and excludes the current tool.
 - **Header/footer match the hub:** same nav labels — **All tools** (to `https://juankit.com/` or `/`), **Feedback** (hub `/#feedback`), **Support** (hub `/#support`). Shared `style.css` uses **`--chrome-maxw`** for the header/footer inner width (wider bar) and **`--maxw`** for `<main>` (narrower content) so chrome lines up with the hub.
 - **Optional bookmark reminder:** the central monorepo includes `bookmark-hint.js` — a dismissible strip above the footer. New pages should load it before `</body>` (`bookmark-hint.js` from site root, or `../bookmark-hint.js` one folder deep). After dismiss, `localStorage` key `juankit_bookmark_hint_v1` hides it.
 

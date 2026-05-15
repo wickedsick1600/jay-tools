@@ -76,6 +76,12 @@ File: **`bookmark-hint.js`** at the publish root.
 - **Persistence:** after **Dismiss**, `localStorage` key `juankit_bookmark_hint_v1` prevents the bar from showing again (private browsing or blocked storage disables the feature harmlessly).
 - **Wiring:** from the publish root, `<script src="bookmark-hint.js" defer></script>` before `</body>`; from a one-level-deep tool path, `<script src="../bookmark-hint.js" defer></script>`. Styles live at the end of `style.css` (`.bookmark-hint-bar`, etc.).
 
+### Tool page cross-promotion
+
+- Every tool page must include a **Support this tool** section before the footer.
+- Every tool page must include `<section class="related-tools" data-related-tools></section>` below that support section.
+- One-level-deep tool pages must load `../tools.js` and `../related-tools.js` before `../bookmark-hint.js`. The related-tools script picks 3 random live tools from the central registry and excludes the current tool.
+
 ## Security and privacy model
 
 - Process user files in browser whenever possible

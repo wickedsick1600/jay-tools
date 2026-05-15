@@ -78,6 +78,7 @@ Content rules:
 
 - **One `<h1>` per page**, matching the page title's core phrase.
 - Every tool gets a short "How to use this" section — Google rewards task-oriented content and users want it.
+- Every tool gets a **Support this tool** section before the footer, followed by `<section class="related-tools" data-related-tools></section>`. Load `../tools.js` and `../related-tools.js` before `../bookmark-hint.js` so the page shows 3 random live tools from the central registry.
 - Register new tools in the hub's `tools.js` **and** append them to root `sitemap.xml` with the canonical URL.
 - `robots.txt` at the root allows everything except `/.netlify/` and points at `sitemap.xml`.
 - Use real HTML semantics: `<main>`, `<header>`, `<footer>`, `<nav>`, `<section>`, `<label for=...>`. Don't wrap everything in `<div>`s.
