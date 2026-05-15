@@ -48,6 +48,7 @@ This repository currently hosts the hub and multiple tool folders in one place.
 | Fake User Generator | Create country-matched checkout test profiles | `fake-user-generator/` | Static |
 | Diff Checker | Compare two text blocks and show differences | `diff-checker/` | Static |
 | PDF Editor | Annotate/sign PDF and export | `pdf-editor/` | Static |
+| PDF to Images | Convert PDF pages to PNG/JPG/WebP images | `pdf-to-images/` | Static |
 | PDF Merger | Merge multiple PDFs in-browser | `pdf-merger/` | Static |
 | SVG Optimizer | Basic SVG cleanup/minification | `svg-optimizer/` | Static |
 | Audio Trimmer | Trim audio in-browser and export WAV | `audio-trimmer/` | Static |

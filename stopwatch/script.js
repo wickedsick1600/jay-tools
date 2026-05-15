@@ -17,10 +17,11 @@
 
   function fmt(ms) {
     const s = Math.floor(ms / 1000);
+    const mmm = String(ms % 1000).padStart(3, '0');
     const hh = String(Math.floor(s / 3600)).padStart(2, '0');
     const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
     const ss = String(s % 60).padStart(2, '0');
-    return `${hh}:${mm}:${ss}`;
+    return `${hh}:${mm}:${ss}.${mmm}`;
   }
 
   function elapsed() {
@@ -67,8 +68,8 @@
     lastSplitAt = 0;
     splits = [];
     setRunning(false);
-    totalEl.textContent = '00:00:00';
-    currentEl.textContent = 'Current split: 00:00:00';
+    totalEl.textContent = '00:00:00.000';
+    currentEl.textContent = 'Current split: 00:00:00.000';
     render();
   });
 
