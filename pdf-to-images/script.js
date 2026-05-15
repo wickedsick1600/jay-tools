@@ -87,11 +87,11 @@ function padPageNumber(pageNumber) {
 }
 
 function fileNameForPage(pageNumber, ext) {
-  return `${safeFileBase(originalFileName)}-page-${padPageNumber(pageNumber)}.${ext}`;
+  return `${safeFileBase(originalFileName)}-page-${padPageNumber(pageNumber)}-juankit.${ext}`;
 }
 
 function zipFileName() {
-  return `${safeFileBase(originalFileName)}-images.zip`;
+  return `${safeFileBase(originalFileName)}-images-juankit.zip`;
 }
 
 function downloadBlob(blob, filename) {

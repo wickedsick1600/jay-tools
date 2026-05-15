@@ -377,7 +377,7 @@ trimBtn.addEventListener('click', async () => {
     let filename;
     if (fmt === 'wav') {
       blob = new Blob([encodeWav(out)], { type: 'audio/wav' });
-      filename = 'trimmed.wav';
+      filename = 'trimmed-juankit.wav';
     } else {
       if (typeof lamejs === 'undefined' || !lamejs.Mp3Encoder) {
         flash('MP3 encoder did not load. Pick WAV or refresh the page.', true);
@@ -386,7 +386,7 @@ trimBtn.addEventListener('click', async () => {
       flash('Encoding MP3…');
       await new Promise((r) => setTimeout(r, 0));
       blob = encodeBufferToMp3(out);
-      filename = 'trimmed.mp3';
+      filename = 'trimmed-juankit.mp3';
     }
     triggerDownload(blob, filename);
     flash('Download started.');

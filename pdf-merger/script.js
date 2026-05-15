@@ -22,9 +22,11 @@ function humanBytes(n) {
 }
 
 function cleanOutputName(name) {
-  const trimmed = (name || 'merged.pdf').trim();
+  const trimmed = (name || 'merged-juankit.pdf').trim();
   const safe = trimmed.replace(/[\\/:*?"<>|]+/g, '-');
-  return /\.pdf$/i.test(safe) ? safe : `${safe}.pdf`;
+  const base = (/\.pdf$/i.test(safe) ? safe.replace(/\.pdf$/i, '') : safe).trim() || 'merged';
+  const brandedBase = /(^|-)juankit$/i.test(base) ? base : `${base}-juankit`;
+  return `${brandedBase}.pdf`;
 }
 
 function isPdfFile(file) {

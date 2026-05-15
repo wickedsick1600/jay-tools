@@ -20,7 +20,7 @@ document.getElementById('download-btn').addEventListener('click', () => {
   if (!src) { flash('Generate a QR first.', true); return; }
   const a = document.createElement('a');
   a.href = src;
-  a.download = 'qr-code.png';
+  a.download = 'qr-code-juankit.png';
   document.body.appendChild(a);
   a.click();
   a.remove();
