@@ -45,6 +45,7 @@ This repository currently hosts the hub and multiple tool folders in one place.
 | Bulk Image Resizer | Batch image resize/crop workflows | `bulk-image-resizer/` | Static |
 | Password Generator | Secure in-browser random password generation | `password-generator/` | Static |
 | QR Generator | Create and download QR code PNG | `qr-generator/` | Static |
+| Fake User Generator | Create country-matched checkout test profiles | `fake-user-generator/` | Static |
 | Diff Checker | Compare two text blocks and show differences | `diff-checker/` | Static |
 | PDF Editor | Annotate/sign PDF and export | `pdf-editor/` | Static |
 | PDF Merger | Merge multiple PDFs in-browser | `pdf-merger/` | Static |
