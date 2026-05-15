@@ -26,7 +26,7 @@
   }
   .clock .total {
     font-variant-numeric: tabular-nums;
-    font-size: 44px;
+    font-size: clamp(28px, 6.5vw, 44px);
     font-weight: 600;
     letter-spacing: 1px;
     line-height: 1.1;
@@ -101,8 +101,8 @@
   </section>
 
   <div class="clock">
-    <div class="total" id="total">00:00:00</div>
-    <div class="current" id="current">Current split: 00:00:00</div>
+    <div class="total" id="total">00:00:00.000</div>
+    <div class="current" id="current">Current split: 00:00:00.000</div>
   </div>
 
   <div class="row">
@@ -138,7 +138,7 @@
 
   <h2>How to use this</h2>
   <ul>
-    <li><strong>Start</strong> begins the stopwatch. The big number on top is the total time. The smaller number below is the time since your last split.</li>
+    <li><strong>Start</strong> begins the stopwatch. The big number on top is the total time (hours, minutes, seconds, and milliseconds). The smaller number below is the time since your last split.</li>
     <li><strong>Split</strong> saves the current moment to the list. Type a short note first if you want it attached.</li>
     <li><strong>Copy buttons</strong> let you grab any timecode — just the time, or the time + your note.</li>
     <li><strong>Reset</strong> clears everything.</li>
@@ -149,23 +149,53 @@
     <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Support on Ko-fi</a>
     <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
   </div>
+
+  <section class="related-tools" data-related-tools></section>
 </main>
 
 <footer class="site-footer">
   <div class="wrap">
-    <div>
-      <a href="/privacy.html">Privacy</a>
-      <a href="/terms.html">Terms</a>
-      <a href="/">All tools</a>
+    <div class="site-footer__grid">
+      <nav class="site-footer__nav" aria-label="Site and legal">
+        <ul class="site-footer__links">
+          <li><a href="/privacy.html">Privacy</a></li>
+          <li><a href="/terms.html">Terms</a></li>
+          <li><a href="/">All tools</a></li>
+          <li><a href="/#feedback">Feedback</a></li>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+        </ul>
+      </nav>
+      <nav class="site-footer__nav" aria-label="Support the project">
+        <ul class="site-footer__links">
+          <li>
+            <a
+              href="https://ko-fi.com/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ko-fi (opens in new tab)"
+            >Ko-fi</a>
+          </li>
+          <li>
+            <a
+              href="https://paypal.me/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="PayPal (opens in new tab)"
+            >PayPal</a>
+          </li>
+        </ul>
+      </nav>
     </div>
-    <div>
-      <a href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Ko-fi</a>
-      <a href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
-    </div>
+    <p class="site-footer__tagline">
+      Juankit — free browser tools. No accounts.
+      <span class="site-footer__copy">© 2026 Juankit</span>
+    </p>
   </div>
 </footer>
 
 <script src="script.js"></script>
+<script src="../tools.js"></script>
+<script src="../related-tools.js"></script>
 <script src="../bookmark-hint.js" defer></script>
 </body>
 </html>

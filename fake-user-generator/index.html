@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fake User Generator - Checkout Test Profiles | Juankit</title>
+<meta name="description" content="Generate checkout-ready fake user profiles with country-matched names, phones, emails, and public test addresses. Runs fully in your browser.">
+<meta property="og:title" content="Fake User Generator - Juankit">
+<meta property="og:description" content="Create country-matched fake user details for checkout and QA testing.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://juankit.com/fake-user-generator/">
+<meta property="og:url" content="https://juankit.com/fake-user-generator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Juankit">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="../style.css">
+<style>
+  :root { --maxw: 1120px; }
+
+  .generator-shell {
+    display: grid;
+    grid-template-columns: minmax(250px, 320px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .tool-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tool-panel h2 {
+    margin: 0 0 12px;
+    font-size: 18px;
+  }
+
+  .control-actions,
+  .copy-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .copy-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 14px 0;
+  }
+
+  .result-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .result-head h2 { margin: 0; }
+
+  .profile-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--green-soft);
+    color: var(--green-hover);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .fields-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+    gap: 10px;
+  }
+
+  .field-box {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--off-white);
+    padding: 10px;
+  }
+
+  .field-box.wide {
+    grid-column: 1 / -1;
+  }
+
+  .field-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .field-label {
+    color: var(--fg-muted);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .field-copy {
+    min-height: 30px;
+    padding: 4px 9px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+  }
+
+  .field-value {
+    min-height: 30px;
+    margin-top: 8px;
+    overflow-wrap: anywhere;
+    color: var(--fg);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .field-value[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+    font-size: 20px;
+  }
+
+  .output-area {
+    min-height: 140px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+  }
+
+  .output-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .fine-print {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .fine-print p { margin: 0; }
+
+  .status-line {
+    min-height: 22px;
+    margin-top: 10px;
+  }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 820px) {
+    .generator-shell,
+    .output-grid,
+    .fine-print {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .control-actions,
+    .copy-actions {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Fake User Generator - Checkout Test Profiles","url":"https://juankit.com/fake-user-generator/","description":"Generate checkout-ready fake user profiles with country-matched names, phones, emails, and public test addresses. Runs fully in your browser.","applicationCategory":"DeveloperApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="dot"></span>
+      Juankit
+    </a>
+    <nav>
+      <a href="/">All tools</a>
+      <a href="/#feedback">Feedback</a>
+      <a class="cta" href="/#support">Support</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Free &middot; Runs in your browser</span>
+    <h1>Fake User Generator</h1>
+    <p>Create checkout-ready sample profiles with country-matched names, phone formats, emails, and public test addresses.</p>
+  </section>
+
+  <div class="notice">
+    Generated people are fictional. Addresses are curated public, commercial, or postal locations for QA forms and staging tests, not private residential data.
+  </div>
+
+  <section class="generator-shell" aria-label="Fake user generator">
+    <aside class="tool-panel" aria-labelledby="controls-title">
+      <h2 id="controls-title">Controls</h2>
+
+      <label for="country">Country</label>
+      <select id="country">
+        <option value="ae" selected>United Arab Emirates</option>
+        <option value="au">Australia</option>
+        <option value="br">Brazil</option>
+        <option value="ca">Canada</option>
+        <option value="fr">France</option>
+        <option value="de">Germany</option>
+        <option value="in">India</option>
+        <option value="it">Italy</option>
+        <option value="jp">Japan</option>
+        <option value="mx">Mexico</option>
+        <option value="nl">Netherlands</option>
+        <option value="sg">Singapore</option>
+        <option value="es">Spain</option>
+        <option value="gb">United Kingdom</option>
+        <option value="us">United States</option>
+      </select>
+
+      <label for="gender">Name style</label>
+      <select id="gender">
+        <option value="any" selected>Any</option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+      </select>
+
+      <div id="uae-script-wrap">
+        <label for="uae-script">UAE name display</label>
+        <select id="uae-script">
+          <option value="arabic" selected>Arabic</option>
+          <option value="latin">Latin transliteration</option>
+        </select>
+      </div>
+
+      <label for="seed">Seed</label>
+      <input id="seed" type="text" spellcheck="false" autocomplete="off">
+
+      <div class="control-actions">
+        <button id="new-seed-btn" class="success" type="button">Regenerate</button>
+        <button id="use-seed-btn" class="secondary" type="button">Use seed</button>
+      </div>
+
+      <p class="muted" style="margin-top:12px;">The same seed and settings produce the same profile.</p>
+      <div id="status" class="muted status-line" role="status" aria-live="polite"></div>
+    </aside>
+
+    <section class="tool-panel" aria-labelledby="profile-title">
+      <div class="result-head">
+        <h2 id="profile-title">Generated Profile</h2>
+        <span id="profile-badge" class="profile-badge">Public test address</span>
+      </div>
+
+      <div id="fields" class="fields-grid"></div>
+
+      <div class="copy-actions">
+        <button id="copy-profile-btn" type="button">Copy profile</button>
+        <button id="copy-json-btn" class="secondary" type="button">Copy JSON</button>
+        <button id="copy-csv-btn" class="secondary" type="button">Copy CSV</button>
+      </div>
+
+      <label for="full-profile">Full profile</label>
+      <textarea id="full-profile" class="output-area" readonly spellcheck="false"></textarea>
+
+      <div class="output-grid">
+        <div>
+          <label for="json-output">JSON</label>
+          <textarea id="json-output" class="output-area" readonly spellcheck="false"></textarea>
+        </div>
+        <div>
+          <label for="csv-output">CSV</label>
+          <textarea id="csv-output" class="output-area" readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <section class="fine-print" aria-label="Data notes">
+    <div class="notice green">
+      <p><strong>Phone numbers:</strong> formatted for checkout validation and QA. They are not guaranteed to be callable or SMS-capable.</p>
+    </div>
+    <div class="notice">
+      <p><strong>Email domains:</strong> generated addresses use reserved example domains so test mail is not sent to real inboxes.</p>
+    </div>
+  </section>
+
+  <section class="support">
+    <h2>Support this tool</h2>
+    <p>Free forever. If it saved you time, a tip keeps this and other free tools alive.</p>
+    <div class="row">
+      <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Support on Ko-fi</a>
+      <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
+    </div>
+  </section>
+
+  <section class="related-tools" data-related-tools></section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__grid">
+      <nav class="site-footer__nav" aria-label="Site and legal">
+        <ul class="site-footer__links">
+          <li><a href="/privacy.html">Privacy</a></li>
+          <li><a href="/terms.html">Terms</a></li>
+          <li><a href="/">All tools</a></li>
+          <li><a href="/#feedback">Feedback</a></li>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+        </ul>
+      </nav>
+      <nav class="site-footer__nav" aria-label="Support the project">
+        <ul class="site-footer__links">
+          <li>
+            <a
+              href="https://ko-fi.com/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ko-fi (opens in new tab)"
+            >Ko-fi</a>
+          </li>
+          <li>
+            <a
+              href="https://paypal.me/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="PayPal (opens in new tab)"
+            >PayPal</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <p class="site-footer__tagline">
+      Juankit — free browser tools. No accounts.
+      <span class="site-footer__copy">© 2026 Juankit</span>
+    </p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script src="../tools.js"></script>
+<script src="../related-tools.js"></script>
+<script src="../bookmark-hint.js" defer></script>
+</body>
+</html>

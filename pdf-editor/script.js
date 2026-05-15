@@ -954,7 +954,7 @@ async function exportEditedPdf() {
 
     const outputBytes = await outPdf.save();
     const blob = new Blob([outputBytes], { type: 'application/pdf' });
-    downloadBlob(blob, `${safeFileBase(originalFileName)}-edited.pdf`);
+    downloadBlob(blob, `${safeFileBase(originalFileName)}-edited-juankit.pdf`);
     flash('Downloaded edited PDF.');
   } catch (err) {
     flash('Failed to export PDF: ' + err.message, true);

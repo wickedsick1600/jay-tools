@@ -840,7 +840,7 @@ function exportCollection(format) {
   }
 
   if (format === 'json') {
-    downloadText('prompt-enhancer-collection.json', JSON.stringify(collection, null, 2), 'application/json');
+    downloadText('prompt-enhancer-collection-juankit.json', JSON.stringify(collection, null, 2), 'application/json');
     flash('Collection exported as JSON.');
     return;
   }
@@ -863,7 +863,7 @@ function exportCollection(format) {
     return parts.join('\n');
   }).join('\n\n---\n\n');
 
-  downloadText('prompt-enhancer-collection.md', markdown, 'text/markdown');
+  downloadText('prompt-enhancer-collection-juankit.md', markdown, 'text/markdown');
   flash('Collection exported as Markdown.');
 }
 

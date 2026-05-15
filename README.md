@@ -45,8 +45,10 @@ This repository currently hosts the hub and multiple tool folders in one place.
 | Bulk Image Resizer | Batch image resize/crop workflows | `bulk-image-resizer/` | Static |
 | Password Generator | Secure in-browser random password generation | `password-generator/` | Static |
 | QR Generator | Create and download QR code PNG | `qr-generator/` | Static |
+| Fake User Generator | Create country-matched checkout test profiles | `fake-user-generator/` | Static |
 | Diff Checker | Compare two text blocks and show differences | `diff-checker/` | Static |
 | PDF Editor | Annotate/sign PDF and export | `pdf-editor/` | Static |
+| PDF to Images | Convert PDF pages to PNG/JPG/WebP images | `pdf-to-images/` | Static |
 | PDF Merger | Merge multiple PDFs in-browser | `pdf-merger/` | Static |
 | SVG Optimizer | Basic SVG cleanup/minification | `svg-optimizer/` | Static |
 | Audio Trimmer | Trim audio in-browser and export WAV | `audio-trimmer/` | Static |
@@ -55,7 +57,8 @@ This repository currently hosts the hub and multiple tool folders in one place.
 ## Tech stack and conventions
 
 - Plain HTML, CSS, and JavaScript
-- No bundler/build step for static pages
+- **Site footer:** canonical markup lives in [`_shared/site-footer.html`](_shared/site-footer.html). `npm run build` runs [`scripts/sync-footer.mjs`](scripts/sync-footer.mjs) and replaces every `<footer class="site-footer">…</footer>` across the repo (Netlify runs this on deploy). Edit the fragment, then run `npm run build` and commit the updated HTML files. `npm run footer:check` fails in CI if any page drifts.
+- No bundler for app JavaScript; no transpilation of tool pages
 - CDN libraries only when they provide clear value
 - No browser ES modules in tool pages; keep `file://` compatibility
 - Prefer broad browser support and simple UI behavior
@@ -73,6 +76,12 @@ File: **`bookmark-hint.js`** at the publish root.
 - Optional, **dismissible** strip injected **above** `footer.site-footer` with plain bookmark instructions (keyboard shortcuts + browser menu).
 - **Persistence:** after **Dismiss**, `localStorage` key `juankit_bookmark_hint_v1` prevents the bar from showing again (private browsing or blocked storage disables the feature harmlessly).
 - **Wiring:** from the publish root, `<script src="bookmark-hint.js" defer></script>` before `</body>`; from a one-level-deep tool path, `<script src="../bookmark-hint.js" defer></script>`. Styles live at the end of `style.css` (`.bookmark-hint-bar`, etc.).
+
+### Tool page cross-promotion
+
+- Every tool page must include a **Support this tool** section before the footer.
+- Every tool page must include `<section class="related-tools" data-related-tools></section>` below that support section.
+- One-level-deep tool pages must load `../tools.js` and `../related-tools.js` before `../bookmark-hint.js`. The related-tools script picks 3 random live tools from the central registry and excludes the current tool.
 
 ## Security and privacy model
 

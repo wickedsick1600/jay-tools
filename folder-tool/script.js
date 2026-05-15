@@ -387,6 +387,7 @@ zipBtn.addEventListener('click', async () => {
 
   const zip = new JSZip();
   const rootName = nodes.length === 1 && nodes[0].isFolder ? nodes[0].name : 'folder-structure';
+  const downloadBase = /(^|-)juankit$/i.test(rootName) ? rootName : rootName + '-juankit';
 
   if (nodes.length === 1 && nodes[0].isFolder) {
     addNodesToZip(zip, nodes[0].children, nodes[0].name + '/');
@@ -397,7 +398,7 @@ zipBtn.addEventListener('click', async () => {
 
   try {
     const blob = await zip.generateAsync({ type: 'blob' });
-    saveAs(blob, rootName + '.zip');
+    saveAs(blob, downloadBase + '.zip');
     flash('ZIP downloaded.');
   } catch (err) {
     flash('Failed to generate ZIP: ' + err.message, true);

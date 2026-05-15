@@ -34,7 +34,7 @@ git push -u origin main
 ### 3. Create the Netlify site
 
 1. In Netlify dashboard → **Add new site** → **Import an existing project** → pick your GitHub repo.
-2. Build settings: **Build command** blank, **Publish directory** blank (root). Click **Deploy**.
+2. Build settings: **Build command** `npm ci && npm run build` (from [netlify.toml](netlify.toml)), **Publish directory** blank (root). Netlify uses Node to sync the shared footer into every HTML file before publish. Click **Deploy**.
 3. Wait ~20 seconds. You'll get a `random-name.netlify.app` URL. Click it — the hub should load.
 
 ### 4. Point your domain at Netlify

@@ -28,6 +28,11 @@
     msg.className = isError ? 'error' : 'muted';
   }
 
+  function brandedBase(name) {
+    const base = (name || 'file').trim() || 'file';
+    return /(^|-)juankit$/i.test(base) ? base : `${base}-juankit`;
+  }
+
   function renderList() {
     fileList.innerHTML = '';
     files.forEach((f, i) => {
@@ -135,7 +140,7 @@
         const blob = await new Promise(res => canvas.toBlob(res, type, q));
         if (!blob) throw new Error('Encoding failed');
         const base = entry.file.name.replace(/\.[^.]+$/, '');
-        zip.file(`${base}.${ext}`, blob);
+        zip.file(`${brandedBase(base)}.${ext}`, blob);
         entry.status = 'done';
       } catch (err) {
         entry.status = 'error';
@@ -153,7 +158,7 @@
     const url = URL.createObjectURL(zipBlob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `resized-${targetW}x${targetH}.zip`;
+    a.download = `resized-${targetW}x${targetH}-juankit.zip`;
     document.body.appendChild(a);
     a.click();
     a.remove();

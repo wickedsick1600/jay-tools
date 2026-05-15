@@ -39,7 +39,7 @@ More services will be added over time using the same conventions.
 - **Netlify free tier** for every service. 100 GB bandwidth/month per site is enough to start.
 - **One GitHub repo per service.** Push to `main` → Netlify auto-deploys.
 - **Subdomain per service (when split).** Point `[tool].juankit.com` at the tool's Netlify site via a CNAME record or Netlify's "Custom domain" settings.
-- **Static HTML/CSS/JS.** No build step. Open `index.html` locally and it just works (except serverless tools, which need `netlify dev`).
+- **Static HTML/CSS/JS.** The monorepo root runs **`npm ci && npm run build`** on Netlify to inject one shared footer from `_shared/site-footer.html` into every page; open `index.html` locally and it still works. After editing the footer fragment, run `npm run build` and commit the synced HTML (except serverless tools, which need `netlify dev` for API routes).
 - Tools that need server logic use **Netlify serverless functions** at `netlify/functions/*.js`. Nothing else runs server-side.
 
 ## Donations
@@ -69,7 +69,9 @@ More services will be added over time using the same conventions.
 - **Mobile-first, single-column layouts.** Tap targets at least 44×44px.
 - **Palette: black, blue, white, green only.** No other accent colors.
 - Every tool should include a small **"How does this work?"** section in plain English.
-- **Header/footer match the hub:** same nav labels — **All tools** (to `https://juankit.com/` or `/`), **Feedback** (hub `/#feedback`), **Support** (hub `/#support`). Shared `style.css` uses **`--chrome-maxw`** for the header/footer inner width (wider bar) and **`--maxw`** for `<main>` (narrower content) so chrome lines up with the hub.
+- Every tool should include a **"Support this tool"** section before the footer, then a related tools placeholder: `<section class="related-tools" data-related-tools></section>`.
+- One-level-deep tool pages should load `../tools.js` and `../related-tools.js` before `../bookmark-hint.js`; `related-tools.js` picks 3 random live tools from the central registry and excludes the current tool.
+- **Header/footer match the hub:** same nav labels — **All tools** (to `https://juankit.com/` or `/`), **Feedback** (hub `/#feedback`), **Support** (hub `/#support`). The **footer** is generated from `_shared/site-footer.html` (`npm run build`) so Privacy, Terms, All tools, Feedback, Sitemap, and support links stay identical on every page. Shared `style.css` uses **`--chrome-maxw`** for the header/footer inner width (wider bar) and **`--maxw`** for `<main>` (narrower content) so chrome lines up with the hub.
 - **Optional bookmark reminder:** the central monorepo includes `bookmark-hint.js` — a dismissible strip above the footer. New pages should load it before `</body>` (`bookmark-hint.js` from site root, or `../bookmark-hint.js` one folder deep). After dismiss, `localStorage` key `juankit_bookmark_hint_v1` hides it.
 
 ## What services DO NOT do

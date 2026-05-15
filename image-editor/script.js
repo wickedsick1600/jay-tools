@@ -744,7 +744,7 @@ downloadBtn.addEventListener('click', async () => {
     const baseName = (originalFile.name || 'image').replace(/\.[^.]+$/, '');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(finalBlob);
-    a.download = `${baseName}-edited.${ext}`;
+    a.download = `${baseName}-edited-juankit.${ext}`;
     document.body.appendChild(a);
     a.click();
     a.remove();

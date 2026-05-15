@@ -115,6 +115,21 @@ const TOOLS = [
     status: 'live',
   },
   {
+    id: 'fake-user-generator',
+    title: 'Fake User Generator',
+    shortTitle: 'Fake Users',
+    hint: 'Checkout test profiles',
+    description: 'Generate country-matched sample user details for checkout and QA testing.',
+    longDescription: 'Create fake user profiles with names, reserved-domain emails, country-formatted phones, and curated public test addresses for UAE, US, UK, and Singapore. Runs fully in your browser with copy-ready fields, JSON, and CSV.',
+    category: 'dev',
+    group: 'code',
+    icon: 'user',
+    browserOnly: true,
+    tags: ['fake user', 'sample user', 'checkout', 'address', 'phone', 'telephone', 'email', 'test data', 'qa', 'uae', 'arabic name', 'json', 'csv'],
+    url: './fake-user-generator/',
+    status: 'live',
+  },
+  {
     id: 'password-generator',
     title: 'Password Generator',
     shortTitle: 'Passwords',
@@ -313,6 +328,21 @@ const TOOLS = [
     status: 'live',
   },
   {
+    id: 'pdf-to-images',
+    title: 'PDF to Images',
+    shortTitle: 'PDF to Images',
+    hint: 'Export PDF pages',
+    description: 'Turn PDF pages into PNG, JPG, or WebP images without uploading the file.',
+    longDescription: 'Drop in a PDF, choose all pages or a range like 1,3,5-8, pick PNG, JPG, or WebP, then download one image or a ZIP of all converted pages. Runs in your browser so your document stays on your device.',
+    category: 'dev',
+    group: 'pdf',
+    icon: 'image',
+    browserOnly: true,
+    tags: ['pdf', 'image', 'png', 'jpg', 'jpeg', 'webp', 'convert', 'pages', 'zip'],
+    url: './pdf-to-images/',
+    status: 'live',
+  },
+  {
     id: 'pdf-merger',
     title: 'PDF Merger',
     shortTitle: 'PDF Merger',
@@ -328,3 +358,32 @@ const TOOLS = [
     status: 'live',
   },
 ];
+
+function iconMarkup(icon) {
+  const icons = {
+    pdf: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5"/><path d="M8.8 15h6.4"/><path d="M8.8 18h4.6"/></svg>',
+    merge: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8v8H6z"/><path d="M10 12h8v8h-8z"/><path d="M14 8h3v3"/></svg>',
+    image: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="m7 16 3.5-4 3 3 2-2.2L19 16"/><circle cx="9" cy="9" r="1.2"/></svg>',
+    resize: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 5H5v4"/><path d="M15 19h4v-4"/><path d="m5 5 5 5"/><path d="m19 19-5-5"/></svg>',
+    folder: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h7l2 2h9v9.5A2.5 2.5 0 0 1 18.5 21h-13A2.5 2.5 0 0 1 3 18.5z"/><path d="M3 7v-1.5A2.5 2.5 0 0 1 5.5 3h4L12 5.5h6.5A2.5 2.5 0 0 1 21 8"/></svg>',
+    prompt: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h10a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3H9l-4 3v-3a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3z"/><path d="M18 3v4"/><path d="M16 5h4"/></svg>',
+    video: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>',
+    audio: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-2"/><path d="M8 16V8"/><path d="M12 19V5"/><path d="M16 16V8"/><path d="M20 13v-2"/></svg>',
+    qr: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><path d="M14 14h2v2h-2z"/><path d="M18 14h2v6h-6v-2"/></svg>',
+    user: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/><path d="M17.5 7.5h3"/><path d="M19 6v3"/></svg>',
+    password: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="12" r="3"/><path d="M11 12h9"/><path d="M17 12v3"/><path d="M14 12v2"/></svg>',
+    timer: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7"/><path d="M9 2h6"/><path d="M12 6V2"/><path d="m12 13 3-2"/></svg>',
+    word: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14"/><path d="M7 10h10"/><path d="M8 14h8"/><path d="M10 18h4"/></svg>',
+    ocr: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5h3"/><path d="M17 5h3v3"/><path d="M20 16v3h-3"/><path d="M7 19H4v-3"/><path d="M7 12h10"/><path d="M9 9h6"/><path d="M9 15h6"/></svg>',
+    exam: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v16H7z"/><path d="m9 9 1 1 2-2"/><path d="M14 9h2"/><path d="m9 15 1 1 2-2"/><path d="M14 15h2"/></svg>',
+    json: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v2a2 2 0 0 1-2 2 2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h2"/><path d="M15 5h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0-2 2v2a2 2 0 0 1-2 2h-2"/></svg>',
+    regex: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/><path d="m7 7 10 10"/><path d="m17 7-10 10"/></svg>',
+    diff: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h9"/><path d="M5 16h9"/><path d="M18 5v6"/><path d="M15 8h6"/><path d="M15 16h6"/></svg>',
+    unit: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14"/><path d="M5 17h14"/><path d="M7 5v4"/><path d="M17 15v4"/><path d="m9 12-3-3 3-3"/><path d="m15 12 3 3-3 3"/></svg>',
+    token: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="M4 7l8 4 8-4"/><path d="M12 11v10"/></svg>',
+    svg: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="M8 9h8"/><path d="M8 15h8"/></svg>',
+    tool: '<svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
+  };
+
+  return icons[icon] || icons.tool;
+}
