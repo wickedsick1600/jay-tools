@@ -39,9 +39,9 @@ If the user's proposed approach has a clear problem or a meaningfully better alt
 
 ## Stack conventions
 
-- **HTML/CSS/JS only**, via CDN libraries (JSZip, Pica, Cropper.js, FileSaver.js, etc.). No npm/package.json/node_modules unless the task genuinely requires it (e.g., Netlify serverless functions).
+- **HTML/CSS/JS only**, via CDN libraries (JSZip, Pica, Cropper.js, FileSaver.js, etc.). Root `package.json` exists only for **`npm run build`** (syncs `_shared/site-footer.html` into every page via `scripts/sync-footer.mjs`); do not add a bundler or transpile tool pages.
 - **Single file when practical.** Small tools can be one `index.html`. Split into `script.js` + `style.css` when size justifies it.
-- **No transpilation, no build step, no bundler.** If you'd need Webpack/Vite/Rollup, you're overcomplicating it.
+- **No transpilation, no app bundler.** If you'd need Webpack/Vite/Rollup for product JS, you're overcomplicating it.
 
 ## UI principles
 
@@ -83,7 +83,8 @@ Content rules:
 - `robots.txt` at the root allows everything except `/.netlify/` and points at `sitemap.xml`.
 - Use real HTML semantics: `<main>`, `<header>`, `<footer>`, `<nav>`, `<section>`, `<label for=...>`. Don't wrap everything in `<div>`s.
 - All `<img>` tags need a real `alt` — descriptive for content images, empty (`alt=""`) for decorative.
-- Internal links use relative paths. External links use `rel="noopener"` (+ `target="_blank"` only if needed).
+- Internal links use relative paths. **Exception:** the shared site footer (synced from `_shared/site-footer.html`) uses root-absolute paths (`/privacy.html`, `/#feedback`, etc.) so every tool page resolves to the hub and legal pages correctly.
+- External links use `rel="noopener"` (+ `target="_blank"` only if needed).
 - Never block crawlers with JS-only content. First paint must include the H1 + description in plain HTML.
 
 ## When you finish a task

@@ -1,0 +1,11 @@
+{
+  "name": "juankit-multi-service",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/sync-footer.mjs",
+    "footer:check": "node scripts/sync-footer.mjs --check"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

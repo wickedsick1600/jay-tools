@@ -57,7 +57,8 @@ This repository currently hosts the hub and multiple tool folders in one place.
 ## Tech stack and conventions
 
 - Plain HTML, CSS, and JavaScript
-- No bundler/build step for static pages
+- **Site footer:** canonical markup lives in [`_shared/site-footer.html`](_shared/site-footer.html). `npm run build` runs [`scripts/sync-footer.mjs`](scripts/sync-footer.mjs) and replaces every `<footer class="site-footer">…</footer>` across the repo (Netlify runs this on deploy). Edit the fragment, then run `npm run build` and commit the updated HTML files. `npm run footer:check` fails in CI if any page drifts.
+- No bundler for app JavaScript; no transpilation of tool pages
 - CDN libraries only when they provide clear value
 - No browser ES modules in tool pages; keep `file://` compatibility
 - Prefer broad browser support and simple UI behavior
