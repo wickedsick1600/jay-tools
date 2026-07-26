@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script src="../storage-migration.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Free JSON Formatter &amp; Validator — No Upload | Juankit</title>
 <meta name="description" content="Paste JSON, get it pretty-printed, minified, or validated — with exact error locations. Free, no signup, runs in your browser.">
@@ -15,23 +16,6 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="index, follow">
 <link rel="stylesheet" href="style.css">
-<style>
-  .json-area {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    min-height: 260px;
-    white-space: pre;
-  }
-  .controls-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    align-items: end;
-  }
-  @media (max-width: 520px) { .controls-grid { grid-template-columns: 1fr; } }
-  .status-ok { color: var(--green-hover); font-weight: 600; }
-  .status-err { color: var(--error); font-weight: 600; }
-</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free JSON Formatter & Validator — No Upload","url":"https://juankit.com/json-formatter/","description":"Paste JSON, get it pretty-printed, minified, or validated — with exact error locations. Free, no signup, runs in your browser.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
@@ -81,8 +65,16 @@
 
   <div id="status" class="muted" role="status" aria-live="polite" style="margin-top:10px;"></div>
 
-  <label for="output" style="margin-top:12px;">Result</label>
-  <textarea id="output" class="json-area" spellcheck="false" readonly></textarea>
+  <div class="result-heading">
+    <span id="result-label" class="field-label">Result</span>
+    <div class="fold-actions" aria-label="JSON folding controls">
+      <button id="expand-all-btn" class="secondary compact" type="button" disabled>Expand all</button>
+      <button id="collapse-all-btn" class="secondary compact" type="button" disabled>Collapse all</button>
+    </div>
+  </div>
+  <div id="output" class="json-viewer" role="region" aria-labelledby="result-label" tabindex="0">
+    <p class="json-empty">Format or minify JSON to see the result.</p>
+  </div>
   <div class="row">
     <button id="copy-btn" class="secondary">Copy result</button>
   </div>
@@ -93,6 +85,7 @@
     <li><strong>Format</strong> pretty-prints it with your chosen indent.</li>
     <li><strong>Minify</strong> strips whitespace to the smallest valid form.</li>
     <li><strong>Validate</strong> checks for errors and tells you exactly where they are.</li>
+    <li><strong>Fold or expand</strong> nested objects and arrays with the line chevrons, or use Collapse all and Expand all. Copy result still copies the complete JSON.</li>
   </ul>
 
   <h2>Support this tool</h2>
@@ -144,6 +137,7 @@
   </div>
 </footer>
 
+<script src="json-core.js"></script>
 <script src="script.js"></script>
 <script src="../tools.js"></script>
 <script src="../related-tools.js"></script>

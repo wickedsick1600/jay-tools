@@ -39,7 +39,7 @@ If the user's proposed approach has a clear problem or a meaningfully better alt
 
 ## Stack conventions
 
-- **HTML/CSS/JS only**, via CDN libraries (JSZip, Pica, Cropper.js, FileSaver.js, etc.). Root `package.json` exists only for **`npm run build`** (syncs `_shared/site-footer.html` into every page via `scripts/sync-footer.mjs`); do not add a bundler or transpile tool pages.
+- **HTML/CSS/JS only**, via CDN libraries (JSZip, Pica, Cropper.js, Fabric.js, FileSaver.js, etc.). Root `package.json` is only for repository maintenance: footer synchronization, dependency-free Node core tests, and static consistency checks; do not add a bundler or transpile tool pages.
 - **Single file when practical.** Small tools can be one `index.html`. Split into `script.js` + `style.css` when size justifies it.
 - **No transpilation, no app bundler.** If you'd need Webpack/Vite/Rollup for product JS, you're overcomplicating it.
 
@@ -55,7 +55,7 @@ If the user's proposed approach has a clear problem or a meaningfully better alt
 
 - **Files are processed in the user's browser.** Never add code that uploads user content to a server unless the feature explicitly requires it (e.g., AI API calls).
 - **API keys live only in Netlify environment variables**, accessed only from serverless functions (`netlify/functions/*.js`). Never commit a key. Never send one to the client. If a tool needs an AI API, the API call happens in a serverless function, and the client only sees your function's URL.
-- **`OPENAI_MODEL` (and similar env values)** must never appear as **literal strings** in tracked source or docs if they duplicate Netlify env vars — Netlify’s **secrets scanning** fails the build when a file matches an env value. Set `OPENAI_MODEL` only in Netlify (and local `.env`). The Prompt Enhancer function has **no default model id**; omitting it yields a server error until configured.
+- **Never copy secret environment-variable values into tracked source or documentation.** Hosting secret scans can fail the build, and committing a credential exposes it in repository history even after the visible line is removed.
 - **No third-party analytics, no trackers, no fingerprinting.** If you want usage stats, check Netlify's built-in analytics or read server logs.
 - **No inline `<script>` blocks and no inline event handlers (`onclick=`, etc.).** Move all JS into external `script.js` files loaded with `<script src="script.js"></script>`. Strict CSP in `netlify.toml` blocks inline script — keeping it strict is the XSS firewall.
 - **Never use `innerHTML` with user-controlled data.** Use `textContent` or `document.createElement` + DOM APIs. If you must use `innerHTML` for multi-element templates, escape every interpolated value with a dedicated `escapeHtml()` function first. This applies to filenames, clipboard content, localStorage values, AI API responses, and anything the user typed.

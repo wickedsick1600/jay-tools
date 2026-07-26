@@ -1,4 +1,14 @@
-const PDF_WORKER_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+(async function startPdfToImages() {
+const deadline = Date.now() + 30000;
+while (!globalThis.pdfjsLibPromise) {
+  if (Date.now() >= deadline) throw new Error('PDF.js did not load in time.');
+  await new Promise((resolve) => setTimeout(resolve, 25));
+}
+await globalThis.pdfjsLibPromise;
+const pdfjsLib = globalThis.pdfjsLib;
+if (!pdfjsLib) throw new Error('PDF.js is unavailable.');
+
+const PDF_WORKER_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/legacy/build/pdf.worker.min.mjs';
 const MAX_EXPORT_PIXELS = 16000000;
 const LARGE_PAGE_COUNT = 80;
 const PREVIEW_TARGET_WIDTH = 150;
@@ -549,7 +559,10 @@ async function loadPdfFile(file) {
 
   try {
     const bytes = await file.arrayBuffer();
-    const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(bytes.slice(0)) });
+    const loadingTask = pdfjsLib.getDocument({
+      data: new Uint8Array(bytes.slice(0)),
+      isEvalSupported: false,
+    });
     pdfDoc = await loadingTask.promise;
     pageCount = pdfDoc.numPages;
 
@@ -683,3 +696,11 @@ pageRange.addEventListener('change', syncSelectionFromRange);
 
 updateOutputSummary();
 renderSelectionState();
+})().catch((error) => {
+  console.error('PDF to Images failed to start:', error);
+  const message = document.getElementById('msg');
+  if (message) {
+    message.textContent = 'The PDF engine could not start. Check your connection and reload the page.';
+    message.classList.add('error');
+  }
+});

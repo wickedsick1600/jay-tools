@@ -35,13 +35,14 @@ This repository currently hosts the hub and multiple tool folders in one place.
 |---|---|---|---|
 | Hub | Searchable homepage and service registry | `/` | Static |
 | Folder Creator | Folder tree builder + paste import + ZIP/ASCII output | `folder-tool/` | Static |
-| Image Editor | Browser image editing with drawing, transforms, and export | `image-editor/` | Static |
-| Prompt Enhancer | Prompt rewriting with OpenAI-compatible backend function | `prompt-enhancer/` | Static + Netlify Function |
+| Image Editor | Browser image editing with full-resolution paste, drawing, transforms, and export | `image-editor/` | Static |
+| Image Converter | Batch conversion/compression to WebP, JPEG, or PNG with real size comparison | `image-converter/` | Static |
 | Stopwatch with Splits | Stopwatch with split notes and copyable timecodes | `stopwatch/` | Static |
 | Pseudo Word Generator | Generate pronounceable fake words | `pseudo-word/` | Static |
-| JSON Formatter | Format, minify, and validate JSON | `json-formatter/` | Static |
+| JSON Formatter | Token-preserving format/minify/validation with foldable results | `json-formatter/` | Static |
 | Regex Tester | Live regex matching and capture groups | `regex-tester/` | Static |
 | Web Dev Unit Converter | px/rem, hex/rgba, epoch/ISO conversions | `unit-converter/` | Static |
+| Currency Converter | Convert one amount to multiple currencies using daily reference rates | `currency-converter/` | Static + public rates API |
 | Bulk Image Resizer | Batch image resize/crop workflows | `bulk-image-resizer/` | Static |
 | Password Generator | Secure in-browser random password generation | `password-generator/` | Static |
 | QR Generator | Create and download QR code PNG | `qr-generator/` | Static |
@@ -53,11 +54,12 @@ This repository currently hosts the hub and multiple tool folders in one place.
 | SVG Optimizer | Basic SVG cleanup/minification | `svg-optimizer/` | Static |
 | Audio Trimmer | Trim audio in-browser and export WAV | `audio-trimmer/` | Static |
 | YouTube Looper | Replay and loop YouTube videos | `youtube-looper/` | Static |
+| Word Counter | Live word, character, sentence, paragraph, line, and time estimates | `word-counter/` | Static |
 
 ## Tech stack and conventions
 
 - Plain HTML, CSS, and JavaScript
-- **Site footer:** canonical markup lives in [`_shared/site-footer.html`](_shared/site-footer.html). `npm run build` runs [`scripts/sync-footer.mjs`](scripts/sync-footer.mjs) and replaces every `<footer class="site-footer">…</footer>` across the repo (Netlify runs this on deploy). Edit the fragment, then run `npm run build` and commit the updated HTML files. `npm run footer:check` fails in CI if any page drifts.
+- **Site footer:** canonical markup lives in [`_shared/site-footer.html`](_shared/site-footer.html). `npm run build` runs [`scripts/sync-footer.mjs`](scripts/sync-footer.mjs) and replaces every `<footer class="site-footer">…</footer>` across the repo (Netlify runs this on deploy). Edit the fragment, then run `npm run build` and commit the updated HTML files. `npm run footer:check` detects drift locally and can also be used in CI.
 - No bundler for app JavaScript; no transpilation of tool pages
 - CDN libraries only when they provide clear value
 - No browser ES modules in tool pages; keep `file://` compatibility
@@ -65,7 +67,7 @@ This repository currently hosts the hub and multiple tool folders in one place.
 
 ### Shared layout CSS (`style.css`)
 
-- **Canonical file:** root `style.css`. Several tool folders keep a **byte-identical copy** for deploys that only ship that folder; after changing global rules, update the root file and re-copy to those duplicates (or merge the same edits into extended sheets such as `image-editor/style.css`, `folder-tool/style.css`, and `prompt-enhancer/style.css`, which append tool-only rules after the shared block).
+- **Canonical file:** root `style.css`. Several tool folders keep a **byte-identical copy** for deploys that only ship that folder; after changing global rules, update the root file and re-copy to those duplicates (or merge the same edits into extended sheets such as `image-editor/style.css` and `folder-tool/style.css`, which append tool-only rules after the shared block).
 - **`--maxw`:** default max width for `<main>` (often `800px`; individual tools may override via `:root` or page `<style>`).
 - **`--chrome-maxw`:** max width for `header.site-header .wrap` and `footer.site-footer .wrap` (`1180px`) so the header/footer bar matches the hub even when main content is narrower.
 
@@ -85,40 +87,13 @@ File: **`bookmark-hint.js`** at the publish root.
 
 ## Security and privacy model
 
-- Process user files in browser whenever possible
-- Keep secrets only in Netlify environment variables
-- Access secrets only from server-side functions
-- Never expose API keys in client JavaScript
+- Process user files in the browser whenever possible
+- The current production tools do not require application secrets or custom serverless functions
+- If a future integration needs a secret, keep it in the host environment and access it only from server-side code
+- Never expose API keys in client JavaScript or tracked files
 - Avoid analytics, trackers, and fingerprinting
-
-## Prompt Enhancer backend configuration
-
-Required in local `.env` (for `netlify dev`) and in Netlify **Site configuration → Environment variables**:
-
-- `OPENAI_API_KEY`
-- `OPENAI_MODEL` — chat completions model id from your provider (no default in code; the function returns 500 if unset)
-
-Recommended:
-
-- `GLOBAL_DAILY_LIMIT=100`
-
-Optional hardening:
-
-- `UPSTASH_REDIS_REST_URL`
-- `UPSTASH_REDIS_REST_TOKEN`
-- `TURNSTILE_SITE_KEY`
-- `TURNSTILE_SECRET_KEY`
-
-Core serverless function path:
-
-- `prompt-enhancer/netlify/functions/enhance.js`
-- `prompt-enhancer/netlify/functions/config.js`
-- `prompt-enhancer/netlify/functions/feedback.js`
-- `prompt-enhancer/netlify/functions/test-prompt.js`
-
-### Netlify secrets scanning
-
-Netlify compares environment variable **values** to files in the deployed repo. If a tracked file contains the **exact same string** as `OPENAI_MODEL` (or another sensitive env value), the build fails. Do **not** paste real model ids, API keys, or tokens into HTML, JS, Markdown, or examples that get committed. Keep values only in Netlify (and local `.env`, which must stay gitignored).
+- The Currency Converter requests public reference-rate data from Frankfurter without an API key. Amounts and chosen target currencies stay in the browser; only the rate dataset and its cache are external/local state.
+- `storage-migration.js` currently runs before other scripts on every production page to remove historical browser data from a retired feature. `scripts/sync-storage-migration.mjs` keeps that tag site-wide; remove both after the release-window follow-up in `TODO.md` is complete.
 
 ### Hub feedback form (Netlify Forms)
 
@@ -126,10 +101,13 @@ After a successful submit, users are redirected to **`/index.html?thanks=1`**. T
 
 ## Local development
 
-No build step is required.
+There is no app bundler or transpilation step.
 
-1. Open `index.html` directly in browser for quick local preview.
-2. For function testing and parity with production, run Netlify CLI locally if needed.
+1. Open `index.html` directly in a browser for a quick local preview. Use a local HTTP server when testing browser security headers or third-party requests.
+2. Run `npm test` for the dependency-free core tests.
+3. Run `npm run check` for JavaScript syntax, registry, sitemap, canonical URL, duplicate-ID, and local-asset checks.
+4. After changing `_shared/site-footer.html` or adding a page, run `npm run build` and commit the synchronized footer and storage-migration tag.
+5. Run `npm run verify` before committing. The same command runs in `.github/workflows/ci.yml` for pushes and pull requests.
 
 ## Deployment model
 
@@ -137,18 +115,13 @@ Current model is single-repo deployment on Netlify.
 
 - Publish directory: repository root (`.`)
 - Auto deploy: push to `main`
-- Mixed runtime: static pages + serverless functions where needed
+- Runtime: static pages, plus the hosted Netlify Forms submission on the hub
 
 Deployment runbook and domain/DNS procedures are documented in `DEPLOY.md`.
 
 ## Legal and trust baseline
 
-Each service should include:
-
-- `privacy.html`
-- `terms.html`
-
-Both pages must be linked in service footers.
+The site-wide `privacy.html` and `terms.html` at the repository root are linked from every synchronized footer. Add a tool-specific notice only when a tool handles data differently enough to require one.
 
 Donations and feedback baseline:
 
@@ -160,15 +133,15 @@ Donations and feedback baseline:
 1. Create the new service folder (or new repo if splitting immediately).
 2. Build with the shared suite conventions.
 3. Match **hub chrome:** same `site-header` / `site-footer` structure; nav labels **All tools** (to `/` or `/#tools` on the hub), **Feedback**, **Support**; link root `style.css` (or keep a synced copy) so `--chrome-maxw` header/footer alignment stays consistent.
-4. Add legal pages (`privacy.html`, `terms.html`) and `netlify.toml` if needed.
-5. Register the service in `tools.js`.
-6. Load **`bookmark-hint.js`** before `</body>` (see [Bookmark hint script](#bookmark-hint-script)).
-7. Deploy and verify links, metadata, and navigation.
-8. Add the service entry to this README service table.
+4. Add a tool-specific privacy notice or `netlify.toml` only if the tool's behavior requires it.
+5. Register the service in `tools.js` and add its canonical URL to `sitemap.xml`.
+6. Load `../tools.js`, `../related-tools.js`, and **`../bookmark-hint.js`** before `</body>` (see [Bookmark hint script](#bookmark-hint-script)).
+7. Add the service entry to this README table and track the work in `TODO.md`.
+8. Deploy and verify links, metadata, navigation, mobile layout, and browser behavior.
 
 ## Documentation map
 
 - `README.md` - project source of truth (this file)
 - `TODO.md` - actionable checklist (backlog, deployment tasks, launch tasks)
-- `DEPLOY.md` - operational deployment runbook (DNS, forms success URL, secrets scanning, troubleshooting)
+- `DEPLOY.md` - operational deployment runbook (DNS, forms success URL, and troubleshooting)
 - `bookmark-hint.js` - site-wide dismissible bookmark reminder ([details](#bookmark-hint-script))

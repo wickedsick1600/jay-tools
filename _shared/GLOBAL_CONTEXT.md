@@ -1,6 +1,6 @@
 # Global Context — Juankit
 
-This file is **copy-pasted unchanged into every service repo in the suite**. It gives any human or AI opening the repo cold the full context of what the suite is, how its pieces fit together, and the conventions every service follows.
+This is the shared product and engineering context for the Juankit monorepo. Copy it into a standalone tool repository only when that tool is intentionally split from the monorepo.
 
 When starting a new service in the suite, your prompt becomes:
 > "I'm building **[service name]** which does **[one-line description]**. Here's the global plan for the whole suite: [paste this file]. Build it following these conventions."
@@ -21,26 +21,18 @@ When starting a new service in the suite, your prompt becomes:
 
 A collection of free, focused web utilities. Each tool solves one small, repetitive pain point. Zero signup. Zero tracking. Files processed in the browser wherever possible. Revenue comes only from voluntary donations.
 
-The suite is **deliberately fragmented**: each tool is its own repo, its own Netlify deployment, its own subdomain. This isolates blast radius — if one tool violates a third-party ToS or breaks, the others keep running untouched. They only share a parent domain name; independence is preserved because each subdomain is an independent DNS record pointing at an independent Netlify site.
+The current production model is one monorepo and one Netlify site at `juankit.com`. Each tool lives in its own folder. A tool may later move to a separate repository, deployment, and subdomain when traffic, risk, or operational ownership justifies the split.
 
 ## Services in the suite
 
-| Service | What it does | Repo | Subdomain |
-|---|---|---|---|
-| **Hub** | Landing page. Lists all tools, provides search + categories, donation links, feedback form. | `multi-service` | `juankit.com` |
-| **Folder Creator** | Type a folder layout, get it as a downloadable .zip. Also makes clean ASCII trees for READMEs. | `folder-tool` | `foldercreator.juankit.com` |
-| **Image Editor** | Crop, resize, compress, draw shapes, add text. Runs in the browser — your files never leave your device. | `image-editor` | `imageeditor.juankit.com` |
-| **Prompt Enhancer** | Turn a rough prompt into a polished one for ChatGPT, Claude, Midjourney, or Stable Diffusion. | `prompt-enhancer` | `promptenhancer.juankit.com` |
-
-More services will be added over time using the same conventions.
+The live catalog spans PDF, image, code, text, finance, audio, and video utilities. The service table in root `README.md` documents the current tools; root `tools.js` is the runtime source of truth for live and coming-soon status, URLs, search metadata, and categories.
 
 ## Hosting & deployment
 
-- **Netlify free tier** for every service. 100 GB bandwidth/month per site is enough to start.
-- **One GitHub repo per service.** Push to `main` → Netlify auto-deploys.
-- **Subdomain per service (when split).** Point `[tool].juankit.com` at the tool's Netlify site via a CNAME record or Netlify's "Custom domain" settings.
-- **Static HTML/CSS/JS.** The monorepo root runs **`npm ci && npm run build`** on Netlify to inject one shared footer from `_shared/site-footer.html` into every page; open `index.html` locally and it still works. After editing the footer fragment, run `npm run build` and commit the synced HTML (except serverless tools, which need `netlify dev` for API routes).
-- Tools that need server logic use **Netlify serverless functions** at `netlify/functions/*.js`. Nothing else runs server-side.
+- **One Netlify site today.** Pushes to `main` deploy the hub and all tool folders to `juankit.com`.
+- **Optional split later.** A separately operated tool can use `[tool].juankit.com` through its own Netlify site and DNS record.
+- **Static HTML/CSS/JS.** Netlify runs **`npm ci && npm run build`** to inject `_shared/site-footer.html` and the temporary retired-storage migration into every production page; opening `index.html` directly still works for local preview.
+- The current suite has no custom serverless functions. The hub feedback form is handled by Netlify Forms.
 
 ## Donations
 
@@ -57,10 +49,10 @@ More services will be added over time using the same conventions.
 ## Stack conventions
 
 - **Plain HTML / CSS / JS.** No React, Vue, Svelte, Tailwind, or build tools.
-- **CDN libraries only** where they save real time (JSZip, Pica, Cropper.js, Fabric.js, FileSaver.js). No npm install unless the service has a serverless function that needs it.
+- **CDN libraries only** where they save real time (JSZip, Pica, Cropper.js, Fabric.js, FileSaver.js). Root npm scripts exist only for repository maintenance tasks such as footer synchronization, consistency checks, and dependency-free core tests.
 - **Broad browser support:** use flex, grid, and CSS variables. Avoid container queries, `:has()`, and CSS nesting (not all older browsers support them).
 - **No ES modules in the browser.** Load scripts with plain `<script>` tags so the page works when opened directly from `file://`.
-- **Shared files are physically copied across repos**, not linked: `style.css`, header/footer snippets, `CLAUDE.md`, and this `GLOBAL_CONTEXT.md` are identical in every repo. When you update one, paste the update into every repo.
+- **Shared files in this monorepo:** root `style.css` is canonical, `_shared/site-footer.html` is synchronized by `npm run build`, and a few tool folders carry copied or extended CSS for standalone deployment compatibility.
 
 ## UI principles
 
@@ -78,32 +70,28 @@ More services will be added over time using the same conventions.
 
 - **No user accounts, no login, no OAuth.** Zero signup friction.
 - **No analytics, no trackers, no fingerprinting.** Netlify's built-in request logs are enough.
-- **No email collection, no newsletter popups, no modals.**
+- **No passive email collection, no newsletter popups, no marketing lists.** The feedback form accepts an optional reply address only when a user chooses to provide one.
 - **No cookie banners** unless legally required.
-- **No uploads of user files to any server** unless the feature explicitly requires it (only Prompt Enhancer does, because AI inference has to happen server-side).
+- **No uploads of user files to Juankit servers.** Current file-processing tools work in the browser. Embedded services and public-data APIs may still receive normal web request information and must be disclosed; input content or amounts should remain local unless the tool explicitly says otherwise.
 - **No premium tiers, no paywalls.** Everything is free. Donations only.
 
 ## Security rules
 
-- API keys live **only in Netlify environment variables**, accessed **only from serverless functions**. Never in client JS. Never committed to the repo.
-- **`OPENAI_MODEL` is required** for the Prompt Enhancer function — there is no hardcoded default model id in code.
-- Netlify **secrets scanning** compares env var **values** to repository files. Never paste real model ids, API keys, or tokens into Markdown, HTML, or JS that gets committed, or builds can fail.
-- The `netlify/functions/` directory is the only place that touches secrets.
-- Rate-limit any serverless function that calls a paid or quota-limited third-party API.
+- The current production tools do not require application secrets.
+- Never commit credentials or expose them in browser JavaScript. If a future integration needs a secret, store it in the hosting environment and access it only from server-side code.
+- Validate user input at trust boundaries, use `textContent` for user-controlled output, keep the CSP narrow, and pin third-party scripts with integrity metadata.
+- Any future paid or quota-limited backend must have distributed rate limits, a global cost cap, abuse controls, and documented data retention before launch.
 
 ## Legal
 
-Every service has:
-- `privacy.html` — plain-language explanation of what happens to user data.
-- `terms.html` — "provided as-is", right to modify/discontinue, user responsibility for their own use.
-- Both linked from the footer of every page.
+The root `privacy.html` and `terms.html` apply site-wide and are linked from every synchronized footer. Add a tool-specific notice when a tool handles data or relies on a third party in a materially different way.
 
 ## Adding a new service
 
-1. Create a new GitHub repo.
-2. Copy into it: `CLAUDE.md`, `GLOBAL_CONTEXT.md`, `style.css`, shared header/footer, privacy + terms templates.
-3. Write `index.html` using the shared header/footer/CSS, and load **`bookmark-hint.js`** before `</body>` (same pattern as the hub monorepo).
-4. Add `privacy.html`, `terms.html`, `README.md`, `TODO.md`, `netlify.toml`.
-5. Add the service to the hub's `tools.js` registry so it shows up in search and the right category tab.
-6. Deploy to Netlify, then add a CNAME for `[tool].juankit.com`.
-7. Update the "Services in the suite" table in this file, then paste the updated version into every repo.
+1. Create a folder for the tool in this monorepo.
+2. Write `index.html` with the shared header/footer conventions and only the CSS/JavaScript files the tool needs.
+3. Load `../tools.js`, `../related-tools.js`, and `../bookmark-hint.js` before `</body>`.
+4. Add the tool to root `tools.js`, root `sitemap.xml`, the service table in `README.md`, and the checklist in `TODO.md`.
+5. Add a tool-specific privacy notice or deployment config only when the tool's behavior requires it.
+6. Run `npm run build`, then `npm run verify`, and test the tool on mobile and supported browsers.
+7. If the tool is later split out, copy the relevant shared context and configure its standalone repository, Netlify site, canonical URL, and DNS record.

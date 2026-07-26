@@ -3,7 +3,6 @@
   <url><loc>https://juankit.com/</loc><priority>1.0</priority></url>
   <url><loc>https://juankit.com/image-editor/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/folder-tool/</loc><priority>0.8</priority></url>
-  <url><loc>https://juankit.com/prompt-enhancer/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/youtube-looper/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/audio-trimmer/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/qr-generator/</loc><priority>0.8</priority></url>
@@ -11,11 +10,14 @@
   <url><loc>https://juankit.com/password-generator/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/stopwatch/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/bulk-image-resizer/</loc><priority>0.8</priority></url>
+  <url><loc>https://juankit.com/image-converter/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/pseudo-word/</loc><priority>0.8</priority></url>
+  <url><loc>https://juankit.com/word-counter/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/json-formatter/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/regex-tester/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/diff-checker/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/unit-converter/</loc><priority>0.8</priority></url>
+  <url><loc>https://juankit.com/currency-converter/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/svg-optimizer/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/pdf-editor/</loc><priority>0.8</priority></url>
   <url><loc>https://juankit.com/pdf-to-images/</loc><priority>0.8</priority></url>

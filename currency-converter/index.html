@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../storage-migration.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Currency Converter — Compare Multiple Currencies | Juankit</title>
+<meta name="description" content="Convert one amount into multiple currencies at once using current daily reference rates. No account or API key required.">
+<meta property="og:title" content="Currency Converter — Juankit">
+<meta property="og:description" content="Compare one amount across multiple currencies with current daily reference rates.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://juankit.com/currency-converter/">
+<meta property="og:url" content="https://juankit.com/currency-converter/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Juankit">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Currency Converter — Compare Multiple Currencies","url":"https://juankit.com/currency-converter/","description":"Convert one amount into multiple currencies at once using current daily reference rates.","applicationCategory":"FinanceApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="dot"></span>Juankit</a>
+    <nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#support">Support</a></nav>
+  </div>
+</header>
+
+<main class="currency-main">
+  <section class="hero">
+    <span class="tag">Free · No account or API key</span>
+    <h1>Currency Converter</h1>
+    <p>Enter one amount and compare it across as many currencies as you need.</p>
+  </section>
+
+  <div class="notice green">
+    <strong>Your amount stays in your browser.</strong> Only public currency and rate data is requested from Frankfurter.
+  </div>
+
+  <section class="converter-card" aria-labelledby="converter-title">
+    <h2 id="converter-title">Convert an amount</h2>
+    <div class="source-grid">
+      <div>
+        <label for="amount">Amount</label>
+        <input id="amount" type="number" value="100" min="0" max="1000000000000000" step="any" inputmode="decimal" autocomplete="off" aria-describedby="amount-error">
+      </div>
+      <div>
+        <label for="base-currency">From</label>
+        <select id="base-currency" disabled aria-describedby="data-status">
+          <option>Loading currencies…</option>
+        </select>
+      </div>
+    </div>
+    <p id="amount-error" class="error" hidden>Enter an amount from 0 to 1 quadrillion.</p>
+
+    <div class="results-heading">
+      <h3>Convert to</h3>
+      <button id="add-target" class="secondary compact" type="button" disabled>+ Add currency</button>
+    </div>
+    <ul id="results" class="currency-results" aria-label="Converted amounts"></ul>
+
+    <div class="converter-actions">
+      <button id="copy-results" type="button" disabled>Copy results</button>
+      <button id="refresh-rates" class="secondary" type="button">Refresh rates</button>
+    </div>
+
+    <div class="rate-status-panel">
+      <p id="data-status" role="status" aria-live="polite">Loading current reference rates…</p>
+      <p id="rate-detail" class="muted"></p>
+    </div>
+  </section>
+
+  <section class="rate-warning" aria-labelledby="rate-warning-title">
+    <h2 id="rate-warning-title">Before you exchange money</h2>
+    <p>These are daily reference rates for estimates, not a guaranteed transaction quote. Banks, cards, cash desks, and transfer services may use their own rate and add fees, so the amount you actually receive can differ.</p>
+  </section>
+
+  <h2>How to use this</h2>
+  <ol>
+    <li>Enter an amount and choose its currency.</li>
+    <li>Add, change, or remove destination currencies. Results update locally as you type.</li>
+    <li>Check the reference date shown below the results, then copy the full comparison when you are ready.</li>
+  </ol>
+
+  <h2>About the rates</h2>
+  <p>Rate data comes from the no-key <a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter exchange-rate API</a>, which gathers reference rates from central banks and other official institutions. Juankit saves the latest successful rate set in this browser so the converter can keep working if a later refresh fails. A saved set is always labeled with its actual rate date.</p>
+
+  <h2>Support this tool</h2>
+  <p>Free forever. If it saved you time, a tip keeps this and other free tools alive.</p>
+  <div class="row">
+    <a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Support on Ko-fi</a>
+    <a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a>
+  </div>
+
+  <section class="related-tools" data-related-tools></section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__grid">
+      <nav class="site-footer__nav" aria-label="Site and legal">
+        <ul class="site-footer__links">
+          <li><a href="/privacy.html">Privacy</a></li>
+          <li><a href="/terms.html">Terms</a></li>
+          <li><a href="/">All tools</a></li>
+          <li><a href="/#feedback">Feedback</a></li>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+        </ul>
+      </nav>
+      <nav class="site-footer__nav" aria-label="Support the project">
+        <ul class="site-footer__links">
+          <li>
+            <a
+              href="https://ko-fi.com/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ko-fi (opens in new tab)"
+            >Ko-fi</a>
+          </li>
+          <li>
+            <a
+              href="https://paypal.me/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="PayPal (opens in new tab)"
+            >PayPal</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <p class="site-footer__tagline">
+      Juankit — free browser tools. No accounts.
+      <span class="site-footer__copy">© 2026 Juankit</span>
+    </p>
+  </div>
+</footer>
+
+<script src="currency-core.js"></script>
+<script src="script.js"></script>
+<script src="../tools.js"></script>
+<script src="../related-tools.js"></script>
+<script src="../bookmark-hint.js" defer></script>
+</body>
+</html>

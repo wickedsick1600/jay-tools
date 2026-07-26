@@ -34,7 +34,7 @@ git push -u origin main
 ### 3. Create the Netlify site
 
 1. In Netlify dashboard → **Add new site** → **Import an existing project** → pick your GitHub repo.
-2. Build settings: **Build command** `npm ci && npm run build` (from [netlify.toml](netlify.toml)), **Publish directory** blank (root). Netlify uses Node to sync the shared footer into every HTML file before publish. Click **Deploy**.
+2. Build settings: **Build command** `npm ci && npm run build` (from [netlify.toml](netlify.toml)), **Publish directory** blank (root). Netlify uses Node to sync the shared footer and the temporary retired-storage migration into every production HTML file before publish. Click **Deploy**.
 3. Wait ~20 seconds. You'll get a `random-name.netlify.app` URL. Click it — the hub should load.
 
 ### 4. Point your domain at Netlify
@@ -62,35 +62,21 @@ Netlify auto-provisions a free SSL cert (Let's Encrypt) within ~1 minute of DNS 
 5. Go back to the live site, submit a test message. Within ~30 seconds you should get it in Gmail.
 6. After submit, the browser should land on **`/index.html?thanks=1`** (Netlify follows the form `action`). You should see the green “Thanks…” line on the feedback card and be scrolled to that section. If you ever change the form `action`, use this pattern — **`/?thanks=1#…` alone caused HTTP 404 redirects** on Netlify for this project.
 
-### 6. Configure Prompt Enhancer env vars (`OPENAI_API_KEY`, `OPENAI_MODEL`)
-
-**Secrets scanning:** Netlify fails builds if any committed file contains the **exact value** of an environment variable such as `OPENAI_MODEL` or `OPENAI_API_KEY`. Keep model ids and keys **only** in Netlify env vars (and local `.env`). Do not put real values in README/DEPLOY examples or in JS defaults. See `README.md` → Netlify secrets scanning.
-
-1. Create an API key in the [OpenAI dashboard (API keys)](https://platform.openai.com/api-keys). Copy it. (**`https://api.openai.com/v1` is not a website** — it’s the API base your server calls; opening it in a browser usually 404s.)
-2. Netlify dashboard → your site → **Site configuration** → **Environment variables** → **Add a variable**.
-3. Key: `OPENAI_API_KEY`. Value: your key. Scope: **All contexts** (production + deploy previews). Save.
-4. Add another variable: Key **`OPENAI_MODEL`**, Value: your provider’s chat model id (required). Scope: **All contexts**. Save.
-5. Baseline optional cap:
-   - `GLOBAL_DAILY_LIMIT=100` (or your preferred cap)
-6. Optional provider settings:
-   - `OPENAI_API_BASE` for OpenAI-compatible providers (example Groq: `https://api.groq.com/openai/v1`)
-7. Optional abuse-protection settings:
-   - `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (distributed rate limit)
-   - `TURNSTILE_SECRET_KEY` (human verification on function)
-8. Trigger a redeploy: **Deploys** → **Trigger deploy** → **Deploy site**. The serverless function at `prompt-enhancer/netlify/functions/enhance.js` now has access to the key.
-9. Visit `/prompt-enhancer/`, type a rough prompt, click Enhance. Should work.
-10. View page source (Ctrl+U) and Ctrl+F for the first few characters of your key. **It must not appear.** If it does, stop and investigate before publicizing the URL.
-
-### 7. Final checks before telling anyone
+### 6. Final checks before telling anyone
 
 - [ ] Every tool loads on mobile and desktop
 - [ ] Feedback form test message arrived in Gmail
 - [ ] Ko-fi support button goes to the right page
 - [ ] PayPal support button goes to the right page
-- [ ] View source on prompt-enhancer: no API key visible
 - [ ] Verify new tools: Password Generator, QR Generator, Diff Checker, PDF Merger, SVG Optimizer, Audio Trimmer
+- [ ] Verify Image Converter output/downloads, Word Counter live counts, and Currency Converter fresh + cached-rate states
+- [ ] Run `npm run verify` (footer, source, registry/sitemap, and core tests)
+- [ ] Confirm the retired page and its former Function endpoints return `404` after this cleanup release
+- [ ] Remove the retired tool's Netlify environment variables, revoke its provider credential, and delete dedicated storage/human-verification resources
+- [ ] If storage was shared, purge the retired tool's `feedback:*` records and backups without deleting unrelated data; review old provider/Function logs under their retention controls
+- [ ] Visit a production page on `https://juankit.com` and confirm the retired browser keys are gone. Repeat on any previously used `www`, `*.netlify.app`, or tool-subdomain origin because browser storage cannot be cleared cross-origin
 
-### 8. Submit to search engines
+### 7. Submit to search engines
 
 - Google: [Google Search Console](https://search.google.com/search-console) → add property `juankit.com` → verify via DNS TXT record → submit `https://juankit.com/sitemap.xml`.
 - Bing: [Bing Webmaster Tools](https://www.bing.com/webmasters) → import from Google Search Console (one click).
@@ -105,12 +91,11 @@ Target layout (example — only if you split tools later):
 - Hub → `juankit.com`
 - Image Editor → `imageeditor.juankit.com`
 - Folder Creator → `foldercreator.juankit.com`
-- Prompt Enhancer → `promptenhancer.juankit.com`
 - …etc.
 
 ### Steps
 
-1. Create a new repo containing **just** that tool's directory contents. Copy `_shared/GLOBAL_CONTEXT.md` + `_shared/CLAUDE.md` in alongside.
+1. Create a new repo containing **just** that tool's directory contents. Copy `_shared/GLOBAL_CONTEXT.md` and the root `CLAUDE.md` in alongside.
 2. Add your own `privacy.html` + `terms.html` to the new repo (the tool currently links to `juankit.com/privacy.html` — once it's a separate site, it needs its own copy).
 3. Push to GitHub. Create a new Netlify site from the repo. Deploy.
 4. Netlify → new site → **Domain management** → **Add custom domain** → `imageeditor.juankit.com` (or whichever). Netlify will show a CNAME record to add.
@@ -121,9 +106,7 @@ Target layout (example — only if you split tools later):
 7. In the **hub** repo, edit `tools.js` — change that tool's `url` from the relative path (`./image-editor/`) to the full URL (`https://imageeditor.juankit.com/`). Commit + push. Hub redeploys automatically.
 8. (Optional) Delete the tool's directory from this repo so the old path 404s. Or leave it in place as a fallback — it'll keep working.
 
-### If the tool has serverless functions (currently just Prompt Enhancer)
-
-Add `OPENAI_API_KEY` and **`OPENAI_MODEL`** as environment variables on the **new** Netlify site too (each Netlify site has its own env vars). There is no default model id in code — without `OPENAI_MODEL`, the function returns 500.
+If a future tool has server-side code or host configuration, document and migrate that configuration separately. The current suite does not deploy custom Netlify Functions.
 
 ---
 
@@ -143,17 +126,10 @@ Run a test donation with a second account (or friend) of $1–2 to confirm the w
 **"After submitting feedback I get HTTP 404."**
 - Confirm the hub form’s `action` in `index.html` is **`/index.html?thanks=1`** (not only `/?thanks=1#feedback`). Netlify’s post-submit redirect must resolve to a real deployed asset; the fragment-only pattern broke redirects here.
 
-**"Netlify build failed: Secrets scanning found secrets."**
-- A file in the repo matches the **literal value** of an env var (often `OPENAI_MODEL`). Remove that string from tracked files, redeploy, and keep secrets only in Netlify. Do not disable scanning for real secrets.
-
 **"The feedback form submits but I don't get email."**
 - Netlify Forms only detects forms on the **deployed** version, not local previews. Deploy first, then check.
 - Check spam folder.
 - Confirm the notification email is `devjaybusiness@gmail.com` in Netlify Forms settings.
-
-**"Prompt Enhancer returns 500 error."**
-- Most often: `OPENAI_API_KEY` missing, or **`OPENAI_MODEL` missing** (there is no default model id in code anymore — both must be set in Netlify). Redeploy after changing env vars.
-- Check function logs: Netlify → **Functions** → `enhance` → **Function log**.
 
 **"Images on Bulk Image Resizer process but the .zip is empty."**
 - Check browser console for errors. Usually means the browser ran out of memory on very large inputs. Cap input image size in the UI if this keeps happening.
