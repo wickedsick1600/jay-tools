@@ -51,6 +51,8 @@
 
 * { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 html { -webkit-text-size-adjust: 100%; }
 
 html, body {
@@ -357,6 +359,16 @@ button.ghost, .btn.ghost {
 
 button.ghost:hover, .btn.ghost:hover {
   background: var(--accent-soft);
+}
+
+button:disabled,
+button:disabled:hover {
+  background: var(--border-strong);
+  color: var(--white);
+  border-color: var(--border-strong);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 button.icon {

@@ -2,8 +2,12 @@
   "name": "juankit-multi-service",
   "private": true,
   "scripts": {
-    "build": "node scripts/sync-footer.mjs",
-    "footer:check": "node scripts/sync-footer.mjs --check"
+    "build": "node scripts/sync-storage-migration.mjs && node scripts/sync-footer.mjs",
+    "footer:check": "node scripts/sync-footer.mjs --check",
+    "storage:check": "node scripts/sync-storage-migration.mjs --check",
+    "check": "node scripts/check-project.mjs",
+    "test": "node --test",
+    "verify": "npm run storage:check && npm run footer:check && npm run check && npm test"
   },
   "engines": {
     "node": ">=18"

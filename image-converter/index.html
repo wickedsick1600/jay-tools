@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../storage-migration.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image Converter &amp; Compressor — WebP, JPG, PNG | Juankit</title>
+<meta name="description" content="Convert JPEG, PNG, WebP, AVIF, BMP, or GIF images to WebP, JPG, or PNG and compare the actual file sizes in your browser.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://juankit.com/image-converter/">
+<meta property="og:title" content="Image Converter &amp; Compressor — Juankit">
+<meta property="og:description" content="Convert and compress common image files locally, with batch ZIP downloads and honest size comparisons.">
+<meta property="og:url" content="https://juankit.com/image-converter/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Juankit">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Converter & Compressor","url":"https://juankit.com/image-converter/","description":"Convert and compress common image files to WebP, JPEG, or PNG locally in your browser.","applicationCategory":"MultimediaApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>Juankit</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#support">Support</a></nav></div></header>
+<main>
+  <section class="hero">
+    <span class="tag">Free · Runs in your browser</span>
+    <h1>Image Converter &amp; Compressor</h1>
+    <p>Turn common image files into browser-friendly WebP, JPEG, or PNG, compare the actual sizes, and download one file or a batch ZIP.</p>
+  </section>
+
+  <div class="notice green"><strong>Your images are never uploaded.</strong> Conversion and compression happen on your device.</div>
+
+  <div id="drop-zone" tabindex="0" role="button" aria-label="Add images">
+    <strong>Drop images here, click to pick, or paste with Ctrl+V</strong>
+    <span class="muted">JPEG/JPG, PNG, WebP, AVIF, BMP, or GIF · multiple files are welcome</span>
+    <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/bmp,image/gif,.jpg,.jpeg,.png,.webp,.avif,.bmp,.gif" multiple hidden>
+  </div>
+  <ul id="file-list" class="file-list" aria-label="Selected images"></ul>
+
+  <section class="card" aria-labelledby="settings-heading">
+    <h2 id="settings-heading" style="margin-top:0">Output settings</h2>
+    <div class="settings-grid">
+      <div>
+        <label for="output-format">Format</label>
+        <select id="output-format">
+          <option value="image/webp" selected>WebP — recommended for smaller web images</option>
+          <option value="image/jpeg">JPEG — widest compatibility, no transparency</option>
+          <option value="image/png">PNG — lossless and transparent, often larger</option>
+        </select>
+      </div>
+      <div id="quality-wrap">
+        <label for="quality">Quality: <output id="quality-value">82%</output></label>
+        <input id="quality" type="range" min="0.4" max="1" step="0.01" value="0.82">
+      </div>
+    </div>
+    <label class="check-label" for="resize-toggle"><input id="resize-toggle" type="checkbox"> Limit dimensions to reduce large files further</label>
+    <div id="resize-fields" class="settings-grid" hidden>
+      <div><label for="max-width">Maximum width (px)</label><input id="max-width" type="number" min="1" max="32767" value="1920"></div>
+      <div><label for="max-height">Maximum height (px)</label><input id="max-height" type="number" min="1" max="32767" value="1920"></div>
+    </div>
+    <p class="muted">Aspect ratio is always preserved, and smaller images are never enlarged.</p>
+    <div id="jpeg-options" hidden><label for="background">Background for transparent areas</label><input id="background" type="color" value="#ffffff" style="width:64px;height:44px;padding:3px"></div>
+  </section>
+
+  <div class="row">
+    <button id="convert-btn" class="success" type="button" disabled>Convert images</button>
+    <button id="cancel-btn" class="secondary" type="button" hidden>Cancel</button>
+    <button id="clear-btn" class="secondary" type="button" disabled>Clear list</button>
+  </div>
+  <div id="progress" class="progress" role="progressbar" aria-label="Conversion progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><div id="progress-bar"></div></div>
+  <p id="status" class="muted" role="status" aria-live="polite"></p>
+
+  <section id="results" hidden>
+    <div class="row" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Converted images</h2><button id="zip-btn" class="secondary" type="button" hidden>Download all as ZIP</button></div>
+    <div id="result-list" class="result-list"></div>
+  </section>
+
+  <h2>Recommendations and limitations</h2>
+  <ul>
+    <li><strong>WebP at 82%</strong> is a practical starting point for photos. For text-heavy screenshots, PNG preserves exact pixels; if you choose WebP, raise the quality and inspect the result. The result card shows the real size change because some optimized files become larger.</li>
+    <li><strong>PNG is best for lossless graphics</strong> and transparency, but converting a photo to PNG usually increases its size. JPEG removes transparency and uses your selected background color.</li>
+    <li>Animated GIFs are converted as a single still frame. Color profiles and metadata such as EXIF, GPS, and camera details are not copied.</li>
+    <li>AVIF input depends on your browser's decoder. Output is limited to WebP, JPEG, and PNG for broad download compatibility.</li>
+  </ul>
+
+  <h2>Support this tool</h2>
+  <p>Free forever. If it saved you time, a tip keeps this and other free tools alive.</p>
+  <div class="row"><a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a><a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener noreferrer">PayPal</a></div>
+  <section class="related-tools" data-related-tools></section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__grid">
+      <nav class="site-footer__nav" aria-label="Site and legal">
+        <ul class="site-footer__links">
+          <li><a href="/privacy.html">Privacy</a></li>
+          <li><a href="/terms.html">Terms</a></li>
+          <li><a href="/">All tools</a></li>
+          <li><a href="/#feedback">Feedback</a></li>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+        </ul>
+      </nav>
+      <nav class="site-footer__nav" aria-label="Support the project">
+        <ul class="site-footer__links">
+          <li>
+            <a
+              href="https://ko-fi.com/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ko-fi (opens in new tab)"
+            >Ko-fi</a>
+          </li>
+          <li>
+            <a
+              href="https://paypal.me/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="PayPal (opens in new tab)"
+            >PayPal</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <p class="site-footer__tagline">
+      Juankit — free browser tools. No accounts.
+      <span class="site-footer__copy">© 2026 Juankit</span>
+    </p>
+  </div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="image-converter-core.js"></script>
+<script src="script.js"></script>
+<script src="../tools.js"></script>
+<script src="../related-tools.js"></script>
+<script src="../bookmark-hint.js" defer></script>
+</body>
+</html>

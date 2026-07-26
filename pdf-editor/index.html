@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script src="../storage-migration.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PDF Editor &amp; Signature Tool | Juankit</title>
 <meta name="description" content="Edit PDFs in your browser: add text, shapes, drawings, and signatures, then download the finished file. Free PDF editor with no upload.">
@@ -160,7 +161,8 @@
     <li><strong>Use Select</strong> to move, resize, or delete items you added.</li>
     <li><strong>On phones</strong>, use Pan when you need to scroll around the page, then switch back to Select or another tool.</li>
     <li><strong>For signatures</strong>, upload once, adjust cleanup if needed, then place it on as many pages as you need.</li>
-    <li><strong>Download</strong> when you are done. The output is a new flattened PDF copy.</li>
+    <li><strong>Download</strong> when you are done. With no edits, the original file is returned unchanged. Edited copies keep the original page content and export supported text, shapes, drawings, and signatures as vector or native-resolution content.</li>
+    <li><strong>Quality limits:</strong> complex text or effects use a small, localized high-resolution fallback (up to 300 DPI). A low-resolution signature cannot gain missing detail. Password-protected PDFs may not open, and changing a digitally signed PDF invalidates its existing signature.</li>
   </ul>
 
   <h2>Support this tool</h2>
@@ -212,7 +214,7 @@
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/legacy/build/pdf.min.mjs" integrity="sha384-C3VK/DSWA0okoepve41PfjDCYPtppxgqr5ZDD6whDI9176DZADWGQtbhMwC6a7dg" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" integrity="sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js" integrity="sha384-K2R7AzsJQPCDnhTlIEZr5pifaODgyx7XqbqkZMtLKzGJNo/Irtg9yU85F+1YwL8X" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="script.js"></script>

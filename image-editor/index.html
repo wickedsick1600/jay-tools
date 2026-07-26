@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script src="../storage-migration.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Free Image Editor — Crop, Draw, Annotate, Resize (No Upload) | Juankit</title>
 <meta name="description" content="A free online image editor. Crop, add shapes, text, and drawings in any color and font. Resize and compress before downloading. Your files never leave your device.">
@@ -112,6 +113,28 @@
     max-width: 100%;
   }
   .canvas-wrap canvas { max-width: 100%; }
+  .canvas-wrap.actual-size canvas,
+  .canvas-wrap.actual-size .canvas-container { max-width: none; }
+
+  .preview-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 12px 0 8px;
+  }
+  .preview-bar .row { margin: 0; }
+  .preview-bar button[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .preview-info {
+    min-height: 20px;
+    font-size: 13px;
+    color: var(--fg-muted);
+  }
 
   .export-grid {
     display: grid;
@@ -258,7 +281,15 @@
       </label>
     </div>
 
-    <div class="canvas-wrap">
+    <div class="preview-bar">
+      <div class="row" role="group" aria-label="Preview size">
+        <button type="button" id="preview-fit-btn" class="secondary" aria-pressed="true">Fit</button>
+        <button type="button" id="preview-actual-btn" class="secondary" aria-pressed="false">100%</button>
+      </div>
+      <div id="preview-info" class="preview-info" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="canvas-wrap" id="canvas-wrap">
       <canvas id="canvas"></canvas>
     </div>
 
@@ -282,10 +313,12 @@
 
     <label for="format">Format</label>
     <select id="format">
+      <option value="original" id="original-format-option" selected>Same as original (recommended)</option>
       <option value="image/png">PNG (best quality, larger file)</option>
-      <option value="image/jpeg" selected>JPEG (smaller file)</option>
+      <option value="image/jpeg">JPEG (smaller file)</option>
       <option value="image/webp">WebP (modern, small file)</option>
     </select>
+    <div id="format-help" class="muted" style="font-size:13px;margin-top:6px;">Untouched images keep their original bytes. Edited formats are encoded once in your browser.</div>
 
     <div class="row export-actions">
       <button id="download-btn" class="success">Download</button>
@@ -304,7 +337,8 @@
     <li><strong>Click and drag</strong> on the image to draw. Use <strong>Select</strong> to move, resize, or rotate things you've added (the crop box can be moved and resized but not rotated).</li>
     <li><strong>Change color</strong> using the color picker on the toolbar.</li>
     <li><strong>For text</strong>, pick a font and size from the text options, then click on the image to place text.</li>
-    <li><strong>Download</strong> when you're done — you can resize and choose format/quality first. With the editor focused (not typing in a field), use <strong>Ctrl+S</strong> (Windows) or <strong>Cmd+S</strong> (Mac) to download with your current settings.</li>
+    <li><strong>Preview</strong> with <strong>Fit</strong> for the whole image or <strong>100%</strong> to inspect source pixels. Preview scaling never lowers the export resolution.</li>
+    <li><strong>Download</strong> when you're done — untouched images use their original bytes by default, or you can resize and choose another format/quality. With the editor focused (not typing in a field), use <strong>Ctrl+S</strong> (Windows) or <strong>Cmd+S</strong> (Mac) to download with your current settings.</li>
   </ul>
 
   <h2>Support this tool</h2>

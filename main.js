@@ -8,6 +8,7 @@ const GROUPS = typeof TOOL_GROUPS !== 'undefined'
       { id: 'image', label: 'Images' },
       { id: 'code', label: 'Code' },
       { id: 'text', label: 'Text' },
+      { id: 'finance', label: 'Finance' },
       { id: 'ai', label: 'AI' },
       { id: 'media', label: 'Media' },
     ];

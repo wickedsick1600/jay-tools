@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../storage-migration.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Counter — Characters, Sentences &amp; Reading Time | Juankit</title>
+<meta name="description" content="Count words, characters, sentences, paragraphs, lines, and estimated reading time instantly in your browser.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://juankit.com/word-counter/">
+<meta property="og:title" content="Word Counter — Juankit">
+<meta property="og:description" content="Count words, characters, sentences, paragraphs, and reading time without uploading your text.">
+<meta property="og:url" content="https://juankit.com/word-counter/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Juankit">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Word Counter","url":"https://juankit.com/word-counter/","description":"Count words, characters, sentences, paragraphs, lines, and estimated reading time instantly in your browser.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>Juankit</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#support">Support</a></nav></div></header>
+<main>
+  <section class="hero">
+    <span class="tag">Free · Runs in your browser</span>
+    <h1>Word Counter</h1>
+    <p>Paste or type text to see useful counts and time estimates update instantly.</p>
+  </section>
+
+  <div class="notice green"><strong>Your text stays on your device.</strong> It is not uploaded or saved.</div>
+
+  <label for="text-input">Your text</label>
+  <textarea id="text-input" placeholder="Start typing or paste a sentence, paragraph, or full document…" autofocus></textarea>
+
+  <section id="statistics" class="counter-grid" aria-label="Text statistics" aria-busy="false">
+    <div class="counter-card"><output id="words-count">0</output><span>Words</span></div>
+    <div class="counter-card"><output id="characters-count">0</output><span>Characters</span></div>
+    <div class="counter-card"><output id="characters-no-spaces-count">0</output><span>Characters without spaces</span></div>
+    <div class="counter-card"><output id="sentences-count">0</output><span>Sentences</span></div>
+    <div class="counter-card"><output id="paragraphs-count">0</output><span>Paragraphs</span></div>
+    <div class="counter-card"><output id="lines-count">0</output><span>Lines</span></div>
+    <div class="counter-card"><output id="reading-time">0 min</output><span>Reading time at 200 wpm</span></div>
+    <div class="counter-card"><output id="speaking-time">0 min</output><span>Speaking time at 130 wpm</span></div>
+  </section>
+
+  <div class="row counter-actions">
+    <button id="copy-summary-btn" class="success" type="button" disabled>Copy summary</button>
+    <button id="clear-btn" class="secondary" type="button" disabled>Clear</button>
+    <p id="status" class="muted" role="status" aria-live="polite"></p>
+  </div>
+
+  <h2>What counts as a word?</h2>
+  <p>The counter uses your browser's language-aware text rules, so it works with languages that do not always separate words with spaces. Joined forms such as <em>don't</em> are normally one word. Character counts use visible characters where browser support allows, so an emoji made from several code points is counted once.</p>
+  <p class="muted">Sentence and word boundaries can vary slightly by language and browser. Reading and speaking times are estimates, not deadlines.</p>
+
+  <h2>Support this tool</h2>
+  <p>Free forever. If it saved you time, a tip keeps this and other free tools alive.</p>
+  <div class="row"><a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a><a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener noreferrer">PayPal</a></div>
+  <section class="related-tools" data-related-tools></section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__grid">
+      <nav class="site-footer__nav" aria-label="Site and legal">
+        <ul class="site-footer__links">
+          <li><a href="/privacy.html">Privacy</a></li>
+          <li><a href="/terms.html">Terms</a></li>
+          <li><a href="/">All tools</a></li>
+          <li><a href="/#feedback">Feedback</a></li>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+        </ul>
+      </nav>
+      <nav class="site-footer__nav" aria-label="Support the project">
+        <ul class="site-footer__links">
+          <li>
+            <a
+              href="https://ko-fi.com/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ko-fi (opens in new tab)"
+            >Ko-fi</a>
+          </li>
+          <li>
+            <a
+              href="https://paypal.me/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="PayPal (opens in new tab)"
+            >PayPal</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <p class="site-footer__tagline">
+      Juankit — free browser tools. No accounts.
+      <span class="site-footer__copy">© 2026 Juankit</span>
+    </p>
+  </div>
+</footer>
+<script src="word-counter-core.js"></script>
+<script src="script.js"></script>
+<script src="../tools.js"></script>
+<script src="../related-tools.js"></script>
+<script src="../bookmark-hint.js" defer></script>
+</body>
+</html>

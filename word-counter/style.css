@@ -1,0 +1,50 @@
+.counter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.counter-card {
+  min-width: 0;
+  padding: 16px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.counter-card output {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--fg);
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.counter-card span {
+  display: block;
+  margin-top: 5px;
+  color: var(--fg-muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+#text-input {
+  min-height: 280px;
+  font-family: inherit;
+  font-size: 16px;
+}
+
+.counter-actions { align-items: center; }
+.counter-actions .muted { margin: 0; }
+
+@media (max-width: 700px) {
+  .counter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 390px) {
+  .counter-grid { grid-template-columns: 1fr; }
+}

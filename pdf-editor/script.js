@@ -1,9 +1,20 @@
-const PDF_WORKER_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+(async function startPdfEditor() {
+const deadline = Date.now() + 30000;
+while (!globalThis.pdfjsLibPromise) {
+  if (Date.now() >= deadline) throw new Error('PDF.js did not load in time.');
+  await new Promise((resolve) => setTimeout(resolve, 25));
+}
+await globalThis.pdfjsLibPromise;
+const pdfjsLib = globalThis.pdfjsLib;
+if (!pdfjsLib) throw new Error('PDF.js is unavailable.');
+
+const PDF_WORKER_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/legacy/build/pdf.worker.min.mjs';
 const MAX_PAGE_WIDTH = 900;
 const MIN_PAGE_WIDTH = 280;
 const MAX_HISTORY = 60;
-const EXPORT_OVERLAY_SCALE = 2;
-const MAX_EXPORT_OVERLAY_PIXELS = 8000000;
+const FALLBACK_EXPORT_DPI = 300;
+const MAX_FALLBACK_EXPORT_PIXELS = 12000000;
+const ELLIPSE_EXPORT_SEGMENTS = 96;
 const MIN_PREVIEW_ZOOM = 0.75;
 const MAX_PREVIEW_ZOOM = 2.5;
 const PREVIEW_ZOOM_STEP = 0.25;
@@ -191,7 +202,10 @@ async function loadPdfFile(file) {
   try {
     const bytes = await file.arrayBuffer();
     originalPdfBytes = bytes.slice(0);
-    const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(bytes.slice(0)) });
+    const loadingTask = pdfjsLib.getDocument({
+      data: new Uint8Array(bytes.slice(0)),
+      isEvalSupported: false,
+    });
     pdfDoc = await loadingTask.promise;
     pageCount = pdfDoc.numPages;
 
@@ -932,30 +946,62 @@ async function exportEditedPdf() {
   flash('Preparing edited PDF...');
 
   try {
-    const outPdf = await PDFLib.PDFDocument.load(originalPdfBytes.slice(0));
-
+    const editedPageNumbers = [];
     for (let pageNumber = 1; pageNumber <= pageCount; pageNumber += 1) {
       const state = pageStates.get(pageNumber);
-      if (!state || !hasObjects(state.json) || !state.width || !state.height) continue;
-
-      flash(`Adding edits to page ${pageNumber} of ${pageCount}...`);
-      const page = outPdf.getPage(pageNumber - 1);
-      const size = page.getSize();
-      const overlaySize = getExportOverlaySize(size.width, size.height);
-      const overlayBytes = await renderOverlayPng(state, overlaySize.width, overlaySize.height);
-      const overlayImage = await outPdf.embedPng(overlayBytes);
-      page.drawImage(overlayImage, {
-        x: 0,
-        y: 0,
-        width: size.width,
-        height: size.height,
-      });
+      if (state && hasObjects(state.json) && state.width && state.height) {
+        editedPageNumbers.push(pageNumber);
+      }
     }
 
-    const outputBytes = await outPdf.save();
+    if (!editedPageNumbers.length) {
+      const originalBytes = new Uint8Array(originalPdfBytes.slice(0));
+      downloadBlob(new Blob([originalBytes], { type: 'application/pdf' }), originalFileName);
+      flash('Downloaded the original PDF unchanged.');
+      return;
+    }
+
+    const outPdf = await PDFLib.PDFDocument.load(originalPdfBytes.slice(0), {
+      updateMetadata: false,
+    });
+    const exportContext = {
+      outPdf,
+      font: null,
+      fontCharacterSet: null,
+      images: new Map(),
+      fallbackCount: 0,
+    };
+
+    for (const pageNumber of editedPageNumbers) {
+      const state = pageStates.get(pageNumber);
+      flash(`Adding edits to page ${pageNumber} of ${pageCount}...`);
+      const page = outPdf.getPage(pageNumber - 1);
+      const sourcePage = await pdfDoc.getPage(pageNumber);
+      const viewport = sourcePage.getViewport({ scale: 1 });
+      const exportCanvas = await loadFabricCanvasForExport(state);
+
+      try {
+        for (const object of exportCanvas.getObjects()) {
+          const exported = await exportFabricObject(object, page, state, viewport, exportContext);
+          if (!exported) {
+            await exportObjectAsLocalizedRaster(object, page, state, viewport, exportContext);
+            exportContext.fallbackCount += 1;
+          }
+        }
+      } finally {
+        exportCanvas.dispose();
+        if (typeof sourcePage.cleanup === 'function') sourcePage.cleanup();
+      }
+    }
+
+    const outputBytes = await outPdf.save({ useObjectStreams: false });
     const blob = new Blob([outputBytes], { type: 'application/pdf' });
     downloadBlob(blob, `${safeFileBase(originalFileName)}-edited-juankit.pdf`);
-    flash('Downloaded edited PDF.');
+    if (exportContext.fallbackCount) {
+      flash(`Downloaded edited PDF. ${exportContext.fallbackCount} complex edit(s) used a localized high-resolution fallback (up to 300 DPI).`);
+    } else {
+      flash('Downloaded edited PDF with vector-quality edits.');
+    }
   } catch (err) {
     flash('Failed to export PDF: ' + err.message, true);
   } finally {
@@ -964,38 +1010,620 @@ async function exportEditedPdf() {
   }
 }
 
-function getExportOverlaySize(pageWidth, pageHeight) {
-  const maxScale = Math.sqrt(MAX_EXPORT_OVERLAY_PIXELS / (pageWidth * pageHeight));
-  const scale = Math.max(1, Math.min(EXPORT_OVERLAY_SCALE, maxScale));
+function loadFabricCanvasForExport(state) {
+  return new Promise((resolve, reject) => {
+    const element = document.createElement('canvas');
+    const canvas = new fabric.StaticCanvas(element, {
+      width: state.width,
+      height: state.height,
+      backgroundColor: 'rgba(0,0,0,0)',
+      enableRetinaScaling: false,
+      renderOnAddRemove: false,
+    });
+
+    try {
+      canvas.loadFromJSON(state.json, () => {
+        canvas.renderAll();
+        resolve(canvas);
+      });
+    } catch (err) {
+      canvas.dispose();
+      reject(err);
+    }
+  });
+}
+
+async function exportFabricObject(object, page, state, viewport, context) {
+  if (object.visible === false || object.opacity === 0) return true;
+  if (hasRasterOnlyEffect(object)) return false;
+
+  try {
+    switch (object.type) {
+      case 'i-text':
+      case 'text':
+      case 'textbox':
+        return await exportTextObject(object, page, state, viewport, context);
+      case 'rect':
+        return exportRectObject(object, page, state, viewport);
+      case 'ellipse':
+        return exportEllipseObject(object, page, state, viewport);
+      case 'line':
+        return exportLineObject(object, page, state, viewport);
+      case 'path':
+        return exportPathObject(object, page, state, viewport);
+      case 'image':
+        return await exportImageObject(object, page, state, viewport, context);
+      default:
+        return false;
+    }
+  } catch (err) {
+    console.warn(`Using localized raster fallback for ${object.type || 'unknown'} edit.`, err);
+    return false;
+  }
+}
+
+function hasRasterOnlyEffect(object) {
+  if (object.shadow || object.clipPath) return true;
+  const composite = object.globalCompositeOperation;
+  return Boolean(composite && composite !== 'source-over');
+}
+
+function exportRectObject(object, page, state, viewport) {
+  if ((object.rx || 0) !== 0 || (object.ry || 0) !== 0 || hasVisibleFill(object)) return false;
+  const stroke = getStrokeStyle(object, state, viewport);
+  if (!stroke) return !hasVisibleStroke(object);
+  if (hasUnsupportedStroke(object)) return false;
+
+  const halfWidth = (object.width || 0) / 2;
+  const halfHeight = (object.height || 0) / 2;
+  const points = [
+    transformObjectPoint(object, -halfWidth, -halfHeight),
+    transformObjectPoint(object, halfWidth, -halfHeight),
+    transformObjectPoint(object, halfWidth, halfHeight),
+    transformObjectPoint(object, -halfWidth, halfHeight),
+  ].map((point) => canvasPointToPdf(point, state, viewport));
+  points.push(points[0]);
+  drawPdfPolyline(page, points, stroke, false);
+  return true;
+}
+
+function exportEllipseObject(object, page, state, viewport) {
+  if (hasVisibleFill(object)) return false;
+  const stroke = getStrokeStyle(object, state, viewport);
+  if (!stroke) return !hasVisibleStroke(object);
+  if (hasUnsupportedStroke(object)) return false;
+
+  const rx = Number(object.rx) || (object.width || 0) / 2;
+  const ry = Number(object.ry) || (object.height || 0) / 2;
+  const points = [];
+  for (let index = 0; index <= ELLIPSE_EXPORT_SEGMENTS; index += 1) {
+    const angle = (index / ELLIPSE_EXPORT_SEGMENTS) * Math.PI * 2;
+    const canvasPoint = transformObjectPoint(object, Math.cos(angle) * rx, Math.sin(angle) * ry);
+    points.push(canvasPointToPdf(canvasPoint, state, viewport));
+  }
+  drawPdfPolyline(page, points, stroke, true);
+  return true;
+}
+
+function exportLineObject(object, page, state, viewport) {
+  const stroke = getStrokeStyle(object, state, viewport);
+  if (!stroke) return !hasVisibleStroke(object);
+  if (hasUnsupportedStroke(object)) return false;
+  const line = typeof object.calcLinePoints === 'function'
+    ? object.calcLinePoints()
+    : { x1: object.x1, y1: object.y1, x2: object.x2, y2: object.y2 };
+  const points = [
+    transformObjectPoint(object, line.x1, line.y1),
+    transformObjectPoint(object, line.x2, line.y2),
+  ].map((point) => canvasPointToPdf(point, state, viewport));
+  drawPdfPolyline(page, points, stroke, object.strokeLineCap === 'round');
+  return true;
+}
+
+function exportPathObject(object, page, state, viewport) {
+  if (hasVisibleFill(object) || hasUnsupportedStroke(object)) return false;
+  const stroke = getStrokeStyle(object, state, viewport);
+  if (!stroke) return !hasVisibleStroke(object);
+  const polylines = flattenFabricPath(object.path);
+  if (!polylines) return false;
+  const offset = object.pathOffset || { x: 0, y: 0 };
+
+  for (const polyline of polylines) {
+    const points = polyline.map((point) => {
+      const canvasPoint = transformObjectPoint(object, point.x - offset.x, point.y - offset.y);
+      return canvasPointToPdf(canvasPoint, state, viewport);
+    });
+    drawPdfPolyline(page, points, stroke, object.strokeLineCap !== 'butt');
+  }
+  return true;
+}
+
+async function exportTextObject(object, page, state, viewport, context) {
+  if (!isPlainTextObject(object)) return false;
+  const fill = parsePdfColor(object.fill);
+  if (!fill || fill.alpha <= 0) return true;
+
+  if (!context.font) {
+    context.font = await context.outPdf.embedFont(PDFLib.StandardFonts.Helvetica);
+    context.fontCharacterSet = new Set(context.font.getCharacterSet());
+  }
+
+  const origin = localPointToPdf(object, 0, 0, state, viewport);
+  const xUnit = localPointToPdf(object, 1, 0, state, viewport);
+  const yDownUnit = localPointToPdf(object, 0, 1, state, viewport);
+  const xVector = subtractPoints(xUnit, origin);
+  const yUpVector = subtractPoints(origin, yDownUnit);
+  const xScale = pointLength(xVector);
+  const yScale = pointLength(yUpVector);
+  if (!xScale || !yScale) return true;
+
+  const orthogonality = Math.abs(dotPoints(xVector, yUpVector)) / (xScale * yScale);
+  const scaleDifference = Math.abs(xScale - yScale) / Math.max(xScale, yScale);
+  const determinant = crossPoints(xVector, yUpVector);
+  if (orthogonality > 0.01 || scaleDifference > 0.03 || determinant <= 0) return false;
+
+  const lines = Array.isArray(object._textLines)
+    ? object._textLines.map((line) => Array.isArray(line) ? line.join('') : String(line))
+    : String(object.text || '').split(/\r?\n/);
+  if (lines.some((line) => Array.from(line).some((character) => !context.fontCharacterSet.has(character.codePointAt(0))))) {
+    return false;
+  }
+  const lineHeight = Number(object.lineHeight) || 1.16;
+  let lineTop = typeof object._getTopOffset === 'function'
+    ? object._getTopOffset()
+    : -(object.height || object.fontSize || 0) / 2;
+  const leftOffset = typeof object._getLeftOffset === 'function'
+    ? object._getLeftOffset()
+    : -(object.width || 0) / 2;
+  const rotation = PDFLib.degrees(Math.atan2(xVector.y, xVector.x) * 180 / Math.PI);
+  const fontSize = Math.max(0.1, (Number(object.fontSize) || 16) * ((xScale + yScale) / 2));
+  const opacity = clampOpacity((Number(object.opacity) || 1) * fill.alpha);
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const text = lines[index];
+    const heightOfLine = typeof object.getHeightOfLine === 'function'
+      ? object.getHeightOfLine(index)
+      : (Number(object.fontSize) || 16) * lineHeight;
+    const maxHeight = heightOfLine / lineHeight;
+    const lineLeft = leftOffset + (typeof object._getLineLeftOffset === 'function'
+      ? object._getLineLeftOffset(index)
+      : 0);
+    const baseline = localPointToPdf(object, lineLeft, lineTop + maxHeight, state, viewport);
+
+    if (text) {
+      context.font.encodeText(text);
+      page.drawText(text, {
+        x: baseline.x,
+        y: baseline.y,
+        size: fontSize,
+        font: context.font,
+        color: fill.color,
+        opacity,
+        rotate: rotation,
+      });
+    }
+    lineTop += heightOfLine;
+  }
+  return true;
+}
+
+function isPlainTextObject(object) {
+  const family = String(object.fontFamily || 'Arial').toLowerCase();
+  const weight = String(object.fontWeight || 'normal').toLowerCase();
+  const style = String(object.fontStyle || 'normal').toLowerCase();
+  const hasStyles = object.styles && Object.keys(object.styles).length > 0;
+  const allowedFamily = family === 'arial' || family === 'helvetica' || family === 'sans-serif';
+  const allowedWeight = weight === 'normal' || weight === '400';
+  return allowedFamily
+    && allowedWeight
+    && style === 'normal'
+    && !hasStyles
+    && !object.path
+    && !object.stroke
+    && !object.underline
+    && !object.overline
+    && !object.linethrough
+    && !object.textBackgroundColor
+    && !object.backgroundColor
+    && !(Number(object.charSpacing) || 0)
+    && !String(object.text || '').includes('\t');
+}
+
+async function exportImageObject(object, page, state, viewport, context) {
+  if (object.flipX || object.flipY || object.clipPath || object.filters?.length) return false;
+  if ((Number(object.cropX) || 0) !== 0 || (Number(object.cropY) || 0) !== 0) return false;
+  const source = typeof object.getSrc === 'function' ? object.getSrc() : object.src;
+  const data = decodeImageDataUrl(source);
+  if (!data) return false;
+
+  let image = context.images.get(source);
+  if (!image) {
+    image = data.type === 'image/jpeg'
+      ? await context.outPdf.embedJpg(data.bytes)
+      : await context.outPdf.embedPng(data.bytes);
+    context.images.set(source, image);
+  }
+
+  return drawEmbeddedImageForObject(image, object, page, state, viewport);
+}
+
+function drawEmbeddedImageForObject(image, object, page, state, viewport) {
+  const halfWidth = (object.width || 0) / 2;
+  const halfHeight = (object.height || 0) / 2;
+  const corners = {
+    tl: localPointToPdf(object, -halfWidth, -halfHeight, state, viewport),
+    tr: localPointToPdf(object, halfWidth, -halfHeight, state, viewport),
+    br: localPointToPdf(object, halfWidth, halfHeight, state, viewport),
+    bl: localPointToPdf(object, -halfWidth, halfHeight, state, viewport),
+  };
+  return drawEmbeddedImageAtPdfCorners(image, corners, page, Number(object.opacity) || 1);
+}
+
+function drawEmbeddedImageAtCanvasRect(image, rect, page, state, viewport, opacity) {
+  const corners = {
+    tl: canvasPointToPdf({ x: rect.left, y: rect.top }, state, viewport),
+    tr: canvasPointToPdf({ x: rect.right, y: rect.top }, state, viewport),
+    br: canvasPointToPdf({ x: rect.right, y: rect.bottom }, state, viewport),
+    bl: canvasPointToPdf({ x: rect.left, y: rect.bottom }, state, viewport),
+  };
+  return drawEmbeddedImageAtPdfCorners(image, corners, page, opacity);
+}
+
+function drawEmbeddedImageAtPdfCorners(image, corners, page, opacity) {
+  const xVector = subtractPoints(corners.br, corners.bl);
+  const yVector = subtractPoints(corners.tl, corners.bl);
+  const width = pointLength(xVector);
+  const height = pointLength(yVector);
+  if (!width || !height) return true;
+  const orthogonality = Math.abs(dotPoints(xVector, yVector)) / (width * height);
+  if (orthogonality > 0.01 || crossPoints(xVector, yVector) <= 0) return false;
+
+  page.drawImage(image, {
+    x: corners.bl.x,
+    y: corners.bl.y,
+    width,
+    height,
+    rotate: PDFLib.degrees(Math.atan2(xVector.y, xVector.x) * 180 / Math.PI),
+    opacity: clampOpacity(opacity),
+  });
+  return true;
+}
+
+async function exportObjectAsLocalizedRaster(object, page, state, viewport, context) {
+  object.setCoords();
+  const rawBounds = object.getBoundingRect(true, true);
+  const padding = Math.max(2, (Number(object.strokeWidth) || 0) * 2);
+  const rect = {
+    left: Math.max(0, rawBounds.left - padding),
+    top: Math.max(0, rawBounds.top - padding),
+    right: Math.min(state.width, rawBounds.left + rawBounds.width + padding),
+    bottom: Math.min(state.height, rawBounds.top + rawBounds.height + padding),
+  };
+  const width = rect.right - rect.left;
+  const height = rect.bottom - rect.top;
+  if (width <= 0 || height <= 0) return;
+
+  const pdfUnitsPerCanvasPixel = ((viewport.width / state.width) + (viewport.height / state.height)) / 2;
+  let multiplier = Math.max(1, pdfUnitsPerCanvasPixel * FALLBACK_EXPORT_DPI / 72);
+  const desiredPixels = width * height * multiplier * multiplier;
+  if (desiredPixels > MAX_FALLBACK_EXPORT_PIXELS) {
+    multiplier *= Math.sqrt(MAX_FALLBACK_EXPORT_PIXELS / desiredPixels);
+  }
+
+  const outputWidth = Math.max(1, Math.ceil(width * multiplier));
+  const outputHeight = Math.max(1, Math.ceil(height * multiplier));
+  const element = document.createElement('canvas');
+  const canvas = new fabric.StaticCanvas(element, {
+    width: outputWidth,
+    height: outputHeight,
+    backgroundColor: 'rgba(0,0,0,0)',
+    enableRetinaScaling: false,
+    renderOnAddRemove: false,
+  });
+
+  try {
+    const clone = await cloneFabricObject(object);
+    clone.set({
+      left: (Number(object.left) - rect.left) * multiplier,
+      top: (Number(object.top) - rect.top) * multiplier,
+      scaleX: (Number(object.scaleX) || 1) * multiplier,
+      scaleY: (Number(object.scaleY) || 1) * multiplier,
+      selectable: false,
+      evented: false,
+    });
+    clone.setCoords();
+    canvas.add(clone);
+    canvas.renderAll();
+    const pngBytes = new Uint8Array(dataUrlToArrayBuffer(canvas.toDataURL({ format: 'png', multiplier: 1 })));
+    const image = await context.outPdf.embedPng(pngBytes);
+    if (!drawEmbeddedImageAtCanvasRect(image, rect, page, state, viewport, 1)) {
+      throw new Error('Could not map localized raster edit to the PDF page.');
+    }
+  } finally {
+    canvas.dispose();
+    element.width = 1;
+    element.height = 1;
+  }
+}
+
+function cloneFabricObject(object) {
+  return new Promise((resolve, reject) => {
+    try {
+      let resolved = false;
+      const result = object.clone((clone) => {
+        resolved = true;
+        resolve(clone);
+      });
+      if (result && typeof result.then === 'function') {
+        result.then((clone) => {
+          if (!resolved) resolve(clone);
+        }, reject);
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function canvasPointToPdf(point, state, viewport) {
+  const viewportX = point.x * viewport.width / state.width;
+  const viewportY = point.y * viewport.height / state.height;
+  const converted = viewport.convertToPdfPoint(viewportX, viewportY);
+  return { x: converted[0], y: converted[1] };
+}
+
+function transformObjectPoint(object, x, y) {
+  return fabric.util.transformPoint(new fabric.Point(x, y), object.calcTransformMatrix());
+}
+
+function localPointToPdf(object, x, y, state, viewport) {
+  return canvasPointToPdf(transformObjectPoint(object, x, y), state, viewport);
+}
+
+function subtractPoints(first, second) {
+  return { x: first.x - second.x, y: first.y - second.y };
+}
+
+function pointLength(point) {
+  return Math.hypot(point.x, point.y);
+}
+
+function dotPoints(first, second) {
+  return first.x * second.x + first.y * second.y;
+}
+
+function crossPoints(first, second) {
+  return first.x * second.y - first.y * second.x;
+}
+
+function hasUnsupportedStroke(object) {
+  return Boolean(object.strokeDashArray?.length || object.strokeDashOffset);
+}
+
+function hasVisibleStroke(object) {
+  const stroke = parsePdfColor(object.stroke);
+  return Boolean(stroke && stroke.alpha > 0 && (Number(object.strokeWidth) || 0) > 0);
+}
+
+function hasVisibleFill(object) {
+  const fill = parsePdfColor(object.fill);
+  return Boolean(fill && fill.alpha > 0);
+}
+
+function getStrokeStyle(object, state, viewport) {
+  const parsed = parsePdfColor(object.stroke);
+  if (!parsed || parsed.alpha <= 0 || (Number(object.strokeWidth) || 0) <= 0) return null;
+
+  let scale = 1;
+  if (!object.strokeUniform) {
+    const origin = transformObjectPoint(object, 0, 0);
+    const xUnit = transformObjectPoint(object, 1, 0);
+    const yUnit = transformObjectPoint(object, 0, 1);
+    scale = Math.sqrt(pointLength(subtractPoints(xUnit, origin)) * pointLength(subtractPoints(yUnit, origin)));
+  }
+  const pdfUnitsPerCanvasPixel = ((viewport.width / state.width) + (viewport.height / state.height)) / 2;
   return {
-    width: Math.max(1, Math.round(pageWidth * scale)),
-    height: Math.max(1, Math.round(pageHeight * scale)),
+    color: parsed.color,
+    opacity: clampOpacity(parsed.alpha * (Number(object.opacity) || 1)),
+    thickness: Math.max(0.1, (Number(object.strokeWidth) || 1) * scale * pdfUnitsPerCanvasPixel),
   };
 }
 
-function renderOverlayPng(state, targetWidth, targetHeight) {
-  return new Promise((resolve, reject) => {
-    const overlayCanvas = document.createElement('canvas');
-    const staticCanvas = new fabric.StaticCanvas(overlayCanvas, {
-      width: targetWidth,
-      height: targetHeight,
-      backgroundColor: 'rgba(0,0,0,0)',
-    });
-
-    staticCanvas.loadFromJSON(state.json, async () => {
-      try {
-        scaleCanvasObjects(staticCanvas, state.width, state.height, targetWidth, targetHeight);
-        staticCanvas.renderAll();
-        const dataUrl = staticCanvas.toDataURL({ format: 'png', multiplier: 1 });
-        const bytes = dataUrlToArrayBuffer(dataUrl);
-        staticCanvas.dispose();
-        resolve(bytes);
-      } catch (err) {
-        staticCanvas.dispose();
-        reject(err);
+function drawPdfPolyline(page, points, stroke, roundCaps) {
+  if (stroke.opacity >= 0.999999 && points.length > 1) {
+    const lineCap = roundCaps ? PDFLib.LineCapStyle.Round : PDFLib.LineCapStyle.Butt;
+    const lineJoin = roundCaps ? PDFLib.LineJoinStyle.Round : PDFLib.LineJoinStyle.Miter;
+    const operators = [
+      PDFLib.pushGraphicsState(),
+      PDFLib.setStrokingColor(stroke.color),
+      PDFLib.setLineWidth(stroke.thickness),
+      PDFLib.setLineCap(lineCap),
+      PDFLib.setLineJoin(lineJoin),
+      PDFLib.setDashPattern([], 0),
+      PDFLib.moveTo(points[0].x, points[0].y),
+    ];
+    for (let index = 1; index < points.length; index += 1) {
+      if (pointLength(subtractPoints(points[index], points[index - 1])) >= 0.0001) {
+        operators.push(PDFLib.lineTo(points[index].x, points[index].y));
       }
-    });
-  });
+    }
+    operators.push(PDFLib.stroke(), PDFLib.popGraphicsState());
+    page.pushOperators(...operators);
+    return;
+  }
+
+  for (let index = 1; index < points.length; index += 1) {
+    const start = points[index - 1];
+    const end = points[index];
+    if (pointLength(subtractPoints(end, start)) < 0.0001) continue;
+    const options = {
+      start,
+      end,
+      thickness: stroke.thickness,
+      color: stroke.color,
+      opacity: stroke.opacity,
+    };
+    if (roundCaps && PDFLib.LineCapStyle?.Round !== undefined) {
+      options.lineCap = PDFLib.LineCapStyle.Round;
+    }
+    page.drawLine(options);
+  }
+}
+
+function parsePdfColor(value) {
+  if (!value || value === 'transparent') return { color: PDFLib.rgb(0, 0, 0), alpha: 0 };
+  const text = String(value).trim().toLowerCase();
+  const named = {
+    black: '#000000',
+    white: '#ffffff',
+    red: '#ff0000',
+    green: '#008000',
+    blue: '#0000ff',
+  };
+  const normalized = named[text] || text;
+  let match = normalized.match(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i);
+  if (match) {
+    let hex = match[1];
+    if (hex.length === 3) hex = hex.split('').map((char) => char + char).join('');
+    const hasAlpha = hex.length === 8;
+    const red = parseInt(hex.slice(0, 2), 16);
+    const green = parseInt(hex.slice(2, 4), 16);
+    const blue = parseInt(hex.slice(4, 6), 16);
+    const alpha = hasAlpha ? parseInt(hex.slice(6, 8), 16) / 255 : 1;
+    return { color: PDFLib.rgb(red / 255, green / 255, blue / 255), alpha };
+  }
+
+  match = normalized.match(/^rgba?\(\s*([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?\s*\)$/);
+  if (!match) return null;
+  const alpha = match[4]
+    ? (match[4].endsWith('%') ? parseFloat(match[4]) / 100 : parseFloat(match[4]))
+    : 1;
+  return {
+    color: PDFLib.rgb(Math.min(255, Number(match[1])) / 255, Math.min(255, Number(match[2])) / 255, Math.min(255, Number(match[3])) / 255),
+    alpha: clampOpacity(alpha),
+  };
+}
+
+function clampOpacity(value) {
+  return Math.max(0, Math.min(1, Number.isFinite(value) ? value : 1));
+}
+
+function decodeImageDataUrl(dataUrl) {
+  if (typeof dataUrl !== 'string') return null;
+  const match = dataUrl.match(/^data:(image\/(?:png|jpeg));base64,(.+)$/i);
+  if (!match) return null;
+  const binary = atob(match[2]);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return { type: match[1].toLowerCase(), bytes };
+}
+
+function flattenFabricPath(path) {
+  if (!Array.isArray(path)) return null;
+  const polylines = [];
+  let points = [];
+  let current = { x: 0, y: 0 };
+  let start = null;
+  let previousCommand = '';
+  let lastCubicControl = null;
+  let lastQuadraticControl = null;
+
+  const addPoint = (point) => {
+    const last = points[points.length - 1];
+    if (!last || last.x !== point.x || last.y !== point.y) points.push(point);
+    current = point;
+  };
+  const finish = () => {
+    if (points.length > 1) polylines.push(points);
+    points = [];
+  };
+
+  for (const segment of path) {
+    const command = String(segment[0] || '');
+    if (command !== command.toUpperCase()) return null;
+    if (command === 'M') {
+      finish();
+      addPoint({ x: Number(segment[1]), y: Number(segment[2]) });
+      start = { ...current };
+    } else if (command === 'L') {
+      addPoint({ x: Number(segment[1]), y: Number(segment[2]) });
+    } else if (command === 'H') {
+      addPoint({ x: Number(segment[1]), y: current.y });
+    } else if (command === 'V') {
+      addPoint({ x: current.x, y: Number(segment[1]) });
+    } else if (command === 'C' || command === 'S') {
+      const control1 = command === 'C'
+        ? { x: Number(segment[1]), y: Number(segment[2]) }
+        : reflectControl((previousCommand === 'C' || previousCommand === 'S') ? lastCubicControl : current, current);
+      const control2 = command === 'C'
+        ? { x: Number(segment[3]), y: Number(segment[4]) }
+        : { x: Number(segment[1]), y: Number(segment[2]) };
+      const end = command === 'C'
+        ? { x: Number(segment[5]), y: Number(segment[6]) }
+        : { x: Number(segment[3]), y: Number(segment[4]) };
+      const origin = { ...current };
+      const steps = curveStepCount([origin, control1, control2, end]);
+      for (let step = 1; step <= steps; step += 1) {
+        addPoint(cubicBezierPoint(origin, control1, control2, end, step / steps));
+      }
+      lastCubicControl = control2;
+      lastQuadraticControl = null;
+    } else if (command === 'Q' || command === 'T') {
+      const control = command === 'Q'
+        ? { x: Number(segment[1]), y: Number(segment[2]) }
+        : reflectControl((previousCommand === 'Q' || previousCommand === 'T') ? lastQuadraticControl : current, current);
+      const end = command === 'Q'
+        ? { x: Number(segment[3]), y: Number(segment[4]) }
+        : { x: Number(segment[1]), y: Number(segment[2]) };
+      const origin = { ...current };
+      const steps = curveStepCount([origin, control, end]);
+      for (let step = 1; step <= steps; step += 1) {
+        addPoint(quadraticBezierPoint(origin, control, end, step / steps));
+      }
+      lastQuadraticControl = control;
+      lastCubicControl = null;
+    } else if (command === 'Z') {
+      if (start) addPoint({ ...start });
+      finish();
+      start = null;
+    } else {
+      return null;
+    }
+
+    if (command !== 'C' && command !== 'S') lastCubicControl = null;
+    if (command !== 'Q' && command !== 'T') lastQuadraticControl = null;
+    previousCommand = command;
+  }
+  finish();
+  return polylines;
+}
+
+function reflectControl(control, around) {
+  return { x: around.x * 2 - control.x, y: around.y * 2 - control.y };
+}
+
+function curveStepCount(points) {
+  let length = 0;
+  for (let index = 1; index < points.length; index += 1) {
+    length += pointLength(subtractPoints(points[index], points[index - 1]));
+  }
+  return Math.max(12, Math.min(96, Math.ceil(length / 4)));
+}
+
+function cubicBezierPoint(start, control1, control2, end, time) {
+  const inverse = 1 - time;
+  return {
+    x: inverse ** 3 * start.x + 3 * inverse ** 2 * time * control1.x + 3 * inverse * time ** 2 * control2.x + time ** 3 * end.x,
+    y: inverse ** 3 * start.y + 3 * inverse ** 2 * time * control1.y + 3 * inverse * time ** 2 * control2.y + time ** 3 * end.y,
+  };
+}
+
+function quadraticBezierPoint(start, control, end, time) {
+  const inverse = 1 - time;
+  return {
+    x: inverse ** 2 * start.x + 2 * inverse * time * control.x + time ** 2 * end.x,
+    y: inverse ** 2 * start.y + 2 * inverse * time * control.y + time ** 2 * end.y,
+  };
 }
 
 function downloadBlob(blob, filename) {
@@ -1021,3 +1649,11 @@ function dataUrlToArrayBuffer(dataUrl) {
 updateSignatureControls();
 updateZoomControls();
 updateHistoryButtons();
+})().catch((error) => {
+  console.error('PDF Editor failed to start:', error);
+  const message = document.getElementById('msg');
+  if (message) {
+    message.textContent = 'The PDF engine could not start. Check your connection and reload the page.';
+    message.classList.add('error');
+  }
+});
