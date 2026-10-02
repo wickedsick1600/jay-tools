@@ -293,9 +293,87 @@
     return output;
   }
 
+  function buildTree(tokens) {
+    let index = 0;
+
+    function value() {
+      const token = tokens[index];
+      index += 1;
+
+      if (token.raw === '[') {
+        const items = [];
+        if (tokens[index].raw === ']') {
+          index += 1;
+          return { type: 'array', items };
+        }
+        while (true) {
+          items.push(value());
+          if (tokens[index].raw === ']') {
+            index += 1;
+            return { type: 'array', items };
+          }
+          index += 1;
+        }
+      }
+
+      if (token.raw === '{') {
+        const entries = [];
+        if (tokens[index].raw === '}') {
+          index += 1;
+          return { type: 'object', entries };
+        }
+        while (true) {
+          const key = tokens[index];
+          index += 2;
+          entries.push({ key: key.raw, name: JSON.parse(key.raw), value: value() });
+          if (tokens[index].raw === '}') {
+            index += 1;
+            return { type: 'object', entries };
+          }
+          index += 1;
+        }
+      }
+
+      return { type: 'scalar', raw: token.raw };
+    }
+
+    return value();
+  }
+
+  function renderTree(node, unit, depth, shouldSort) {
+    if (node.type === 'scalar') return node.raw;
+
+    if (node.type === 'array') {
+      if (!node.items.length) return '[]';
+      const items = node.items.map((item) => (
+        `${unit.repeat(depth + 1)}${renderTree(item, unit, depth + 1, shouldSort)}`
+      ));
+      return `[\n${items.join(',\n')}\n${unit.repeat(depth)}]`;
+    }
+
+    if (!node.entries.length) return '{}';
+    const entries = node.entries.map((entry, order) => ({ ...entry, order }));
+    if (shouldSort) {
+      entries.sort((left, right) => {
+        if (left.name < right.name) return -1;
+        if (left.name > right.name) return 1;
+        return left.order - right.order;
+      });
+    }
+    const properties = entries.map((entry) => (
+      `${unit.repeat(depth + 1)}${entry.key}: ${renderTree(entry.value, unit, depth + 1, shouldSort)}`
+    ));
+    return `{\n${properties.join(',\n')}\n${unit.repeat(depth)}}`;
+  }
+
+  function sortKeys(text, indent) {
+    const tokens = parse(text);
+    return renderTree(buildTree(tokens), indentUnit(indent), 0, true);
+  }
+
   function minify(text) {
     return parse(text).map((token) => token.raw).join('');
   }
 
-  return { format, locationAt, minify, parse, tokenize };
+  return { format, locationAt, minify, parse, sortKeys, tokenize };
 });

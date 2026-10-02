@@ -351,16 +351,6 @@ button.success:hover, .btn.success:hover {
   background: var(--success-hover);
 }
 
-button.ghost, .btn.ghost {
-  background: transparent;
-  color: var(--accent);
-  box-shadow: none;
-}
-
-button.ghost:hover, .btn.ghost:hover {
-  background: var(--accent-soft);
-}
-
 button:disabled,
 button:disabled:hover {
   background: var(--border-strong);
@@ -438,8 +428,6 @@ input[type="file"] { padding: 8px; }
   flex-wrap: wrap;
   margin: 16px 0;
 }
-
-.stack { display: flex; flex-direction: column; gap: 10px; }
 
 .card {
   background: var(--bg-card);

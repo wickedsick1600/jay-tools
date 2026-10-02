@@ -5,7 +5,7 @@
   const currentToolSlug = getCurrentToolSlug();
   const candidates = TOOLS
     .filter((tool) => tool.status === 'live' && tool.url && tool.url !== '#')
-    .filter((tool) => tool.id !== currentToolSlug && toolSlug(tool) !== currentToolSlug);
+    .filter((tool) => toolSlug(tool) !== currentToolSlug);
 
   const picks = shuffle(candidates).slice(0, 3);
   if (!picks.length) return;

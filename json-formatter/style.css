@@ -351,16 +351,6 @@ button.success:hover, .btn.success:hover {
   background: var(--success-hover);
 }
 
-button.ghost, .btn.ghost {
-  background: transparent;
-  color: var(--accent);
-  box-shadow: none;
-}
-
-button.ghost:hover, .btn.ghost:hover {
-  background: var(--accent-soft);
-}
-
 button:disabled,
 button:disabled:hover {
   background: var(--border-strong);
@@ -438,8 +428,6 @@ input[type="file"] { padding: 8px; }
   flex-wrap: wrap;
   margin: 16px 0;
 }
-
-.stack { display: flex; flex-direction: column; gap: 10px; }
 
 .card {
   background: var(--bg-card);
@@ -659,6 +647,50 @@ p code, li code {
   font-weight: 650;
 }
 
+.source-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.source-heading > label {
+  margin: 0;
+}
+
+.source-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.find-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
+  align-items: end;
+  margin-top: 10px;
+}
+
+.find-bar label {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.find-bar button {
+  min-height: 44px;
+}
+
+.inline-check {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 10px;
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
 .fold-actions {
   display: flex;
   flex-wrap: wrap;
@@ -684,6 +716,26 @@ button.compact {
   font-size: 14px;
   line-height: 1.6;
   tab-size: 4;
+}
+
+.json-output-editor {
+  min-height: 260px;
+  max-height: 640px;
+  margin-top: 7px;
+  border-color: #263247;
+  background: #070d18;
+  color: #dbe7f5;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  tab-size: 4;
+  white-space: pre;
+  overflow: auto;
+}
+
+.json-output-editor:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .json-viewer:focus-visible {
@@ -769,6 +821,10 @@ button.compact {
 
 @media (max-width: 520px) {
   .controls-grid { grid-template-columns: 1fr; }
+  .source-heading { align-items: flex-start; flex-direction: column; }
+  .source-actions { justify-content: flex-start; }
+  .find-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .find-bar input { grid-column: 1 / -1; }
   .result-heading { align-items: flex-start; flex-direction: column; }
   .json-line { grid-template-columns: 26px 42px minmax(max-content, 1fr); }
   .json-line-number { left: 26px; }

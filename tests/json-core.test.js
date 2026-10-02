@@ -47,3 +47,16 @@ test('preserves escaped braces and Unicode escapes', () => {
   const source = '{"value":"{not a fold} \\u263A","emoji":"😀"}';
   assert.equal(json.minify(source), source);
 });
+
+test('sorts object keys recursively without changing value tokens or duplicate keys', () => {
+  const source = '{"z":9007199254740993,"a":{"two":2,"one":1},"a":1e+09,"list":[{"b":-0,"a":1.2300}]}';
+  const sorted = json.sortKeys(source, 2);
+
+  assert.ok(sorted.indexOf('"a": {') < sorted.indexOf('"z": 9007199254740993'));
+  assert.ok(sorted.indexOf('"one": 1') < sorted.indexOf('"two": 2'));
+  assert.equal((sorted.match(/"a"/g) || []).length, 3);
+  assert.match(sorted, /9007199254740993/);
+  assert.match(sorted, /1e\+09/);
+  assert.match(sorted, /"b": -0/);
+  assert.match(sorted, /1\.2300/);
+});
