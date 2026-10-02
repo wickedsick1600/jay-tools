@@ -1,17 +1,6 @@
 // TOOL_GROUPS, CATEGORIES, TOOLS, and iconMarkup come from tools.js, loaded before this file.
 
-const GROUPS = typeof TOOL_GROUPS !== 'undefined'
-  ? TOOL_GROUPS
-  : [
-      { id: 'all', label: 'All' },
-      { id: 'pdf', label: 'PDF' },
-      { id: 'image', label: 'Images' },
-      { id: 'code', label: 'Code' },
-      { id: 'text', label: 'Text' },
-      { id: 'finance', label: 'Finance' },
-      { id: 'ai', label: 'AI' },
-      { id: 'media', label: 'Media' },
-    ];
+const GROUPS = TOOL_GROUPS;
 
 const searchInput = document.getElementById('search');
 const tabsContainer = document.getElementById('tabs');
@@ -39,19 +28,8 @@ function liveTools() {
 }
 
 function categoryLabel(id) {
-  if (typeof CATEGORIES === 'undefined') return id;
-
   const category = CATEGORIES.find((item) => item.id === id);
   return category ? category.label : id;
-}
-
-function groupFor(tool) {
-  if (tool.group) return tool.group;
-  if (tool.category === 'image') return 'image';
-  if (tool.category === 'audio' || tool.category === 'video') return 'media';
-  if (tool.category === 'ai') return 'ai';
-  if (tool.category === 'text') return 'text';
-  return 'code';
 }
 
 function groupConfig(id) {
@@ -75,13 +53,13 @@ function clearElement(element) {
 }
 
 function groupSortValue(tool) {
-  const id = groupFor(tool);
+  const id = tool.group;
   const index = GROUPS.findIndex((group) => group.id === id);
   return index === -1 ? 99 : index;
 }
 
 function searchableText(tool) {
-  const groupId = groupFor(tool);
+  const groupId = tool.group;
 
   return [
     tool.title,
@@ -98,7 +76,7 @@ function searchableText(tool) {
 }
 
 function toolMatches(tool) {
-  if (activeGroup !== 'all' && groupFor(tool) !== activeGroup) return false;
+  if (activeGroup !== 'all' && tool.group !== activeGroup) return false;
   if (!query) return true;
 
   const haystack = searchableText(tool);
@@ -107,7 +85,7 @@ function toolMatches(tool) {
 
 function countLiveInGroup(groupId) {
   if (groupId === 'all') return liveTools().length;
-  return liveTools().filter((tool) => groupFor(tool) === groupId).length;
+  return liveTools().filter((tool) => tool.group === groupId).length;
 }
 
 function chipLabel(group) {
@@ -174,7 +152,7 @@ function renderCard(tool) {
 
   const category = document.createElement('span');
   category.className = 'tool-category';
-  category.textContent = groupLabel(groupFor(tool));
+  category.textContent = groupLabel(tool.group);
 
   const hint = document.createElement('span');
   hint.className = 'tool-hint';
@@ -218,7 +196,7 @@ function renderHeroShortcuts() {
 
     const hint = document.createElement('span');
     hint.className = 'shortcut-hint';
-    hint.textContent = groupLabel(groupFor(tool));
+    hint.textContent = groupLabel(tool.group);
 
     body.append(title, hint);
     link.append(icon, body);
@@ -235,7 +213,7 @@ function renderToolGroups(tools, container, options) {
     : GROUPS.filter((group) => group.id === activeGroup);
 
   for (const group of groupsToRender) {
-    const groupTools = tools.filter((tool) => groupFor(tool) === group.id);
+    const groupTools = tools.filter((tool) => tool.group === group.id);
     if (groupTools.length === 0) continue;
 
     const section = document.createElement('section');

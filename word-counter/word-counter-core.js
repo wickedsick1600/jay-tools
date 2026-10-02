@@ -104,8 +104,6 @@
       sentences: countSentences(value, locale),
       paragraphs: countParagraphs(value),
       lines: countLines(value),
-      readingMinutes,
-      speakingMinutes,
       readingTime: formatDuration(readingMinutes),
       speakingTime: formatDuration(speakingMinutes),
     };

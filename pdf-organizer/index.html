@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../storage-migration.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Organizer — Split, Rotate &amp; Reorder PDF | Juankit</title>
+<meta name="description" content="Organize PDF pages in your browser. Reorder, rotate, delete, extract, or split pages with thumbnails and no file upload. Free, private, and fast.">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="canonical" href="https://juankit.com/pdf-organizer/">
+<meta property="og:title" content="PDF Organizer — Split, Rotate &amp; Reorder PDF | Juankit">
+<meta property="og:description" content="Reorder, rotate, delete, extract, and split PDF pages locally in your browser.">
+<meta property="og:url" content="https://juankit.com/pdf-organizer/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Juankit">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="../style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PDF Organizer — Split, Rotate & Reorder PDF","url":"https://juankit.com/pdf-organizer/","description":"Organize PDF pages in your browser. Reorder, rotate, delete, extract, or split pages with thumbnails and no file upload.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+  :root { --maxw: 1080px; }
+
+  #drop-zone {
+    padding: 42px 20px;
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    color: var(--fg-muted);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  #drop-zone:hover,
+  #drop-zone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  #drop-zone strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--fg);
+    font-size: 17px;
+  }
+
+  #workspace[hidden] { display: none; }
+
+  .workspace-head,
+  .toolbar,
+  .output-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .workspace-head {
+    margin: 18px 0 10px;
+  }
+
+  .workspace-head h2,
+  .output-card h2 {
+    margin: 0;
+  }
+
+  .toolbar {
+    justify-content: flex-start;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+  }
+
+  .toolbar button,
+  .page-actions button {
+    min-height: 36px;
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+
+  .page-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .page-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .page-card.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+  }
+
+  .page-card.dragging { opacity: 0.55; }
+
+  .page-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 210px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--off-white);
+  }
+
+  .page-preview canvas {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .page-placeholder {
+    padding: 10px;
+    color: var(--fg-muted);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .page-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .page-title label {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+  }
+
+  .rotation-label {
+    color: var(--fg-muted);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .page-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .output-card {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+  }
+
+  .output-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+    margin-top: 12px;
+  }
+
+  .output-grid label { margin-top: 0; }
+  .status-line { min-height: 1.5em; margin-top: 10px; }
+
+  @media (max-width: 660px) {
+    .page-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .page-preview { height: 170px; }
+    .output-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 430px) {
+    .page-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>Juankit</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#support">Support</a></nav></div></header>
+<main>
+  <section class="hero">
+    <span class="tag">Free · No upload</span>
+    <h1>PDF Organizer</h1>
+    <p>Reorder, rotate, delete, extract, or split PDF pages with visual thumbnails. Your document stays in your browser.</p>
+  </section>
+
+  <div class="notice green"><strong>Your PDF is never uploaded.</strong> Page previews and downloads are created on your device.</div>
+
+  <div id="drop-zone" role="button" tabindex="0" aria-label="Choose a PDF">
+    <strong>Drop a PDF here or click to choose</strong>
+    <span>One PDF at a time · password-protected files are not supported</span>
+    <input id="pdf-input" type="file" accept="application/pdf,.pdf" hidden>
+  </div>
+  <div id="status" class="muted status-line" role="status" aria-live="polite"></div>
+
+  <section id="workspace" hidden aria-labelledby="pages-heading">
+    <div class="workspace-head">
+      <div>
+        <h2 id="pages-heading">Pages</h2>
+        <div id="file-meta" class="muted"></div>
+      </div>
+      <button id="change-file-btn" class="secondary" type="button">Choose another PDF</button>
+    </div>
+
+    <div class="toolbar" aria-label="Selected page actions">
+      <button id="select-all-btn" class="secondary" type="button">Select all</button>
+      <button id="clear-selection-btn" class="secondary" type="button">Clear selection</button>
+      <button id="rotate-left-btn" class="secondary" type="button">Rotate selected left</button>
+      <button id="rotate-right-btn" class="secondary" type="button">Rotate selected right</button>
+      <button id="delete-btn" class="secondary" type="button">Delete selected</button>
+      <button id="reset-btn" class="secondary" type="button">Reset pages</button>
+    </div>
+
+    <p class="muted">Drag page cards to reorder them. Select pages for batch rotation, deletion, or extraction.</p>
+    <div id="page-grid" class="page-grid" aria-live="polite"></div>
+
+    <section class="output-card" aria-labelledby="output-heading">
+      <h2 id="output-heading">Download</h2>
+      <div class="output-grid">
+        <div>
+          <label for="output-name">Output filename</label>
+          <input id="output-name" type="text" value="organized-juankit.pdf" autocomplete="off">
+        </div>
+        <div class="output-actions">
+          <button id="save-btn" class="success" type="button">Save organized PDF</button>
+          <button id="extract-btn" class="secondary" type="button">Download selected pages</button>
+          <button id="split-btn" class="secondary" type="button">Split every page (.zip)</button>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <h2>How to organize a PDF</h2>
+  <ol>
+    <li><strong>Choose a PDF</strong> to create local page thumbnails.</li>
+    <li><strong>Drag pages</strong> into the order you need, then rotate or delete pages.</li>
+    <li><strong>Save the organized PDF</strong>, extract only selected pages, or split every remaining page into a ZIP.</li>
+  </ol>
+
+  <h2>Support this tool</h2>
+  <div class="row"><a class="btn success" href="https://ko-fi.com/devjaybusiness" target="_blank" rel="noopener">Support on Ko-fi</a><a class="btn secondary" href="https://paypal.me/devjaybusiness" target="_blank" rel="noopener">PayPal</a></div>
+  <section class="related-tools" data-related-tools></section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__grid">
+      <nav class="site-footer__nav" aria-label="Site and legal">
+        <ul class="site-footer__links">
+          <li><a href="/privacy.html">Privacy</a></li>
+          <li><a href="/terms.html">Terms</a></li>
+          <li><a href="/">All tools</a></li>
+          <li><a href="/browser-tools/">Browser tools guide</a></li>
+          <li><a href="/#feedback">Feedback</a></li>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+        </ul>
+      </nav>
+      <nav class="site-footer__nav" aria-label="Support the project">
+        <ul class="site-footer__links">
+          <li>
+            <a
+              href="https://ko-fi.com/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ko-fi (opens in new tab)"
+            >Ko-fi</a>
+          </li>
+          <li>
+            <a
+              href="https://paypal.me/devjaybusiness"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="PayPal (opens in new tab)"
+            >PayPal</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <p class="site-footer__tagline">
+      Juankit — free browser tools. No accounts.
+      <span class="site-footer__copy">© 2026 Juankit</span>
+    </p>
+  </div>
+</footer>
+<script src="../pdfjs-bootstrap.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/legacy/build/pdf.min.mjs" integrity="sha384-C3VK/DSWA0okoepve41PfjDCYPtppxgqr5ZDD6whDI9176DZADWGQtbhMwC6a7dg" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" integrity="sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="script.js"></script>
+<script src="../tools.js"></script>
+<script src="../related-tools.js"></script>
+<script src="../bookmark-hint.js" defer></script>
+</body>
+</html>

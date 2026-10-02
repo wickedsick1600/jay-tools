@@ -15,6 +15,7 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [x] Feedback form via Netlify Forms
 - [x] Plain-language legal pages
 - [x] Dependency-free core tests, project consistency checks, and GitHub Actions verification
+- [x] Audit production assets and remove verified dead registry, shared CSS, QR, and footer code
 
 ## Pre-deployment checklist
 - [x] Rebrand to Juankit; apex URLs in `sitemap.xml`, `robots.txt`, hub + tool meta, and `netlify.toml` www→apex redirects
@@ -48,6 +49,7 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [ ] Final copy edit of hub content
 - [ ] Mobile search QA
 - [ ] Cross-browser test (Safari, Firefox, Chrome, Edge)
+- [ ] Add browser smoke tests for UI-only tools: page load, primary action, and console errors
 - [x] Load-test layout with 20+ tools in registry
 - [x] Submit site to Google Search Console (DNS TXT + sitemap)
 - [x] Submit site to Bing Webmaster Tools (import / manual)
@@ -67,6 +69,8 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [ ] Deploy and smoke-test Image Converter, Word Counter, and Currency Converter
 
 ## Growth and operations backlog
+- [x] Publish a crawlable browser-tools guide with useful keyword coverage, privacy details, and static internal links
+- [ ] Bring legacy tool pages up to the current SEO baseline: title/description length, Open Graph copy, and "How to use" sections
 - [x] Dismissible bookmark hint (`bookmark-hint.js`, `localStorage` key `juankit_bookmark_hint_v1`)
 - [x] Upgrade PDF.js to the integrity-pinned 4.2.67 legacy module build; keep `isEvalSupported: false` as defense in depth
 - [ ] Add "Did this help?" donation prompt after successful actions
@@ -91,11 +95,15 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [x] SVG Optimizer
 - [x] PDF Editor
 - [x] PDF Merger
+- [x] PDF Organizer with page thumbnails, reorder, rotation, deletion, extraction, and split ZIP
+- [x] Images to PDF with page sizing, margins, ordering, and fit controls
 - [x] YouTube Replay/Looper
 - [x] Audio Trimmer
 - [x] QR Generator
 - [x] Password Generator
 - [x] JSON Formatter fold/unfold viewer with token-preserving validation and formatting
+- [x] JSON Formatter two-way result editing with validated foldable preview
+- [x] JSON Formatter file import/export, find, undo/redo controls, and token-safe key sorting
 - [x] Image Editor full-resolution paste/export and direct Blob download fix
 - [x] PDF Editor quality-preserving page export with vector-first annotations
 - [x] Image Converter and Compressor

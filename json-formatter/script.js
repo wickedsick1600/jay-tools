@@ -2,6 +2,11 @@ const input = document.getElementById('input');
 const output = document.getElementById('output');
 const status = document.getElementById('status');
 const indentSelect = document.getElementById('indent');
+const sortKeys = document.getElementById('sort-keys');
+const jsonFile = document.getElementById('json-file');
+const findInput = document.getElementById('find-input');
+const outputEditor = document.getElementById('output-editor');
+const editResultButton = document.getElementById('edit-result-btn');
 const expandAllButton = document.getElementById('expand-all-btn');
 const collapseAllButton = document.getElementById('collapse-all-btn');
 
@@ -9,6 +14,8 @@ let outputText = '';
 let foldRanges = [];
 let collapsedFolds = new Set();
 let lineElements = [];
+let isEditingOutput = false;
+let openedFileName = '';
 
 function getIndent() {
   return indentSelect.value === 'tab' ? '\t' : Number(indentSelect.value);
@@ -26,12 +33,22 @@ function showOk(message) {
   setStatus('status-ok', `✓ ${message}`);
 }
 
-function showError(error) {
+function showError(error, target = input) {
   setStatus('status-err', `✕ ${error.message}`);
   if (Number.isInteger(error.offset)) {
-    input.focus();
-    input.setSelectionRange(error.offset, Math.min(error.offset + 1, input.value.length));
+    target.focus();
+    target.setSelectionRange(error.offset, Math.min(error.offset + 1, target.value.length));
   }
+}
+
+function setOutputMode(editing) {
+  isEditingOutput = editing;
+  output.hidden = editing;
+  outputEditor.hidden = !editing;
+  editResultButton.textContent = editing ? 'Preview' : 'Edit result';
+  const foldsAvailable = foldRanges.length > 0 && !editing;
+  expandAllButton.disabled = !foldsAvailable;
+  collapseAllButton.disabled = !foldsAvailable;
 }
 
 function tokenClass(token) {
@@ -70,6 +87,7 @@ function buildModel(text) {
 
 function clearOutput() {
   outputText = '';
+  outputEditor.value = '';
   foldRanges = [];
   collapsedFolds = new Set();
   lineElements = [];
@@ -78,8 +96,8 @@ function clearOutput() {
   empty.className = 'json-empty';
   empty.textContent = 'Format or minify JSON to see the result.';
   output.appendChild(empty);
-  expandAllButton.disabled = true;
-  collapseAllButton.disabled = true;
+  editResultButton.disabled = true;
+  setOutputMode(false);
 }
 
 function updateFoldVisibility() {
@@ -108,6 +126,7 @@ function updateFoldVisibility() {
 
 function renderOutput(text) {
   outputText = text;
+  outputEditor.value = text;
   const model = buildModel(text);
   foldRanges = model.folds;
   collapsedFolds = new Set();
@@ -187,9 +206,8 @@ function renderOutput(text) {
   });
 
   output.appendChild(fragment);
-  const hasFolds = foldRanges.length > 0;
-  expandAllButton.disabled = !hasFolds;
-  collapseAllButton.disabled = !hasFolds;
+  editResultButton.disabled = false;
+  setOutputMode(false);
 }
 
 function runTransform(transform, successMessage) {
@@ -205,8 +223,12 @@ function runTransform(transform, successMessage) {
 
 document.getElementById('format-btn').addEventListener('click', () => {
   runTransform(
-    (text) => JuankitJson.format(text, getIndent()),
-    () => 'Valid JSON — formatted without changing values.'
+    (text) => sortKeys.checked
+      ? JuankitJson.sortKeys(text, getIndent())
+      : JuankitJson.format(text, getIndent()),
+    () => sortKeys.checked
+      ? 'Valid JSON — formatted with object keys sorted.'
+      : 'Valid JSON — formatted without changing values.'
   );
 });
 
@@ -222,8 +244,106 @@ document.getElementById('validate-btn').addEventListener('click', () => {
     JuankitJson.parse(input.value);
     showOk('Valid JSON.');
   } catch (error) {
+    if (!isEditingOutput) clearOutput();
+    showError(error, isEditingOutput ? outputEditor : input);
+  }
+});
+
+editResultButton.addEventListener('click', () => {
+  if (!isEditingOutput) {
+    setOutputMode(true);
+    outputEditor.focus();
+    return;
+  }
+
+  try {
+    JuankitJson.parse(outputEditor.value);
+    renderOutput(outputEditor.value);
+    showOk('Valid JSON — result edits synced to your JSON.');
+  } catch (error) {
+    showError(error, outputEditor);
+  }
+});
+
+outputEditor.addEventListener('input', () => {
+  outputText = outputEditor.value;
+  input.value = outputText;
+  setStatus('muted', 'Result edited — changes synced to your JSON. Select Preview to validate.');
+});
+
+input.addEventListener('input', () => {
+  if (!isEditingOutput && outputText) {
     clearOutput();
-    showError(error);
+    setStatus('muted', 'Source changed — format or minify again to refresh the result.');
+  }
+});
+
+document.getElementById('open-file-btn').addEventListener('click', () => jsonFile.click());
+
+jsonFile.addEventListener('change', async () => {
+  const file = jsonFile.files[0];
+  jsonFile.value = '';
+  if (!file) return;
+
+  try {
+    input.value = await file.text();
+    openedFileName = file.name;
+    clearOutput();
+    showOk(`${file.name} loaded locally.`);
+    input.focus();
+  } catch (error) {
+    showError(new Error('Could not read that JSON file.'));
+  }
+});
+
+function runHistoryCommand(command) {
+  const target = isEditingOutput ? outputEditor : input;
+  target.focus();
+  const changed = document.execCommand(command);
+  if (!changed) setStatus('muted', `Nothing to ${command}.`);
+}
+
+document.getElementById('undo-btn').addEventListener('click', () => runHistoryCommand('undo'));
+document.getElementById('redo-btn').addEventListener('click', () => runHistoryCommand('redo'));
+
+function findText(direction) {
+  const query = findInput.value;
+  if (!query) {
+    setStatus('muted', 'Enter text to find.');
+    findInput.focus();
+    return;
+  }
+
+  const target = isEditingOutput ? outputEditor : input;
+  const haystack = target.value.toLocaleLowerCase();
+  const needle = query.toLocaleLowerCase();
+  let index;
+
+  if (direction > 0) {
+    index = haystack.indexOf(needle, target.selectionEnd);
+    if (index === -1) index = haystack.indexOf(needle);
+  } else {
+    index = haystack.lastIndexOf(needle, Math.max(0, target.selectionStart - 1));
+    if (index === -1) index = haystack.lastIndexOf(needle);
+  }
+
+  if (index === -1) {
+    setStatus('status-err', `✕ No match for “${query}”.`);
+    return;
+  }
+
+  target.hidden = false;
+  target.focus();
+  target.setSelectionRange(index, index + query.length);
+  setStatus('status-ok', `✓ Match at character ${index + 1}.`);
+}
+
+document.getElementById('find-previous-btn').addEventListener('click', () => findText(-1));
+document.getElementById('find-next-btn').addEventListener('click', () => findText(1));
+findInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    findText(event.shiftKey ? -1 : 1);
   }
 });
 
@@ -231,9 +351,32 @@ document.getElementById('copy-btn').addEventListener('click', async () => {
   if (!outputText) return;
   try {
     await navigator.clipboard.writeText(outputText);
-    showOk('Copied the complete JSON, including folded lines.');
+    showOk(isEditingOutput ? 'Copied the edited result.' : 'Copied the complete JSON, including folded lines.');
   } catch (error) {
     showError(new Error('Copy failed — select and copy the result manually.'));
+  }
+});
+
+document.getElementById('download-btn').addEventListener('click', () => {
+  const target = isEditingOutput ? outputEditor : input;
+  const text = isEditingOutput ? outputEditor.value : (outputText || input.value);
+  try {
+    JuankitJson.parse(text);
+    const blob = new Blob([text], { type: 'application/json;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    const base = (openedFileName || 'formatted.json')
+      .replace(/\.json$/i, '')
+      .replace(/[\\/:*?"<>|]+/g, '-')
+      .trim() || 'formatted';
+    link.download = `${base}-juankit.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    showOk('JSON downloaded.');
+  } catch (error) {
+    showError(error, target);
   }
 });
 

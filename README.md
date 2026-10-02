@@ -25,6 +25,7 @@ Juankit is a suite of free, focused web utilities built for speed and privacy.
 This repository currently hosts the hub and multiple tool folders in one place.
 
 - Hub root: `/` (`index.html`, `main.js`, `tools.js`)
+- Browser tools guide: `/browser-tools/` (static, crawlable directory and local-processing explainer)
 - Shared guidance: `_shared/`
 - Tool directories: each service under its own folder (for example `image-editor/`)
 - Optional future state: each tool can be split into an independent repo and subdomain
@@ -39,7 +40,7 @@ This repository currently hosts the hub and multiple tool folders in one place.
 | Image Converter | Batch conversion/compression to WebP, JPEG, or PNG with real size comparison | `image-converter/` | Static |
 | Stopwatch with Splits | Stopwatch with split notes and copyable timecodes | `stopwatch/` | Static |
 | Pseudo Word Generator | Generate pronounceable fake words | `pseudo-word/` | Static |
-| JSON Formatter | Token-preserving format/minify/validation with foldable results | `json-formatter/` | Static |
+| JSON Formatter | Token-preserving format/minify/key sorting, validation, file I/O, and editable foldable results | `json-formatter/` | Static |
 | Regex Tester | Live regex matching and capture groups | `regex-tester/` | Static |
 | Web Dev Unit Converter | px/rem, hex/rgba, epoch/ISO conversions | `unit-converter/` | Static |
 | Currency Converter | Convert one amount to multiple currencies using daily reference rates | `currency-converter/` | Static + public rates API |
@@ -49,7 +50,9 @@ This repository currently hosts the hub and multiple tool folders in one place.
 | Fake User Generator | Create country-matched checkout test profiles | `fake-user-generator/` | Static |
 | Diff Checker | Compare two text blocks and show differences | `diff-checker/` | Static |
 | PDF Editor | Annotate/sign PDF and export | `pdf-editor/` | Static |
+| PDF Organizer | Reorder, rotate, delete, extract, and split PDF pages | `pdf-organizer/` | Static |
 | PDF to Images | Convert PDF pages to PNG/JPG/WebP images | `pdf-to-images/` | Static |
+| Images to PDF | Combine ordered images into a configurable PDF | `images-to-pdf/` | Static |
 | PDF Merger | Merge multiple PDFs in-browser | `pdf-merger/` | Static |
 | SVG Optimizer | Basic SVG cleanup/minification | `svg-optimizer/` | Static |
 | Audio Trimmer | Trim audio in-browser and export WAV | `audio-trimmer/` | Static |
