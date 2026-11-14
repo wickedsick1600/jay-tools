@@ -4,29 +4,129 @@
 <meta charset="utf-8">
 <script src="../storage-migration.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QR Code Generator — Download PNG | Juankit</title>
-<meta name="description" content="Generate a QR code from text or URL and download it as PNG.">
+<title>Styled QR Code Generator – Free | Juankit</title>
+<meta name="description" content="Create custom QR codes with rounded shapes, colors, borders, frames, and optional logos. Download PNG or SVG locally with no upload or signup.">
 <meta name="theme-color" content="#0a0f1a">
 <link rel="canonical" href="https://juankit.com/qr-generator/">
+<meta property="og:title" content="Styled QR Code Generator – Free | Juankit">
+<meta property="og:description" content="Create custom QR codes with rounded shapes, colors, borders, frames, and optional logos. Download PNG or SVG locally with no upload or signup.">
 <meta property="og:url" content="https://juankit.com/qr-generator/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Juankit">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="index, follow">
 <link rel="stylesheet" href="../style.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"QR Code Generator — Download PNG","url":"https://juankit.com/qr-generator/","description":"Generate a QR code from text or URL and download it as PNG.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Styled QR Code Generator","url":"https://juankit.com/qr-generator/","description":"Create custom QR codes with rounded shapes, colors, borders, frames, and optional logos. Download PNG or SVG locally with no upload or signup.","applicationCategory":"UtilitiesApplication","operatingSystem":"Any (browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 <header class="site-header"><div class="wrap"><a class="brand" href="/"><span class="dot"></span>Juankit</a><nav><a href="/">All tools</a><a href="/#feedback">Feedback</a><a class="cta" href="/#support">Support</a></nav></div></header>
 <main>
-  <section class="hero"><span class="tag">Free · Runs in your browser</span><h1>QR Code Generator</h1><p>Turn any link or text into a QR code you can download.</p></section>
-  <label for="text">URL or text</label>
-  <textarea id="text" spellcheck="false" placeholder="https://example.com"></textarea>
-  <label for="size">Size (px)</label>
-  <input id="size" type="number" min="128" max="1024" value="320">
-  <div class="row"><button id="gen-btn" class="success">Generate QR</button><button id="download-btn" class="secondary">Download PNG</button></div>
-  <div id="qr" class="card"></div>
-  <div id="msg" class="muted" role="status" aria-live="polite"></div>
+  <section class="hero">
+    <span class="tag">Free · Local styling · No upload</span>
+    <h1>Styled QR Code Generator</h1>
+    <p>Create a custom QR code with shapes, colors, a frame, or your logo, then download it as PNG or SVG.</p>
+  </section>
+
+  <div class="qr-workspace">
+    <section class="card qr-controls" aria-labelledby="content-title">
+      <h2 id="content-title">Content and style</h2>
+
+      <label for="text">URL or text</label>
+      <textarea id="text" spellcheck="false" placeholder="https://example.com"></textarea>
+
+      <div class="control-grid">
+        <div>
+          <label for="size">Size</label>
+          <select id="size">
+            <option value="256">256 px</option>
+            <option value="320" selected>320 px</option>
+            <option value="512">512 px</option>
+            <option value="768">768 px</option>
+            <option value="1024">1024 px</option>
+          </select>
+        </div>
+        <div>
+          <label for="pattern">Pattern shape</label>
+          <select id="pattern">
+            <option value="square">Square</option>
+            <option value="rounded" selected>Rounded</option>
+            <option value="dots">Dots</option>
+            <option value="classy">Classy</option>
+          </select>
+        </div>
+        <div>
+          <label for="corners">Corner style</label>
+          <select id="corners">
+            <option value="square">Square</option>
+            <option value="rounded" selected>Rounded</option>
+            <option value="dot">Dot</option>
+          </select>
+        </div>
+        <div>
+          <label for="frame">Frame</label>
+          <select id="frame">
+            <option value="none">None</option>
+            <option value="simple">Simple border</option>
+            <option value="label">Rounded “Scan me”</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-grid color-grid">
+        <label class="color-control" for="foreground">
+          <span>QR color</span>
+          <span class="color-input-wrap"><input id="foreground" type="color" value="#0a0f1a"><output id="foreground-value">#0A0F1A</output></span>
+        </label>
+        <label class="color-control" for="background">
+          <span>Background</span>
+          <span class="color-input-wrap"><input id="background" type="color" value="#ffffff"><output id="background-value">#FFFFFF</output></span>
+        </label>
+      </div>
+
+      <label for="margin">QR margin: <output id="margin-value">16 px</output></label>
+      <input id="margin" type="range" min="8" max="64" step="4" value="16">
+
+      <label for="logo-input">Center logo (optional)</label>
+      <input id="logo-input" type="file" accept="image/png,image/jpeg,image/webp">
+      <div class="logo-row">
+        <span id="logo-status" class="muted">PNG, JPEG, or WebP up to 4 MB.</span>
+        <button id="remove-logo-btn" class="secondary" type="button" disabled>Remove logo</button>
+      </div>
+
+      <div id="scan-warning" class="notice scan-warning" role="status" aria-live="polite" hidden></div>
+      <div class="row qr-actions">
+        <button id="gen-btn" class="success" type="button">Update QR code</button>
+        <button id="reset-style-btn" class="secondary" type="button">Reset style</button>
+      </div>
+    </section>
+
+    <section class="card qr-result" aria-labelledby="preview-title">
+      <div class="result-heading">
+        <div>
+          <h2 id="preview-title">Preview</h2>
+          <p class="muted">High error correction is always enabled for styled codes.</p>
+        </div>
+        <span class="safe-badge">Local only</span>
+      </div>
+      <div id="qr-preview" class="qr-preview" aria-live="polite"></div>
+      <div id="msg" class="muted status-line" role="status" aria-live="polite"></div>
+      <div class="download-grid">
+        <button id="download-png-btn" class="success" type="button" disabled>Download PNG</button>
+        <button id="download-svg-btn" class="secondary" type="button" disabled>Download SVG</button>
+      </div>
+    </section>
+  </div>
+
+  <section class="how-to" aria-labelledby="how-to-title">
+    <h2 id="how-to-title">How to use this QR code generator</h2>
+    <ol>
+      <li>Enter a URL or text, then choose the pattern, corners, colors, margin, and frame.</li>
+      <li>Optionally add a local logo. The image stays in your browser and is not uploaded.</li>
+      <li>Test the preview with your phone, then download a PNG for sharing or an SVG for print.</li>
+    </ol>
+    <p class="notice"><strong>QR codes do not expire.</strong> A URL-based code works while its destination remains available. This tool does not create tracking links or expiring redirects.</p>
+  </section>
 
   <h2>Support this tool</h2>
   <p>Free forever. If it saved you time, a tip keeps this and other free tools alive.</p>
@@ -77,7 +177,7 @@
     </p>
   </div>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.9.2/lib/qr-code-styling.js" integrity="sha384-P7sw4KeI1SDhOs6wYFsBysIIHFqMTgG4y9vunEfL8ZuV0WhnHsh9MRu9Rso17MtY" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="script.js"></script>
 <script src="../tools.js"></script>
 <script src="../related-tools.js"></script>

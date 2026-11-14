@@ -99,7 +99,7 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - [x] Images to PDF with page sizing, margins, ordering, and fit controls
 - [x] YouTube Replay/Looper
 - [x] Audio Trimmer
-- [x] QR Generator
+- [x] Styled QR Generator with patterns, corners, colors, frames, local logos, and PNG/SVG downloads
 - [x] Password Generator
 - [x] JSON Formatter fold/unfold viewer with token-preserving validation and formatting
 - [x] JSON Formatter two-way result editing with validated foldable preview
